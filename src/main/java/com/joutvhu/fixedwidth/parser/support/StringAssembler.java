@@ -56,4 +56,8 @@ public class StringAssembler {
     public StringAssembler child(Integer start, Integer length) {
         return new StringAssembler(this.get(start, length));
     }
+
+    public StringAssembler child(FixedTypeInfo info) {
+        return child(info.getStart(), info.getLength());
+    }
 }
