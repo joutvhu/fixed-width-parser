@@ -1,9 +1,10 @@
-package com.joutvhu.fixedwidth.parser.support;
+package com.joutvhu.fixedwidth.parser.util;
 
 import com.google.re2j.Pattern;
 import com.joutvhu.fixedwidth.parser.annotation.FixedField;
 import com.joutvhu.fixedwidth.parser.annotation.FixedObject;
-import com.joutvhu.fixedwidth.parser.util.CommonUtil;
+import com.joutvhu.fixedwidth.parser.exception.FixedException;
+import com.joutvhu.fixedwidth.parser.support.StringAssembler;
 import lombok.experimental.UtilityClass;
 
 import java.lang.reflect.Constructor;
@@ -13,23 +14,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 @UtilityClass
-public class FixedObjectHelper {
+public class FixedHelper {
     /**
      * New instance by object type.
      *
      * @param type class
      * @param <T>  is type of the object
      * @return
-     * @throws NoSuchMethodException
-     * @throws IllegalAccessException
-     * @throws InvocationTargetException
-     * @throws InstantiationException
      */
-    public <T> T newInstanceOf(Class<T> type) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        Constructor<?> constructor = type.getConstructor();
-        if (constructor != null) return (T) constructor.newInstance();
-        else throw new UnsupportedOperationException(String
-                .format("%s class don't have a no-arg constructor.", type.getName()));
+    public <T> T newInstanceOf(Class<T> type) {
+        try {
+            Constructor<?> constructor = type.getConstructor();
+            if (constructor != null) return (T) constructor.newInstance();
+            else throw new UnsupportedOperationException(String
+                    .format("%s class don't have a no-arg constructor.", type.getName()));
+        } catch (NoSuchMethodException | SecurityException | InstantiationException |
+                IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            throw new FixedException(e);
+        }
     }
 
     /**

@@ -42,6 +42,10 @@ public class StringAssembler {
             this.value = this.value.substring(0, start) + value + this.value.substring(start + length);
     }
 
+    public int length() {
+        return value != null ? value.length() : 0;
+    }
+
     public String get(Integer start, Integer length) {
         if (start == null) start = 0;
         if (length == 0) length = null;

@@ -27,10 +27,14 @@ dependencies {
     compile 'org.projectlombok:lombok:1.18.12'
 
     compile 'org.apache.commons:commons-lang3:3.11'
-    compile 'org.apache.logging.log4j:log4j-api:2.13.3'
     compile 'com.google.code.findbugs:jsr305:3.0.2'
 
+    compile 'org.apache.logging.log4j:log4j-api:2.13.3'
+    compile 'org.apache.logging.log4j:log4j-core:2.13.3'
+
     compile "com.google.re2j:re2j:1.4"
+
+    compile "org.reflections:reflections:0.9.12"
 
     compile "com.fasterxml.jackson.core:jackson-core:2.11.2"
     compile "com.fasterxml.jackson.core:jackson-annotations:2.11.2"
@@ -152,7 +156,7 @@ publishing {
         }
         maven {
             name = 'github'
-            url = "https://maven.pkg.github.com/joutvhu/spring-dynamic-jpa"
+            url = "https://maven.pkg.github.com/joutvhu/fixed-width-parser"
             credentials {
                 username = project.githubUsername
                 password = project.githubPassword

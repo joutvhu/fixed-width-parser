@@ -47,6 +47,23 @@ public class CommonUtil {
         return result;
     }
 
+    public <T> Set<T> setOf(T... value) {
+        Set<T> result = new HashSet<>();
+        for (T v : value) result.add(v);
+        return result;
+    }
+
+    public <K, V> Map.Entry<K, V> mapEntryOf(K key, V value) {
+        return new HashMap.SimpleEntry<>(key, value);
+    }
+
+    public static <K, V> Map<K, V> mapOfEntries(Map.Entry<? extends K, ? extends V>... entries) {
+        Map<K, V> result = new HashMap<>();
+        for (Map.Entry<? extends K, ? extends V> e : entries)
+            result.put(e.getKey(), e.getValue());
+        return result;
+    }
+
     /**
      * Left pad a String with a specified character.
      *

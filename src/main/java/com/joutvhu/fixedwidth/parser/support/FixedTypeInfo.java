@@ -2,15 +2,18 @@ package com.joutvhu.fixedwidth.parser.support;
 
 import com.joutvhu.fixedwidth.parser.annotation.FixedField;
 import com.joutvhu.fixedwidth.parser.annotation.FixedObject;
+import com.joutvhu.fixedwidth.parser.annotation.FixedParam;
 import com.joutvhu.fixedwidth.parser.model.Alignment;
 import com.joutvhu.fixedwidth.parser.util.Assert;
-import com.joutvhu.fixedwidth.parser.util.IgnoreError;
+import com.joutvhu.fixedwidth.parser.util.CommonUtil;
+import com.joutvhu.fixedwidth.parser.util.FixedHelper;
+import com.joutvhu.fixedwidth.parser.util.ReflectionUtil;
 import lombok.AccessLevel;
 import lombok.Getter;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +22,9 @@ import java.util.List;
 public class FixedTypeInfo {
     private Field field;
     private Class<?> type;
-    private List<Class<?>> genericTypes = new ArrayList<>();
 
     private FixedField fixedField;
+    private FixedParam fixedParam;
     private FixedObject fixedObject;
 
     @Getter(AccessLevel.NONE)
@@ -33,14 +36,32 @@ public class FixedTypeInfo {
     private Character padding;
     private Alignment alignment;
 
-    private FixedTypeInfo keyInfo;
     private List<FixedTypeInfo> childInfo = new ArrayList<>();
+    private List<FixedTypeInfo> genericInfo = new ArrayList<>();
 
     public FixedTypeInfo(Class<?> type) {
         Assert.notNull(type, "Class Type must not be null!");
         this.type = type;
 
         this.label = String.format("%s object", type.getName());
+        this.detectTypeInfo();
+    }
+
+    public FixedTypeInfo(AnnotatedType annotatedType) {
+        Type t = annotatedType.getType();
+        this.fixedParam = annotatedType.getAnnotation(FixedParam.class);
+        Assert.isTrue(t instanceof Class, String
+                .format("Generic type %s of %s is not a class.", t.getTypeName(), label));
+        Assert.notNull(fixedParam, String
+                .format("Generic type %s of %s must be annotated with FixedParam.", t.getTypeName(), label));
+
+        this.type = (Class<?>) t;
+        this.label = String.format("%s object", type.getName());
+        this.start = 0;
+        this.length = fixedParam.length();
+        this.padding = fixedParam.padding();
+        this.alignment = fixedParam.alignment();
+
         this.detectTypeInfo();
     }
 
@@ -78,6 +99,10 @@ public class FixedTypeInfo {
         return new FixedTypeInfo(type);
     }
 
+    public static FixedTypeInfo of(AnnotatedType annotatedType) {
+        return new FixedTypeInfo(annotatedType);
+    }
+
     public static FixedTypeInfo of(Field field) {
         return new FixedTypeInfo(field);
     }
@@ -111,21 +136,14 @@ public class FixedTypeInfo {
 
     private void detectGenericTypes() {
         if (field != null) {
-            Type[] types = IgnoreError.execute(() -> {
-                ParameterizedType integerListType = (ParameterizedType) field.getGenericType();
-                return integerListType.getActualTypeArguments();
-            });
-            if (types != null) {
-                for (Type t : types) {
-                    Assert.isTrue(t instanceof Class, String.format("Generic type %s is not a class.", t.getTypeName()));
-                    this.genericTypes.add((Class<?>) t);
-                }
-            }
+            AnnotatedType[] annotatedTypes = ReflectionUtil.getAnnotatedActualTypeArguments(field);
+            for (AnnotatedType annotatedType : CommonUtil.defaultIfNull(annotatedTypes, new AnnotatedType[0]))
+                this.genericInfo.add(of(annotatedType));
         }
     }
 
     private void detectFields(Class<?> type) {
-        FixedObjectHelper
+        FixedHelper
                 .getFixedFields(type)
                 .stream()
                 .map(f -> of(f))
@@ -143,7 +161,7 @@ public class FixedTypeInfo {
 
     public void detectTypeInfo() {
         this.fixedObject = type.getAnnotation(FixedObject.class);
-        if (fixedObject != null) {
+        if (fixedObject != null && fixedParam == null) {
             if (start == null) start = 0;
             if (length == null) {
                 length = fixedObject.length();
@@ -154,7 +172,7 @@ public class FixedTypeInfo {
 
     public Class<?> detectType(StringAssembler assembler) {
         if (!type.isPrimitive() && fixedObject != null) {
-            this.type = FixedObjectHelper.detectType(assembler, type);
+            this.type = FixedHelper.detectType(assembler, type);
             if (field == null)
                 this.label = String.format("%s object", type.getName());
             this.detectTypeInfo();

@@ -9,7 +9,7 @@ public class DefaultModule extends FixedModule {
                 BooleanReader.class,
                 NumberReader.class,
                 DateReader.class,
-                ListReader.class,
+                CollectionReader.class,
                 MapReader.class,
                 ObjectReader.class
         );

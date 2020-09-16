@@ -1,15 +1,13 @@
 package com.joutvhu.fixedwidth.parser.reader.impl;
 
-import com.joutvhu.fixedwidth.parser.exception.FixedException;
 import com.joutvhu.fixedwidth.parser.reader.FixedWidthReader;
-import com.joutvhu.fixedwidth.parser.support.FixedObjectHelper;
 import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.support.StringAssembler;
+import com.joutvhu.fixedwidth.parser.util.FixedHelper;
 import com.joutvhu.fixedwidth.parser.util.ReflectionUtil;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public class ObjectReader extends FixedWidthReader<Object> {
@@ -20,22 +18,18 @@ public class ObjectReader extends FixedWidthReader<Object> {
 
     @Override
     public Object read(StringAssembler assembler) {
-        try {
-            Object result = FixedObjectHelper.newInstanceOf(info.getType());
-            List<FixedTypeInfo> children = info.getChildInfo();
-            for (FixedTypeInfo fieldInfo : children) {
-                Field field = fieldInfo.getField();
-                if (field != null) {
-                    StringAssembler childAssembler = assembler.child(fieldInfo);
-                    Object v = strategy.read(fieldInfo, childAssembler);
+        Object result = FixedHelper.newInstanceOf(info.getType());
+        List<FixedTypeInfo> children = info.getChildInfo();
+        for (FixedTypeInfo fieldInfo : children) {
+            Field field = fieldInfo.getField();
+            if (field != null) {
+                StringAssembler childAssembler = assembler.child(fieldInfo);
+                Object v = strategy.read(fieldInfo, childAssembler);
 
-                    ReflectionUtil.makeAccessible(field);
-                    ReflectionUtil.setField(field, result, v);
-                }
+                ReflectionUtil.makeAccessible(field);
+                ReflectionUtil.setField(field, result, v);
             }
-            return result;
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            throw new FixedException(e);
         }
+        return result;
     }
 }

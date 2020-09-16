@@ -2,10 +2,7 @@ package com.joutvhu.fixedwidth.parser.util;
 
 import lombok.experimental.UtilityClass;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.UndeclaredThrowableException;
+import java.lang.reflect.*;
 
 @UtilityClass
 public class ReflectionUtil {
@@ -55,5 +52,23 @@ public class ReflectionUtil {
                 !Modifier.isPublic(field.getDeclaringClass().getModifiers()) ||
                 Modifier.isFinal(field.getModifiers())) && !field.isAccessible())
             field.setAccessible(true);
+    }
+
+    public Type[] getActualTypeArguments(Field field) {
+        try {
+            ParameterizedType integerListType = (ParameterizedType) field.getGenericType();
+            return integerListType.getActualTypeArguments();
+        } catch (Exception e) {
+            return new Type[0];
+        }
+    }
+
+    public AnnotatedType[] getAnnotatedActualTypeArguments(Field field) {
+        try {
+            AnnotatedParameterizedType annotatedType = (AnnotatedParameterizedType) field.getAnnotatedType();
+            return annotatedType.getAnnotatedActualTypeArguments();
+        } catch (Exception e) {
+            return new AnnotatedType[0];
+        }
     }
 }
