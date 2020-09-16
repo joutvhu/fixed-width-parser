@@ -11,6 +11,7 @@ public class DefaultModule extends FixedModule {
                 DateReader.class,
                 CollectionReader.class,
                 MapReader.class,
+                PairReader.class,
                 ObjectReader.class
         );
     }
