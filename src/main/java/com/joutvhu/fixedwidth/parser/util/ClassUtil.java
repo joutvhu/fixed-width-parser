@@ -17,11 +17,16 @@ public class ClassUtil {
             CommonUtil.mapEntryOf(List.class, ArrayList.class),
             CommonUtil.mapEntryOf(Set.class, HashSet.class),
             CommonUtil.mapEntryOf(AbstractSet.class, HashSet.class),
+            CommonUtil.mapEntryOf(SortedSet.class, TreeSet.class),
+            CommonUtil.mapEntryOf(NavigableSet.class, TreeSet.class),
             CommonUtil.mapEntryOf(Queue.class, LinkedList.class),
             CommonUtil.mapEntryOf(Deque.class, LinkedList.class),
             CommonUtil.mapEntryOf(AbstractSequentialList.class, LinkedList.class),
             CommonUtil.mapEntryOf(Map.class, HashMap.class),
-            CommonUtil.mapEntryOf(AbstractMap.class, HashMap.class)
+            CommonUtil.mapEntryOf(AbstractMap.class, HashMap.class),
+            CommonUtil.mapEntryOf(SortedMap.class, TreeMap.class),
+            CommonUtil.mapEntryOf(NavigableMap.class, TreeMap.class),
+            CommonUtil.mapEntryOf(Dictionary.class, Hashtable.class)
     );
 
     public Class<?> selectSubTypeOf(Class<?> type) {
