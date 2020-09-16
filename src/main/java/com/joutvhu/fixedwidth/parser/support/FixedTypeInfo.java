@@ -19,7 +19,7 @@ import java.util.List;
 public class FixedTypeInfo {
     private Field field;
     private Class<?> type;
-    private List<Type> genericTypes = new ArrayList<>();
+    private List<Class<?>> genericTypes = new ArrayList<>();
 
     private FixedField fixedField;
     private FixedObject fixedObject;
@@ -111,12 +111,16 @@ public class FixedTypeInfo {
 
     private void detectGenericTypes() {
         if (field != null) {
-            IgnoreError.execute(() -> {
+            Type[] types = IgnoreError.execute(() -> {
                 ParameterizedType integerListType = (ParameterizedType) field.getGenericType();
-                for (Type t : integerListType.getActualTypeArguments()) {
-                    this.genericTypes.add(t);
-                }
+                return integerListType.getActualTypeArguments();
             });
+            if (types != null) {
+                for (Type t : types) {
+                    Assert.isTrue(t instanceof Class, String.format("Generic type %s is not a class.", t.getTypeName()));
+                    this.genericTypes.add((Class<?>) t);
+                }
+            }
         }
     }
 

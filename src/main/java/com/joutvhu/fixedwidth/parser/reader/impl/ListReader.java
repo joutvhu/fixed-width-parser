@@ -5,7 +5,6 @@ import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.support.StringAssembler;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
 public class ListReader extends FixedWidthReader<List<?>> {
@@ -13,7 +12,7 @@ public class ListReader extends FixedWidthReader<List<?>> {
         super(info, strategy);
         if (!List.class.isAssignableFrom(info.getType()))
             this.skip();
-        List<Type> genericTypes = info.getGenericTypes();
+        List<Class<?>> genericTypes = info.getGenericTypes();
         if (genericTypes.size() != 1)
             this.skip();
     }
