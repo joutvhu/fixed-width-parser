@@ -4,11 +4,14 @@ import com.joutvhu.fixedwidth.parser.annotation.FixedField;
 import com.joutvhu.fixedwidth.parser.annotation.FixedObject;
 import com.joutvhu.fixedwidth.parser.model.Alignment;
 import com.joutvhu.fixedwidth.parser.util.Assert;
+import com.joutvhu.fixedwidth.parser.util.IgnoreError;
 import lombok.AccessLevel;
 import lombok.Getter;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +19,7 @@ import java.util.List;
 public class FixedTypeInfo {
     private Field field;
     private Class<?> type;
+    private List<Type> genericTypes = new ArrayList<>();
 
     private FixedField fixedField;
     private FixedObject fixedObject;
@@ -57,6 +61,8 @@ public class FixedTypeInfo {
         this.require = fixedField.require();
         this.padding = fixedField.padding() != '\n' ? fixedField.padding() : null;
         this.alignment = fixedField.alignment();
+
+        this.detectGenericTypes();
     }
 
     public FixedTypeInfo(Object value) {
@@ -101,6 +107,17 @@ public class FixedTypeInfo {
             if (t != null) return t;
         }
         return type.getAnnotation(annotationClass);
+    }
+
+    private void detectGenericTypes() {
+        if (field != null) {
+            IgnoreError.execute(() -> {
+                ParameterizedType integerListType = (ParameterizedType) field.getGenericType();
+                for (Type t : integerListType.getActualTypeArguments()) {
+                    this.genericTypes.add(t);
+                }
+            });
+        }
     }
 
     private void detectFields(Class<?> type) {

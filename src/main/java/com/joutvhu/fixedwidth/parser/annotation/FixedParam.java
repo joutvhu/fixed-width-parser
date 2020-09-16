@@ -4,7 +4,7 @@ import com.joutvhu.fixedwidth.parser.model.Alignment;
 
 import java.lang.annotation.*;
 
-@Target({ElementType.TYPE_PARAMETER})
+@Target({ElementType.TYPE_PARAMETER, ElementType.TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface FixedParam {
