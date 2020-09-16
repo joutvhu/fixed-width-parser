@@ -133,21 +133,4 @@ public class FixedTypeInfo {
         }
         return this.type;
     }
-
-    public String trimValue(StringAssembler assembler) {
-        String value = assembler.get(0, length);
-        if (padding != null) {
-            switch (alignment) {
-                case LEFT:
-                    return CommonUtil.trimLeftBy(value, padding);
-                case RIGHT:
-                    return CommonUtil.trimRightBy(value, padding);
-                case CENTRE:
-                    return CommonUtil.trimBy(value, padding);
-                default:
-                    return value;
-            }
-        }
-        return value;
-    }
 }

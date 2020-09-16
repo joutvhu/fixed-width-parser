@@ -25,7 +25,7 @@ public class NumberReader extends FixedWidthReader<Object> {
     @Override
     public Object read(StringAssembler assembler) {
         Class<?> type = info.getType();
-        String value = info.trimValue(assembler);
+        String value = assembler.get(info);
         return ObjectUtil.readValue(value, type);
     }
 }

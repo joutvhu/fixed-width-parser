@@ -14,6 +14,6 @@ public class StringReader extends FixedWidthReader<String> {
 
     @Override
     public String read(StringAssembler assembler) {
-        return info.trimValue(assembler);
+        return assembler.get(info);
     }
 }

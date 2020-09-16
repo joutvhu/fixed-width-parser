@@ -1,6 +1,7 @@
 package com.joutvhu.fixedwidth.parser.support;
 
 import com.joutvhu.fixedwidth.parser.util.Assert;
+import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
@@ -45,6 +46,23 @@ public class StringAssembler {
         if (start == null) start = 0;
         this.value = padString(this.value, start, length);
         return length != null ? value.substring(start, start + length) : value.substring(start);
+    }
+
+    public String get(FixedTypeInfo info) {
+        String value = get(0, info.getLength());
+        if (info.getPadding() != null) {
+            switch (info.getAlignment()) {
+                case LEFT:
+                    return CommonUtil.trimLeftBy(value, info.getPadding());
+                case RIGHT:
+                    return CommonUtil.trimRightBy(value, info.getPadding());
+                case CENTRE:
+                    return CommonUtil.trimBy(value, info.getPadding());
+                default:
+                    return value;
+            }
+        }
+        return value;
     }
 
     public void set(String value, Integer start, Integer length) {
