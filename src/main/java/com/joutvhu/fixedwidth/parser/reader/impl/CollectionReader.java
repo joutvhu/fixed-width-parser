@@ -10,6 +10,7 @@ import java.util.Collection;
 public class CollectionReader extends FixedWidthReader<Collection<?>> {
     public CollectionReader(FixedTypeInfo info, FixedParseStrategy strategy) {
         super(info, strategy);
+        this.skip();
     }
 
     @Override

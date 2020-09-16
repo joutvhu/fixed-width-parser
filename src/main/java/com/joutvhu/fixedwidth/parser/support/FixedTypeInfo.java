@@ -4,7 +4,7 @@ import com.joutvhu.fixedwidth.parser.annotation.FixedField;
 import com.joutvhu.fixedwidth.parser.annotation.FixedObject;
 import com.joutvhu.fixedwidth.parser.model.Alignment;
 import com.joutvhu.fixedwidth.parser.util.Assert;
-import com.joutvhu.fixedwidth.parser.util.CommonUtil;
+import lombok.AccessLevel;
 import lombok.Getter;
 
 import java.lang.annotation.Annotation;
@@ -20,6 +20,8 @@ public class FixedTypeInfo {
     private FixedField fixedField;
     private FixedObject fixedObject;
 
+    @Getter(AccessLevel.NONE)
+    private String title;
     private String label;
     private Integer start;
     private Integer length;
@@ -51,6 +53,7 @@ public class FixedTypeInfo {
         this.start = fixedField.start();
         Assert.isTrue(start >= 0, String.format("Start position of %s can't less than 0.", this.label));
         this.length = fixedField.length();
+        Assert.isTrue(length >= 0, String.format("Field length of %s can't less than 0.", this.label));
         this.require = fixedField.require();
         this.padding = fixedField.padding() != '\n' ? fixedField.padding() : null;
         this.alignment = fixedField.alignment();
@@ -87,7 +90,9 @@ public class FixedTypeInfo {
     }
 
     public String title() {
-        return buildMessage("{label} at position {position} and length {length}");
+        if (this.title == null)
+            this.title = buildMessage("{label} at position {position} and length {length}");
+        return this.title;
     }
 
     public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
@@ -119,7 +124,10 @@ public class FixedTypeInfo {
         this.fixedObject = type.getAnnotation(FixedObject.class);
         if (fixedObject != null) {
             if (start == null) start = 0;
-            if (length == null) length = fixedObject.length();
+            if (length == null) {
+                length = fixedObject.length();
+                Assert.isTrue(length >= 0, String.format("Object length of %s can't less than 0.", this.label));
+            }
         }
     }
 

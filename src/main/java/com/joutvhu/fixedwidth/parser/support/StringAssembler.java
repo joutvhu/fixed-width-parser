@@ -44,6 +44,7 @@ public class StringAssembler {
 
     public String get(Integer start, Integer length) {
         if (start == null) start = 0;
+        if (length == 0) length = null;
         this.value = padString(this.value, start, length);
         return length != null ? value.substring(start, start + length) : value.substring(start);
     }
