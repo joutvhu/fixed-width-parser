@@ -12,5 +12,9 @@ public class ReaderTests {
                 .parser()
                 .parse("40023nkjnssednfwmkerkjwernkwtyd4emw11nerjkwermfwlmkneriwjfnerijwne", Event.class);
         Assert.assertNotNull(event);
+        String line = FixedParser
+                .parser()
+                .write(event);
+//        Assert.assertNotNull(line);
     }
 }

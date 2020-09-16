@@ -33,7 +33,7 @@ public class FixedParser {
     }
 
     public <T> String write(T object) {
-        FixedTypeInfo fixedTypeInfo = FixedTypeInfo.of(object.getClass());
+        FixedTypeInfo fixedTypeInfo = FixedTypeInfo.of(object);
         return this.strategy.write(fixedTypeInfo, object);
     }
 }

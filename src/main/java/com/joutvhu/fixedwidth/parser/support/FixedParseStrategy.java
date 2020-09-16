@@ -4,6 +4,7 @@ import com.joutvhu.fixedwidth.parser.exception.FixedException;
 import com.joutvhu.fixedwidth.parser.module.FixedModule;
 import com.joutvhu.fixedwidth.parser.reader.FixedWidthReader;
 import com.joutvhu.fixedwidth.parser.util.IgnoreError;
+import com.joutvhu.fixedwidth.parser.writer.FixedWidthWriter;
 
 import java.lang.reflect.Constructor;
 import java.util.Set;
@@ -31,6 +32,16 @@ public class FixedParseStrategy {
     }
 
     public String write(FixedTypeInfo info, Object value) {
-        return null;
+        Set<Class<? extends FixedWidthWriter>> writers = module.getWriters();
+        for (Class<? extends FixedWidthWriter> writerClass : writers) {
+            FixedWidthWriter writer = IgnoreError.execute(() -> {
+                Constructor<? extends FixedWidthWriter> constructor =
+                        writerClass.getConstructor(FixedTypeInfo.class, FixedParseStrategy.class);
+                return constructor != null ? constructor.newInstance(info, this) : null;
+            });
+            if (writer != null)
+                return writer.write(value);
+        }
+        throw new FixedException("Writer not found.");
     }
 }

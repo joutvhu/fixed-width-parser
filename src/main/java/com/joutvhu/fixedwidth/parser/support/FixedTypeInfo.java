@@ -107,6 +107,10 @@ public class FixedTypeInfo {
         return new FixedTypeInfo(field);
     }
 
+    public static FixedTypeInfo of(Object value) {
+        return new FixedTypeInfo(value);
+    }
+
     public Integer position() {
         return start + 1;
     }
