@@ -12,8 +12,8 @@ import java.util.Collection;
 
 public class CollectionReader extends FixedWidthReader<Collection<?>> {
     protected FixedTypeInfo valueInfo;
-    protected int start = 0;
-    protected int length = 0;
+    protected Integer start = 0;
+    protected Integer length = 0;
 
     public CollectionReader(FixedTypeInfo info, FixedParseStrategy strategy) {
         super(info, strategy);
