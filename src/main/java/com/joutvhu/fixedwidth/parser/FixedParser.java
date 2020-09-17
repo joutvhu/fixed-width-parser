@@ -7,7 +7,7 @@ import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.support.StringAssembler;
 
 public class FixedParser {
-    private FixedModule module = new DefaultModule();
+    private FixedModule module = DefaultModule.INSTANCE;
     private FixedParseStrategy strategy = new FixedParseStrategy(module);
 
     public static FixedParser parser() {

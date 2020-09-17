@@ -10,7 +10,7 @@ public class CollectionWriter extends FixedWidthWriter<Collection<?>> {
     public CollectionWriter(FixedTypeInfo info, FixedParseStrategy strategy) {
         super(info, strategy);
         if (!Collection.class.equals(info.getType()) || !Collection.class.isAssignableFrom(info.getType()) ||
-                info.getGenericInfo().size() != 1)
+                info.getGenericTypeInfo().size() != 1)
             this.skip();
     }
 

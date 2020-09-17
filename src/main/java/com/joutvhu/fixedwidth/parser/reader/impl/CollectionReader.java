@@ -18,9 +18,9 @@ public class CollectionReader extends FixedWidthReader<Collection<?>> {
     public CollectionReader(FixedTypeInfo info, FixedParseStrategy strategy) {
         super(info, strategy);
         if (!Collection.class.equals(info.getType()) || !Collection.class.isAssignableFrom(info.getType()) ||
-                info.getGenericInfo().size() != 1)
+                info.getGenericTypeInfo().size() != 1)
             this.skip();
-        this.valueInfo = info.getGenericInfo().get(0);
+        this.valueInfo = info.getGenericTypeInfo().get(0);
         this.length = valueInfo.getLength();
     }
 

@@ -4,6 +4,8 @@ import com.joutvhu.fixedwidth.parser.reader.impl.*;
 import com.joutvhu.fixedwidth.parser.writer.impl.*;
 
 public class DefaultModule extends FixedModule {
+    public static final FixedModule INSTANCE = new DefaultModule();
+
     public DefaultModule() {
         super(
                 StringReader.class,
@@ -14,7 +16,13 @@ public class DefaultModule extends FixedModule {
                 MapReader.class,
                 ObjectReader.class,
 
-                StringWriter.class
+                StringWriter.class,
+                BooleanWriter.class,
+                NumberWriter.class,
+                DateWriter.class,
+                CollectionWriter.class,
+                MapWriter.class,
+                ObjectWriter.class
         );
     }
 }

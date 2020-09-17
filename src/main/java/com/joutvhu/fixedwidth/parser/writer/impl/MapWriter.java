@@ -10,7 +10,7 @@ public class MapWriter extends FixedWidthWriter<Map<?, ?>> {
     public MapWriter(FixedTypeInfo info, FixedParseStrategy strategy) {
         super(info, strategy);
         if ((!Map.class.equals(info.getType()) && !Map.class.isAssignableFrom(info.getType())) ||
-                info.getGenericInfo().size() != 2)
+                info.getGenericTypeInfo().size() != 2)
             this.skip();
     }
 

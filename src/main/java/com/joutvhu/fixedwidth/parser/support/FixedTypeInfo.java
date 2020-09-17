@@ -34,8 +34,8 @@ public class FixedTypeInfo {
     private Character padding;
     private Alignment alignment;
 
-    private List<FixedTypeInfo> childInfo = new ArrayList<>();
-    private List<FixedTypeInfo> genericInfo = new ArrayList<>();
+    private List<FixedTypeInfo> elementTypeInfo = new ArrayList<>();
+    private List<FixedTypeInfo> genericTypeInfo = new ArrayList<>();
 
     public FixedTypeInfo(Class<?> type) {
         Assert.notNull(type, "Class Type must not be null!");
@@ -140,7 +140,7 @@ public class FixedTypeInfo {
         if (field != null) {
             AnnotatedType[] annotatedTypes = ReflectionUtil.getAnnotatedActualTypeArguments(field);
             for (AnnotatedType annotatedType : CommonUtil.defaultIfNull(annotatedTypes, new AnnotatedType[0]))
-                this.genericInfo.add(of(annotatedType));
+                this.genericTypeInfo.add(of(annotatedType));
         }
     }
 
@@ -149,11 +149,11 @@ public class FixedTypeInfo {
                 .getFixedFields(type)
                 .stream()
                 .map(f -> of(f))
-                .forEach(i -> this.childInfo.add(i));
+                .forEach(i -> this.elementTypeInfo.add(i));
     }
 
     public FixedTypeInfo findField(String name) {
-        for (FixedTypeInfo info : this.childInfo) {
+        for (FixedTypeInfo info : this.elementTypeInfo) {
             Field f = info.getField();
             if (f != null && f.getName().equals(name))
                 return info;

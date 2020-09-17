@@ -19,7 +19,7 @@ public class ObjectReader extends FixedWidthReader<Object> {
     @Override
     public Object read(StringAssembler assembler) {
         Object result = FixedHelper.newInstanceOf(info.getType());
-        List<FixedTypeInfo> children = info.getChildInfo();
+        List<FixedTypeInfo> children = info.getElementTypeInfo();
         for (FixedTypeInfo fieldInfo : children) {
             Field field = fieldInfo.getField();
             if (field != null) {
