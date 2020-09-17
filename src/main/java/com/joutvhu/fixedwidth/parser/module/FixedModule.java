@@ -18,7 +18,7 @@ public abstract class FixedModule {
     private Set<Class<? extends FixedWidthReader>> readers = new LinkedHashSet<>();
     private Set<Class<? extends FixedWidthWriter>> writers = new LinkedHashSet<>();
 
-    public FixedModule(Class<?> ...classes) {
+    public FixedModule(Class<?>... classes) {
         for (Class<?> c : classes) {
             if (FixedWidthReader.class.isAssignableFrom(c))
                 this.readers.add((Class<? extends FixedWidthReader>) c);

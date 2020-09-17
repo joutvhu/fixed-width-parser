@@ -110,8 +110,7 @@ public class CommonUtil {
             int halfSize = padSize / 2;
             return StringUtils.repeat(pad, (padSize & 1) == 0 ? halfSize + 1 : halfSize) +
                     value + StringUtils.repeat(pad, halfSize);
-        }
-        else return StringUtils.substring(value, 0, size);
+        } else return StringUtils.substring(value, 0, size);
     }
 
     public String trimLeftBy(String value, char pad) {
