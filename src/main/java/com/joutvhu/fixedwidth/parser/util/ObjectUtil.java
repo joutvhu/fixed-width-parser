@@ -34,6 +34,10 @@ public class ObjectUtil {
                 return LocalDate.parse(content, formatter);
             else if (java.sql.Date.class == valueType)
                 return java.sql.Date.valueOf(LocalDate.parse(content, formatter));
+            else if (java.sql.Time.class == valueType)
+                return java.sql.Time.valueOf(LocalTime.parse(content, formatter));
+            else if (java.sql.Timestamp.class == valueType)
+                return java.sql.Timestamp.valueOf(LocalDateTime.parse(content, formatter));
             else if (LocalTime.class == valueType)
                 return LocalTime.parse(content, formatter);
             else if (LocalDateTime.class == valueType)

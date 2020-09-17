@@ -27,11 +27,7 @@ public class NumberReader extends FixedWidthReader<Object> {
         this.isDecimal = TypeConstants.DECIMAL_NUMBER_TYPES.contains(type);
         if (!TypeConstants.INTEGER_NUMBER_TYPES.contains(type) && !this.isDecimal)
             this.skip();
-        else {
-            this.notNull = CommonUtil
-                    .listOf(short.class, int.class, long.class, float.class, double.class)
-                    .contains(type);
-        }
+        else this.notNull = TypeConstants.NOT_NULL_TYPES.contains(type);
     }
 
     @Override
@@ -41,7 +37,6 @@ public class NumberReader extends FixedWidthReader<Object> {
         FixedFormat fixedFormat = info.getAnnotation(FixedFormat.class);
         String format = fixedFormat != null ? fixedFormat.format() : null;
         Object result = null;
-
 
         if (CommonUtil.isNotBlank(value)) {
             if (isDecimal && CommonUtil.isNotBlank(format))

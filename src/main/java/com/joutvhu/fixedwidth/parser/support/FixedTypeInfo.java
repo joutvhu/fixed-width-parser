@@ -4,6 +4,7 @@ import com.joutvhu.fixedwidth.parser.annotation.FixedField;
 import com.joutvhu.fixedwidth.parser.annotation.FixedObject;
 import com.joutvhu.fixedwidth.parser.annotation.FixedParam;
 import com.joutvhu.fixedwidth.parser.model.Alignment;
+import com.joutvhu.fixedwidth.parser.model.Padding;
 import com.joutvhu.fixedwidth.parser.util.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -77,7 +78,7 @@ public class FixedTypeInfo {
         this.length = fixedField.length();
         Assert.isTrue(length >= 0, String.format("Field length of %s can't less than 0.", this.label));
         this.require = fixedField.require();
-        this.padding = fixedField.padding() != '\n' ? fixedField.padding() : null;
+        this.padding = fixedField.padding();
         this.alignment = fixedField.alignment();
 
         this.detectGenericTypes();
@@ -180,6 +181,16 @@ public class FixedTypeInfo {
             this.detectFields(type);
         }
         return this.type;
+    }
+
+    public char defaultPadding() {
+        if (padding != null && Padding.AUTO != padding) return padding;
+        if (Padding.AUTO == padding) {
+            if ((TypeConstants.INTEGER_NUMBER_TYPES.contains(type) || TypeConstants.DECIMAL_NUMBER_TYPES.contains(type)) &&
+                    (alignment == null || Alignment.AUTO == alignment || Alignment.LEFT == alignment))
+                return '0';
+        }
+        return ' ';
     }
 
     public Alignment defaultAlignment() {

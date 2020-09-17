@@ -1,6 +1,7 @@
 package com.joutvhu.fixedwidth.parser.annotation;
 
 import com.joutvhu.fixedwidth.parser.model.Alignment;
+import com.joutvhu.fixedwidth.parser.model.Padding;
 
 import java.lang.annotation.*;
 
@@ -10,7 +11,7 @@ import java.lang.annotation.*;
 public @interface FixedParam {
     int length();
 
-    char padding() default ' ';
+    char padding() default Padding.AUTO;
 
     Alignment alignment() default Alignment.AUTO;
 }

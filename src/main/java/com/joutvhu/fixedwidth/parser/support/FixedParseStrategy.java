@@ -39,8 +39,10 @@ public class FixedParseStrategy {
                         writerClass.getConstructor(FixedTypeInfo.class, FixedParseStrategy.class);
                 return constructor != null ? constructor.newInstance(info, this) : null;
             });
-            if (writer != null)
-                return writer.write(value);
+            if (writer != null) {
+                String result = writer.write(value);
+                return StringAssembler.of(result).pad(info).getValue();
+            }
         }
         throw new FixedException("Writer not found.");
     }

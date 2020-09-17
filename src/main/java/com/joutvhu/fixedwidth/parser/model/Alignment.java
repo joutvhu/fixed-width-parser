@@ -1,6 +1,6 @@
 package com.joutvhu.fixedwidth.parser.model;
 
-public enum  Alignment {
+public enum Alignment {
     AUTO,
     LEFT,
     CENTRE,

@@ -5,6 +5,8 @@ import org.reflections.Reflections;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
+import java.time.Instant;
+import java.time.temporal.Temporal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -26,7 +28,8 @@ public class ClassUtil {
             CommonUtil.mapEntryOf(AbstractMap.class, HashMap.class),
             CommonUtil.mapEntryOf(SortedMap.class, TreeMap.class),
             CommonUtil.mapEntryOf(NavigableMap.class, TreeMap.class),
-            CommonUtil.mapEntryOf(Dictionary.class, Hashtable.class)
+            CommonUtil.mapEntryOf(Dictionary.class, Hashtable.class),
+            CommonUtil.mapEntryOf(Temporal.class, Instant.class)
     );
 
     public Class<?> selectSubTypeOf(Class<?> type) {

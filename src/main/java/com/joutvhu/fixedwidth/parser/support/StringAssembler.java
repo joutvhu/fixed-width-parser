@@ -1,6 +1,7 @@
 package com.joutvhu.fixedwidth.parser.support;
 
 import com.joutvhu.fixedwidth.parser.model.Alignment;
+import com.joutvhu.fixedwidth.parser.model.Padding;
 import com.joutvhu.fixedwidth.parser.util.Assert;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import lombok.Getter;
@@ -61,6 +62,8 @@ public class StringAssembler {
         Character padding = info.getPadding();
         Alignment alignment = info.getAlignment();
         if (padding != null && alignment != null) {
+            if (padding == Padding.AUTO) padding = info.defaultPadding();
+
             switch (alignment) {
                 case LEFT:
                     return CommonUtil.trimLeftBy(value, padding);
@@ -78,6 +81,7 @@ public class StringAssembler {
 
     public StringAssembler set(Integer start, Integer length, String value) {
         if (start == null) start = 0;
+        if (value == null) value = StringUtils.EMPTY;
         this.value = padString(this.value, start, length);
         this.replaceAt(start, length, value);
         return this;
@@ -91,7 +95,7 @@ public class StringAssembler {
         Integer length = info.getLength();
         if (length != null) {
             Alignment alignment = getAlignment(info, defaultAlignment);
-            Character padding = CommonUtil.defaultIfNull(info.getPadding(), ' ');
+            Character padding = info.defaultPadding();
 
             switch (alignment) {
                 case LEFT:

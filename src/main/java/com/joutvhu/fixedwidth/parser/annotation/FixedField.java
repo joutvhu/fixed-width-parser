@@ -1,6 +1,7 @@
 package com.joutvhu.fixedwidth.parser.annotation;
 
 import com.joutvhu.fixedwidth.parser.model.Alignment;
+import com.joutvhu.fixedwidth.parser.model.Padding;
 
 import java.lang.annotation.*;
 
@@ -28,7 +29,7 @@ public @interface FixedField {
      */
     boolean require() default false;
 
-    char padding() default ' ';
+    char padding() default Padding.AUTO;
 
     Alignment alignment() default Alignment.AUTO;
 }
