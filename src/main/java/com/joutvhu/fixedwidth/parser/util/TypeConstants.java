@@ -26,5 +26,5 @@ public class TypeConstants {
 
     public final List<Class<?>> DECIMAL_NUMBER_TYPES = CommonUtil.listOf(Float.class, Double.class, BigDecimal.class, float.class, double.class);
 
-    public final List<Class<?>> NOT_NULL_TYPES = CommonUtil.listOf(byte.class, short.class, int.class, long.class, float.class, double.class);
+    public final List<Class<?>> NOT_NULL_TYPES = CommonUtil.listOf(boolean.class, char.class, byte.class, short.class, int.class, long.class, float.class, double.class);
 }

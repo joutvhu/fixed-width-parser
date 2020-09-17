@@ -3,6 +3,7 @@ package com.joutvhu.fixedwidth.parser.writer.impl;
 import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.util.TypeConstants;
+import com.joutvhu.fixedwidth.parser.validator.FixedFormat;
 import com.joutvhu.fixedwidth.parser.writer.FixedWidthWriter;
 
 public class DateWriter extends FixedWidthWriter<Object> {
@@ -14,6 +15,9 @@ public class DateWriter extends FixedWidthWriter<Object> {
 
     @Override
     public String write(Object value) {
+        Class<?> type = info.getType();
+        FixedFormat fixedFormat = info.getAnnotation(FixedFormat.class);
+        String format = fixedFormat != null ? fixedFormat.format() : null;
         return null;
     }
 }
