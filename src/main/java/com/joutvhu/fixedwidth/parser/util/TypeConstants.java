@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 @UtilityClass
 public class TypeConstants {
@@ -20,9 +22,9 @@ public class TypeConstants {
 
     public final List<Class<?>> DATE_TYPES = CommonUtil.listOf(Date.class, Timestamp.class, LocalDate.class, LocalTime.class, LocalDateTime.class, Instant.class, java.sql.Date.class, java.sql.Time.class, java.sql.Timestamp.class);
 
-    public final List<Class<?>> INTEGER_NUMBER_TYPES = CommonUtil.listOf(Short.class, Integer.class, Long.class, BigInteger.class, short.class, int.class, long.class);
+    public final List<Class<?>> INTEGER_NUMBER_TYPES = CommonUtil.listOf(Byte.class, Short.class, Integer.class, Long.class, AtomicInteger.class, AtomicLong.class, BigInteger.class, byte.class, short.class, int.class, long.class);
 
     public final List<Class<?>> DECIMAL_NUMBER_TYPES = CommonUtil.listOf(Float.class, Double.class, BigDecimal.class, float.class, double.class);
 
-    public final List<Class<?>> NOT_NULL_TYPES = CommonUtil.listOf(short.class, int.class, long.class, float.class, double.class);
+    public final List<Class<?>> NOT_NULL_TYPES = CommonUtil.listOf(byte.class, short.class, int.class, long.class, float.class, double.class);
 }

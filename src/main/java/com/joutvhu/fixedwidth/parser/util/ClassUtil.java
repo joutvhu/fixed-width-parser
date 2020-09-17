@@ -32,6 +32,9 @@ public class ClassUtil {
             CommonUtil.mapEntryOf(Temporal.class, Instant.class)
     );
 
+    /**
+     * Select a perfect type of a given type
+     */
     public Class<?> selectSubTypeOf(Class<?> type) {
         int modifiers = type.getModifiers();
         if (!Modifier.isInterface(modifiers) && !Modifier.isAbstract(modifiers))
@@ -46,6 +49,9 @@ public class ClassUtil {
         return null;
     }
 
+    /**
+     * Gets all sub types in hierarchy of a given type
+     */
     public <T> List<Class<?>> getNormalTypesOf(Class<T> type, String... firstPrefix) {
         return new Reflections()
                 .getSubTypesOf(type)
