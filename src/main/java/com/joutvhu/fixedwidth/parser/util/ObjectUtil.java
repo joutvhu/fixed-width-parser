@@ -25,6 +25,14 @@ public class ObjectUtil {
             .registerModule(new SimpleModule())
             .registerModule(new JavaTimeModule());
 
+    public String writeValue(Object value) {
+        try {
+            return MAPPER.writeValueAsString(value);
+        } catch (Exception e) {
+            throw new FixedException(e);
+        }
+    }
+
     public <T> T readValue(String content, Class<T> valueType) {
         try {
             return MAPPER.readValue(content, valueType);
@@ -33,27 +41,52 @@ public class ObjectUtil {
         }
     }
 
+    public String formatDate(Object value, String format) {
+        if (CommonUtil.isNotBlank(format)) {
+            Class<?> type = value.getClass();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+            ZoneId zone = format.endsWith("Z") ? ZoneOffset.UTC : ZoneOffset.systemDefault();
+            formatter = formatter.withZone(zone);
+
+            if (LocalDate.class.equals(type))
+                return formatter.format((LocalDate) value);
+            else if (LocalTime.class.equals(type))
+                return formatter.format((LocalTime) value);
+            else if (LocalDateTime.class.equals(type))
+                return formatter.format((LocalDateTime) value);
+            else if (java.sql.Date.class.equals(type))
+                return formatter.format(((java.sql.Date) value).toLocalDate());
+            else if (java.sql.Time.class.equals(type))
+                return formatter.format(((java.sql.Time) value).toLocalTime());
+            else if (java.sql.Timestamp.class.equals(type))
+                return formatter.format(((java.sql.Timestamp) value).toLocalDateTime());
+            else if (Instant.class.equals(type))
+                return formatter.format((Instant) value);
+            else if (Date.class.equals(type))
+                return formatter.format(((Date) value).toInstant());
+        }
+        return writeValue(value);
+    }
+
     public Object parseDate(String value, Class<?> type, String format) {
         if (format != null) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
-            if (LocalDate.class == type)
+            if (LocalDate.class.equals(type))
                 return LocalDate.parse(value, formatter);
-            else if (java.sql.Date.class == type)
+            else if (java.sql.Date.class.equals(type))
                 return java.sql.Date.valueOf(LocalDate.parse(value, formatter));
-            else if (java.sql.Time.class == type)
+            else if (java.sql.Time.class.equals(type))
                 return java.sql.Time.valueOf(LocalTime.parse(value, formatter));
-            else if (java.sql.Timestamp.class == type)
+            else if (java.sql.Timestamp.class.equals(type))
                 return java.sql.Timestamp.valueOf(LocalDateTime.parse(value, formatter));
-            else if (LocalTime.class == type)
+            else if (LocalTime.class.equals(type))
                 return LocalTime.parse(value, formatter);
-            else if (LocalDateTime.class == type)
+            else if (LocalDateTime.class.equals(type))
                 return LocalDateTime.parse(value, formatter);
-            else if (Timestamp.class == type)
-                return Timestamp.valueOf(LocalDateTime.parse(value, formatter));
-            else if (Instant.class == type) {
+            else if (Instant.class.equals(type)) {
                 formatter = formatter.withZone(ZoneId.systemDefault());
                 return Instant.from(formatter.parse(value));
-            } else if (Date.class == type) {
+            } else if (Date.class.equals(type)) {
                 formatter = formatter.withZone(ZoneId.systemDefault());
                 return Date.from(Instant.from(formatter.parse(value)));
             }
