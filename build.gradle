@@ -1,0 +1,170 @@
+plugins {
+    id 'java'
+    id 'idea'
+    id 'groovy'
+    id 'signing'
+    id 'maven-publish'
+}
+
+group = 'com.github.joutvhu'
+version '1.0.0-SNAPSHOT'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    annotationProcessor 'org.projectlombok:lombok:1.18.12'
+    compile 'org.projectlombok:lombok:1.18.12'
+
+    compile 'org.apache.commons:commons-lang3:3.11'
+    compile 'com.google.code.findbugs:jsr305:3.0.2'
+
+    compile 'org.apache.logging.log4j:log4j-api:2.13.3'
+    compile 'org.apache.logging.log4j:log4j-core:2.13.3'
+
+    compile "com.google.re2j:re2j:1.4"
+
+    compile "org.reflections:reflections:0.9.12"
+
+    compile "com.fasterxml.jackson.core:jackson-core:2.11.2"
+    compile "com.fasterxml.jackson.core:jackson-annotations:2.11.2"
+    compile "com.fasterxml.jackson.core:jackson-databind:2.11.2"
+    compile "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.11.2"
+    compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.2"
+
+    testCompile 'junit:junit:4.13'
+    testCompile 'org.junit.jupiter:junit-jupiter-api:5.6.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.6.2'
+}
+
+jar {
+    manifest {
+        attributes 'Built-By': 'joutvhu (Giao Ho)'
+    }
+    into("META-INF/maven/${project.group}/${project.name}") {
+        from {
+            generatePomFileForMavenPublication
+        }
+        rename {
+            it.replace('pom-default.xml', 'pom.xml')
+        }
+    }
+}
+
+task fatJar(type: Jar) {
+    manifest.from jar.manifest
+    with jar
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives fatJar, sourcesJar, javadocJar
+}
+
+tasks.withType(Test) {
+    useJUnitPlatform {
+        includeEngines 'junit-jupiter'
+    }
+    filter {
+        includeTestsMatching 'com.joutvhu.fixedwidth.parser.*'
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = group
+            artifactId = project.name
+            artifacts = [fatJar, sourcesJar, javadocJar]
+            version = version
+
+            pom {
+                name = project.name
+                description = 'Fixed Width Parser'
+                url = 'https://github.com/joutvhu/fixed-width-parser'
+                licenses {
+                    license {
+                        name = 'Apache License 2.0'
+                        url = 'https://github.com/joutvhu/fixed-width-parser/blob/master/LICENSE'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'joutvhu'
+                        name = 'Giao Ho'
+                        email = 'joutvhu@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git@github.com:joutvhu/fixed-width-parser.git'
+                    developerConnection = 'scm:git:git@github.com:joutvhu/fixed-width-parser.git'
+                    url = 'https://github.com/joutvhu/fixed-width-parser'
+                }
+                issueManagement {
+                    system = 'Github Issue'
+                    url = 'https://github.com/joutvhu/fixed-width-parser/issues'
+                }
+                organization {
+                    name = 'Giao Ho'
+                    url = 'https://github.com/joutvhu'
+                }
+                withXml {
+                    def dependenciesNode = asNode().appendNode('dependencies')
+
+                    configurations.compile.allDependencies.each {
+                        def dependencyNode = dependenciesNode.appendNode('dependency')
+                        dependencyNode.appendNode('groupId', it.group)
+                        dependencyNode.appendNode('artifactId', it.name)
+                        dependencyNode.appendNode('version', it.version)
+                    }
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = 'sonatype'
+            if (version.endsWith('-SNAPSHOT') || version.endsWith('.SNAPSHOT')) {
+                url = 'https://oss.sonatype.org/content/repositories/snapshots'
+            } else {
+                url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+            }
+            credentials {
+                username = project.ossrhUsername
+                password = project.ossrhPassword
+            }
+        }
+        maven {
+            name = 'github'
+            url = "https://maven.pkg.github.com/joutvhu/fixed-width-parser"
+            credentials {
+                username = project.githubUsername
+                password = project.githubPassword
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.maven
+}
