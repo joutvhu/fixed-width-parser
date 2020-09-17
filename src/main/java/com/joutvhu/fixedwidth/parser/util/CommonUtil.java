@@ -95,17 +95,22 @@ public class CommonUtil {
     }
 
     /**
-     * Right pad a String with a specified character.
+     * Center pad a String with a specified character.
      *
      * @param value the string need to be pad
      * @param size  the int need to be pad
      * @param pad   the char need to be cut
      * @return the value has right pad
      */
-    public String centrePadValue(String value, int size, char pad) {
+    public String centerPadValue(String value, int size, char pad) {
         int len = value.length();
         if (len == size) return value;
-        else if (len < size) return StringUtils.rightPad(value, size, pad);
+        else if (len < size) {
+            int padSize = size - len;
+            int halfSize = padSize / 2;
+            return StringUtils.repeat(pad, (padSize & 1) == 0 ? halfSize + 1 : halfSize) +
+                    value + StringUtils.repeat(pad, halfSize);
+        }
         else return StringUtils.substring(value, 0, size);
     }
 

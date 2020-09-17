@@ -20,6 +20,7 @@ import java.util.List;
 public class FixedTypeInfo {
     private Field field;
     private Class<?> type;
+    private AnnotatedType annotatedType;
 
     private FixedField fixedField;
     private FixedParam fixedParam;
@@ -52,6 +53,7 @@ public class FixedTypeInfo {
                 .format("Generic type %s of %s is not a class.", t.getTypeName(), label));
         Assert.notNull(fixedParam, String
                 .format("Generic type %s of %s must be annotated with FixedParam.", t.getTypeName(), label));
+        this.annotatedType = annotatedType;
 
         this.type = (Class<?>) t;
         this.label = String.format("%s object", type.getName());

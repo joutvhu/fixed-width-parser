@@ -32,6 +32,8 @@ public class FixedParseStrategy {
     }
 
     public String write(FixedTypeInfo info, Object value) {
+        if (value == null)
+            return StringAssembler.instance().pad(info).getValue();
         Set<Class<? extends FixedWidthWriter>> writers = module.getWriters();
         for (Class<? extends FixedWidthWriter> writerClass : writers) {
             FixedWidthWriter writer = IgnoreError.execute(() -> {

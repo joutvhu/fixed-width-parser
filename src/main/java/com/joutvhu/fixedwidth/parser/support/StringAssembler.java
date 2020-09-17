@@ -70,7 +70,7 @@ public class StringAssembler {
                 case RIGHT:
                     return CommonUtil.trimRightBy(value, padding);
                 case AUTO:
-                case CENTRE:
+                case CENTER:
                     return CommonUtil.trimBy(value, padding);
                 default:
                     return value;
@@ -104,8 +104,8 @@ public class StringAssembler {
                 case RIGHT:
                     value = CommonUtil.rightPadValue(value, length, padding);
                     break;
-                case CENTRE:
-                    value = CommonUtil.centrePadValue(value, length, padding);
+                case CENTER:
+                    value = CommonUtil.centerPadValue(value, length, padding);
                     break;
                 default:
                     break;
