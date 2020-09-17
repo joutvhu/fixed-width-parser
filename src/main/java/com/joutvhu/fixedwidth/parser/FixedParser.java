@@ -14,7 +14,7 @@ public class FixedParser {
         return new FixedParser();
     }
 
-    public FixedParser module(FixedModule module) {
+    public FixedParser use(FixedModule module) {
         this.module = module;
         this.strategy = new FixedParseStrategy(module);
         return this;
