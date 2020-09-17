@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public class FixedTypeInfo {
+public class FixedTypeInfo implements TypeInfo {
     private Field field;
     private Class<?> type;
     private AnnotatedType annotatedType;
@@ -91,8 +91,7 @@ public class FixedTypeInfo {
         this.type = value.getClass();
 
         this.label = String.format("%s object", type.getName());
-        this.detectTypeInfo();
-        this.detectFields(type);
+        this.afterTypeDetected();
     }
 
     public static FixedTypeInfo of(Class<?> type) {
@@ -124,18 +123,40 @@ public class FixedTypeInfo {
                 .replaceAll("\\{length\\}", length + "");
     }
 
-    public String title() {
+    public String getTitle() {
         if (this.title == null)
             this.title = buildMessage("{label} at position {position} and length {length}");
         return this.title;
     }
 
+    public char defaultPadding() {
+        if (padding == null) return ' ';
+        if (Padding.AUTO != padding) return padding;
+        if ((TypeConstants.INTEGER_NUMBER_TYPES.contains(type) || TypeConstants.DECIMAL_NUMBER_TYPES.contains(type)) &&
+                (alignment == null || Alignment.AUTO == alignment || Alignment.LEFT == alignment))
+            return '0';
+        return ' ';
+    }
+
+    public Alignment defaultAlignment() {
+        if (alignment != null && Alignment.AUTO != alignment) return alignment;
+        if (TypeConstants.INTEGER_NUMBER_TYPES.contains(type) || TypeConstants.DECIMAL_NUMBER_TYPES.contains(type))
+            return Alignment.LEFT;
+        return Alignment.RIGHT;
+    }
+
+    @Override
     public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
-        if (field != null) {
-            T t = field.getAnnotation(annotationClass);
-            if (t != null) return t;
+        return ReflectionUtil.getAnnotation(annotationClass, field, annotatedType, type);
+    }
+
+    public FixedTypeInfo findField(String name) {
+        for (FixedTypeInfo info : this.elementTypeInfo) {
+            Field f = info.getField();
+            if (f != null && f.getName().equals(name))
+                return info;
         }
-        return type.getAnnotation(annotationClass);
+        return null;
     }
 
     private void detectGenericTypes() {
@@ -154,16 +175,7 @@ public class FixedTypeInfo {
                 .forEach(i -> this.elementTypeInfo.add(i));
     }
 
-    public FixedTypeInfo findField(String name) {
-        for (FixedTypeInfo info : this.elementTypeInfo) {
-            Field f = info.getField();
-            if (f != null && f.getName().equals(name))
-                return info;
-        }
-        return null;
-    }
-
-    public void detectTypeInfo() {
+    private void detectTypeInfo() {
         this.fixedObject = type.getAnnotation(FixedObject.class);
         if (fixedObject != null && fixedParam == null) {
             if (start == null) start = 0;
@@ -174,31 +186,20 @@ public class FixedTypeInfo {
         }
     }
 
-    public Class<?> detectType(StringAssembler assembler) {
+    @Override
+    public Class<?> detectTypeWith(StringAssembler assembler) {
         if (!type.isPrimitive() && fixedObject != null) {
             this.type = FixedHelper.detectType(assembler, type);
             if (field == null)
                 this.label = String.format("%s object", type.getName());
-            this.detectTypeInfo();
-            this.detectFields(type);
         }
+        this.afterTypeDetected();
         return this.type;
     }
 
-    public char defaultPadding() {
-        if (padding != null && Padding.AUTO != padding) return padding;
-        if (Padding.AUTO == padding) {
-            if ((TypeConstants.INTEGER_NUMBER_TYPES.contains(type) || TypeConstants.DECIMAL_NUMBER_TYPES.contains(type)) &&
-                    (alignment == null || Alignment.AUTO == alignment || Alignment.LEFT == alignment))
-                return '0';
-        }
-        return ' ';
-    }
-
-    public Alignment defaultAlignment() {
-        if (alignment != null && Alignment.AUTO != alignment) return alignment;
-        if (TypeConstants.INTEGER_NUMBER_TYPES.contains(type) || TypeConstants.DECIMAL_NUMBER_TYPES.contains(type))
-            return Alignment.LEFT;
-        return Alignment.RIGHT;
+    @Override
+    public void afterTypeDetected() {
+        this.detectTypeInfo();
+        this.detectFields(type);
     }
 }

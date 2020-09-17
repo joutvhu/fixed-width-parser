@@ -20,8 +20,7 @@ public class MapReader extends FixedWidthReader<Map<?, ?>> {
 
     public MapReader(FixedTypeInfo info, FixedParseStrategy strategy) {
         super(info, strategy);
-        if ((!Map.class.equals(info.getType()) && !Map.class.isAssignableFrom(info.getType())) ||
-                info.getGenericTypeInfo().size() != 2)
+        if (!Map.class.isAssignableFrom(info.getType()) || info.getGenericTypeInfo().size() != 2)
             this.skip();
         this.keyInfo = info.getGenericTypeInfo().get(0);
         this.valueInfo = info.getGenericTypeInfo().get(1);

@@ -114,6 +114,12 @@ public class StringAssembler {
         return this;
     }
 
+    public StringAssembler black(FixedTypeInfo info) {
+        if (info.getLength() != null && info.getLength() > 0)
+            this.value = StringUtils.repeat(' ', info.getLength());
+        return this;
+    }
+
     private Alignment getAlignment(FixedTypeInfo info, Alignment defaultAlignment) {
         Alignment alignment = info.getAlignment();
         if (alignment == null || alignment == Alignment.AUTO) alignment = defaultAlignment;

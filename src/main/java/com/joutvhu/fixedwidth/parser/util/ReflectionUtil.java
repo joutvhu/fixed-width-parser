@@ -2,6 +2,7 @@ package com.joutvhu.fixedwidth.parser.util;
 
 import lombok.experimental.UtilityClass;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 
 @UtilityClass
@@ -70,5 +71,24 @@ public class ReflectionUtil {
         } catch (Exception e) {
             return new AnnotatedType[0];
         }
+    }
+
+    /**
+     * Find an annotation from some {@link AnnotatedElement}
+     *
+     * @param annotationClass the Class object corresponding to the annotation type
+     * @param annotatedElements the annotation sources {@link AnnotatedElement}
+     * @param <T> the type of the annotation to query for and return if present
+     * @return annotation for the specified annotation type
+     */
+    public <T extends Annotation> T getAnnotation(Class<T> annotationClass, AnnotatedElement ...annotatedElements) {
+        for (AnnotatedElement annotatedElement : CommonUtil.defaultIfNull(annotatedElements, new AnnotatedElement[0])) {
+            if (annotatedElement != null) {
+                T annotation = annotatedElement.getAnnotation(annotationClass);
+                if (annotation != null)
+                    return annotation;
+            }
+        }
+        return null;
     }
 }

@@ -125,7 +125,7 @@ public class CommonUtil {
 
     public String trimRightBy(String value, char pad) {
         int i = value.length() - 1;
-        for (; i >= 0; i++) {
+        for (; i >= 0; i--) {
             if (value.charAt(i) != pad)
                 break;
         }

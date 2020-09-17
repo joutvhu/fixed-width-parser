@@ -3,8 +3,10 @@ package com.joutvhu.fixedwidth.parser.support;
 import com.joutvhu.fixedwidth.parser.exception.FixedException;
 import com.joutvhu.fixedwidth.parser.module.FixedModule;
 import com.joutvhu.fixedwidth.parser.reader.FixedWidthReader;
+import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import com.joutvhu.fixedwidth.parser.util.IgnoreError;
 import com.joutvhu.fixedwidth.parser.writer.FixedWidthWriter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Constructor;
 import java.util.Set;
@@ -17,7 +19,7 @@ public class FixedParseStrategy {
     }
 
     public Object read(FixedTypeInfo info, StringAssembler assembler) {
-        info.detectType(assembler);
+        info.detectTypeWith(assembler);
         Set<Class<? extends FixedWidthReader>> readers = module.getReaders();
         for (Class<? extends FixedWidthReader> readerClass : readers) {
             FixedWidthReader reader = IgnoreError.execute(() -> {
@@ -25,6 +27,7 @@ public class FixedParseStrategy {
                         readerClass.getConstructor(FixedTypeInfo.class, FixedParseStrategy.class);
                 return constructor != null ? constructor.newInstance(info, this) : null;
             });
+
             if (reader != null)
                 return reader.read(assembler);
         }
@@ -33,7 +36,8 @@ public class FixedParseStrategy {
 
     public String write(FixedTypeInfo info, Object value) {
         if (value == null)
-            return StringAssembler.instance().pad(info).getValue();
+            return StringAssembler.instance().black(info).getValue();
+
         Set<Class<? extends FixedWidthWriter>> writers = module.getWriters();
         for (Class<? extends FixedWidthWriter> writerClass : writers) {
             FixedWidthWriter writer = IgnoreError.execute(() -> {
@@ -41,9 +45,13 @@ public class FixedParseStrategy {
                         writerClass.getConstructor(FixedTypeInfo.class, FixedParseStrategy.class);
                 return constructor != null ? constructor.newInstance(info, this) : null;
             });
+
             if (writer != null) {
                 String result = writer.write(value);
-                return StringAssembler.of(result).pad(info).getValue();
+                return StringAssembler
+                        .of(CommonUtil.defaultIfNull(result, StringUtils.EMPTY))
+                        .pad(info)
+                        .getValue();
             }
         }
         throw new FixedException("Writer not found.");
