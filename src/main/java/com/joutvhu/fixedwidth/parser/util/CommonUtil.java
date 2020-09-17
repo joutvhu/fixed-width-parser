@@ -94,6 +94,21 @@ public class CommonUtil {
         else return StringUtils.substring(value, 0, size);
     }
 
+    /**
+     * Right pad a String with a specified character.
+     *
+     * @param value the string need to be pad
+     * @param size  the int need to be pad
+     * @param pad   the char need to be cut
+     * @return the value has right pad
+     */
+    public String centrePadValue(String value, int size, char pad) {
+        int len = value.length();
+        if (len == size) return value;
+        else if (len < size) return StringUtils.rightPad(value, size, pad);
+        else return StringUtils.substring(value, 0, size);
+    }
+
     public String trimLeftBy(String value, char pad) {
         int i = 0;
         for (int len = value.length(); i < len; i++) {

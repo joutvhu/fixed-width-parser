@@ -1,6 +1,7 @@
 package com.joutvhu.fixedwidth.parser.module;
 
 import com.joutvhu.fixedwidth.parser.reader.impl.*;
+import com.joutvhu.fixedwidth.parser.writer.impl.*;
 
 public class DefaultModule extends FixedModule {
     public DefaultModule() {
@@ -11,8 +12,9 @@ public class DefaultModule extends FixedModule {
                 DateReader.class,
                 CollectionReader.class,
                 MapReader.class,
-                PairReader.class,
-                ObjectReader.class
+                ObjectReader.class,
+
+                StringWriter.class
         );
     }
 }

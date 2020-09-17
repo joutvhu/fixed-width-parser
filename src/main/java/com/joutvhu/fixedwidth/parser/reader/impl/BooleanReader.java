@@ -1,21 +1,18 @@
 package com.joutvhu.fixedwidth.parser.reader.impl;
 
 import com.google.re2j.Pattern;
-import com.joutvhu.fixedwidth.parser.support.StringAssembler;
-import com.joutvhu.fixedwidth.parser.validator.FixedFormat;
 import com.joutvhu.fixedwidth.parser.reader.FixedWidthReader;
 import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
+import com.joutvhu.fixedwidth.parser.support.StringAssembler;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
-
-import java.util.List;
+import com.joutvhu.fixedwidth.parser.util.TypeConstants;
+import com.joutvhu.fixedwidth.parser.validator.FixedFormat;
 
 public class BooleanReader extends FixedWidthReader<Boolean> {
-    private static final List<Class> TYPES = CommonUtil.listOf(Boolean.class, boolean.class);
-
     public BooleanReader(FixedTypeInfo info, FixedParseStrategy strategy) {
         super(info, strategy);
-        if (!TYPES.contains(info.getType()))
+        if (!TypeConstants.BOOLEAN_TYPES.contains(info.getType()))
             this.skip();
     }
 

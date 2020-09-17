@@ -1,5 +1,6 @@
 package com.joutvhu.fixedwidth.parser.support;
 
+import com.joutvhu.fixedwidth.parser.model.Alignment;
 import com.joutvhu.fixedwidth.parser.util.Assert;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import lombok.Getter;
@@ -39,7 +40,9 @@ public class StringAssembler {
         if (length == null)
             this.value = this.value.substring(0, start) + value;
         else
-            this.value = this.value.substring(0, start) + value + this.value.substring(start + length);
+            this.value = this.value.substring(0, start) +
+                    CommonUtil.rightPadValue(value, length, ' ') +
+                    this.value.substring(start + length);
     }
 
     public int length() {
@@ -55,14 +58,17 @@ public class StringAssembler {
 
     public String get(FixedTypeInfo info) {
         String value = get(0, info.getLength());
-        if (info.getPadding() != null) {
-            switch (info.getAlignment()) {
+        Character padding = info.getPadding();
+        Alignment alignment = info.getAlignment();
+        if (padding != null && alignment != null) {
+            switch (alignment) {
                 case LEFT:
-                    return CommonUtil.trimLeftBy(value, info.getPadding());
+                    return CommonUtil.trimLeftBy(value, padding);
                 case RIGHT:
-                    return CommonUtil.trimRightBy(value, info.getPadding());
+                    return CommonUtil.trimRightBy(value, padding);
+                case AUTO:
                 case CENTRE:
-                    return CommonUtil.trimBy(value, info.getPadding());
+                    return CommonUtil.trimBy(value, padding);
                 default:
                     return value;
             }
@@ -70,10 +76,45 @@ public class StringAssembler {
         return value;
     }
 
-    public void set(String value, Integer start, Integer length) {
+    public StringAssembler set(Integer start, Integer length, String value) {
         if (start == null) start = 0;
         this.value = padString(this.value, start, length);
         this.replaceAt(start, length, value);
+        return this;
+    }
+
+    public StringAssembler pad(FixedTypeInfo info) {
+        return pad(info, Alignment.AUTO);
+    }
+
+    public StringAssembler pad(FixedTypeInfo info, Alignment defaultAlignment) {
+        Integer length = info.getLength();
+        if (length != null) {
+            Alignment alignment = getAlignment(info, defaultAlignment);
+            Character padding = CommonUtil.defaultIfNull(info.getPadding(), ' ');
+
+            switch (alignment) {
+                case LEFT:
+                    value = CommonUtil.leftPadValue(value, length, padding);
+                    break;
+                case RIGHT:
+                    value = CommonUtil.rightPadValue(value, length, padding);
+                    break;
+                case CENTRE:
+                    value = CommonUtil.centrePadValue(value, length, padding);
+                    break;
+                default:
+                    break;
+            }
+        }
+        return this;
+    }
+
+    private Alignment getAlignment(FixedTypeInfo info, Alignment defaultAlignment) {
+        Alignment alignment = info.getAlignment();
+        if (alignment == null || alignment == Alignment.AUTO) alignment = defaultAlignment;
+        if (alignment == null || alignment == Alignment.AUTO) alignment = info.defaultAlignment();
+        return alignment;
     }
 
     public StringAssembler child(Integer start, Integer length) {

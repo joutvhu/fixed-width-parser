@@ -1,28 +1,18 @@
 package com.joutvhu.fixedwidth.parser.reader.impl;
 
-import com.joutvhu.fixedwidth.parser.support.StringAssembler;
-import com.joutvhu.fixedwidth.parser.validator.FixedFormat;
 import com.joutvhu.fixedwidth.parser.reader.FixedWidthReader;
 import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
+import com.joutvhu.fixedwidth.parser.support.StringAssembler;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import com.joutvhu.fixedwidth.parser.util.ObjectUtil;
-
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Date;
-import java.util.List;
+import com.joutvhu.fixedwidth.parser.util.TypeConstants;
+import com.joutvhu.fixedwidth.parser.validator.FixedFormat;
 
 public class DateReader extends FixedWidthReader<Object> {
-    private static final List<Class> TYPES = CommonUtil
-            .listOf(Date.class, java.sql.Date.class, Timestamp.class, LocalDate.class, LocalTime.class, LocalDateTime.class, Instant.class);
-
     public DateReader(FixedTypeInfo info, FixedParseStrategy strategy) {
         super(info, strategy);
-        if (!TYPES.contains(info.getType()))
+        if (!TypeConstants.DATE_TYPES.contains(info.getType()))
             this.skip();
     }
 

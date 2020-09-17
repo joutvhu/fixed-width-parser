@@ -6,6 +6,7 @@ import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.support.StringAssembler;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import com.joutvhu.fixedwidth.parser.util.ObjectUtil;
+import com.joutvhu.fixedwidth.parser.util.TypeConstants;
 import com.joutvhu.fixedwidth.parser.validator.FixedFormat;
 
 import java.math.BigDecimal;
@@ -13,14 +14,8 @@ import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
-import java.util.List;
 
 public class NumberReader extends FixedWidthReader<Object> {
-    private static final List<Class> INTEGER_TYPES = CommonUtil.listOf(
-            Short.class, Integer.class, Long.class, BigInteger.class, short.class, int.class, long.class);
-    private static final List<Class> DECIMAL_TYPES = CommonUtil.listOf(
-            Float.class, Double.class, BigDecimal.class, float.class, double.class);
-
     private static DecimalFormatSymbols symbols;
 
     private boolean notNull;
@@ -29,8 +24,8 @@ public class NumberReader extends FixedWidthReader<Object> {
     public NumberReader(FixedTypeInfo info, FixedParseStrategy strategy) {
         super(info, strategy);
         Class<?> type = info.getType();
-        this.isDecimal = DECIMAL_TYPES.contains(type);
-        if (!INTEGER_TYPES.contains(type) && !this.isDecimal)
+        this.isDecimal = TypeConstants.DECIMAL_NUMBER_TYPES.contains(type);
+        if (!TypeConstants.INTEGER_NUMBER_TYPES.contains(type) && !this.isDecimal)
             this.skip();
         else {
             this.notNull = CommonUtil

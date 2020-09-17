@@ -5,16 +5,13 @@ import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.support.StringAssembler;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
+import com.joutvhu.fixedwidth.parser.util.TypeConstants;
 import jdk.nashorn.internal.runtime.ParserException;
 
-import java.util.List;
-
 public class StringReader extends FixedWidthReader<Object> {
-    private static final List<Class> TYPES = CommonUtil.listOf(String.class, Character.class, char.class);
-
     public StringReader(FixedTypeInfo info, FixedParseStrategy strategy) {
         super(info, strategy);
-        if (!TYPES.contains(info.getType()))
+        if (!TypeConstants.STRING_TYPES.contains(info.getType()))
             this.skip();
     }
 

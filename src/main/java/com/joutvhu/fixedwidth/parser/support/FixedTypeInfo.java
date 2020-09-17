@@ -4,10 +4,7 @@ import com.joutvhu.fixedwidth.parser.annotation.FixedField;
 import com.joutvhu.fixedwidth.parser.annotation.FixedObject;
 import com.joutvhu.fixedwidth.parser.annotation.FixedParam;
 import com.joutvhu.fixedwidth.parser.model.Alignment;
-import com.joutvhu.fixedwidth.parser.util.Assert;
-import com.joutvhu.fixedwidth.parser.util.CommonUtil;
-import com.joutvhu.fixedwidth.parser.util.FixedHelper;
-import com.joutvhu.fixedwidth.parser.util.ReflectionUtil;
+import com.joutvhu.fixedwidth.parser.util.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 
@@ -183,5 +180,12 @@ public class FixedTypeInfo {
             this.detectFields(type);
         }
         return this.type;
+    }
+
+    public Alignment defaultAlignment() {
+        if (alignment != null && Alignment.AUTO != alignment) return alignment;
+        if (TypeConstants.INTEGER_NUMBER_TYPES.contains(type) || TypeConstants.DECIMAL_NUMBER_TYPES.contains(type))
+            return Alignment.LEFT;
+        return Alignment.RIGHT;
     }
 }
