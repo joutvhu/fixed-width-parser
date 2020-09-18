@@ -1,9 +1,9 @@
 package com.joutvhu.fixedwidth.parser.module;
 
-import com.joutvhu.fixedwidth.parser.handler.FixedWidthHandler;
-import com.joutvhu.fixedwidth.parser.handler.FixedWidthReader;
-import com.joutvhu.fixedwidth.parser.handler.FixedWidthValidator;
-import com.joutvhu.fixedwidth.parser.handler.FixedWidthWriter;
+import com.joutvhu.fixedwidth.parser.handle.FixedWidthHandler;
+import com.joutvhu.fixedwidth.parser.handle.FixedWidthReader;
+import com.joutvhu.fixedwidth.parser.handle.FixedWidthValidator;
+import com.joutvhu.fixedwidth.parser.handle.FixedWidthWriter;
 import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.util.IgnoreError;

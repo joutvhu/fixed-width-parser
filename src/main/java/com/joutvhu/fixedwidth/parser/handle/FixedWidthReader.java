@@ -1,4 +1,4 @@
-package com.joutvhu.fixedwidth.parser.handler;
+package com.joutvhu.fixedwidth.parser.handle;
 
 import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;

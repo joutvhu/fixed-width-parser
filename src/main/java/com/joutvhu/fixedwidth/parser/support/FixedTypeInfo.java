@@ -13,6 +13,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -114,13 +115,15 @@ public class FixedTypeInfo implements TypeInfo {
         return start + 1;
     }
 
-    public String buildMessage(String template) {
+    public String buildMessage(String template, Object ... arguments) {
         Assert.hasLength(template, "Title template can't be null.");
-        return template
+        template = template
                 .replaceAll("\\{label\\}", label)
                 .replaceAll("\\{start\\}", start + "")
                 .replaceAll("\\{position\\}", position() + "")
-                .replaceAll("\\{length\\}", length + "");
+                .replaceAll("\\{length\\}", length + "")
+                .replaceAll("\\{title\\}", getTitle());
+        return MessageFormat.format(template, arguments);
     }
 
     public String getTitle() {

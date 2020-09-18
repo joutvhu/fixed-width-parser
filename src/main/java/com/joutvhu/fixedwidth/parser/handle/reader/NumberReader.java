@@ -1,6 +1,6 @@
-package com.joutvhu.fixedwidth.parser.handler.reader;
+package com.joutvhu.fixedwidth.parser.handle.reader;
 
-import com.joutvhu.fixedwidth.parser.handler.FixedWidthReader;
+import com.joutvhu.fixedwidth.parser.handle.FixedWidthReader;
 import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.support.StringAssembler;
@@ -20,7 +20,7 @@ public class NumberReader extends FixedWidthReader<Object> {
     @Override
     public Object read(StringAssembler assembler) {
         Class<?> type = info.getType();
-        String value = assembler.get(info);
+        String value = assembler.get(info).trim();
         FixedFormat fixedFormat = info.getAnnotation(FixedFormat.class);
         String format = fixedFormat != null ? fixedFormat.format() : null;
         Object result = null;

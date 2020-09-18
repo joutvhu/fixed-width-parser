@@ -1,9 +1,9 @@
-package com.joutvhu.fixedwidth.parser.handler.writer;
+package com.joutvhu.fixedwidth.parser.handle.writer;
 
 import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.support.StringAssembler;
-import com.joutvhu.fixedwidth.parser.handler.FixedWidthWriter;
+import com.joutvhu.fixedwidth.parser.handle.FixedWidthWriter;
 
 import java.util.Collection;
 
