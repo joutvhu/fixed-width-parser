@@ -2,8 +2,6 @@ package com.joutvhu.fixedwidth.parser.util;
 
 import lombok.experimental.UtilityClass;
 
-import java.util.function.Supplier;
-
 @UtilityClass
 public class Assert {
     /**
@@ -78,9 +76,5 @@ public class Assert {
     public void hasLength(String text, String message) {
         if (text == null || !text.isEmpty())
             throw new IllegalArgumentException(message);
-    }
-
-    private String nullSafeGet(Supplier<String> messageSupplier) {
-        return (messageSupplier != null ? messageSupplier.get() : null);
     }
 }

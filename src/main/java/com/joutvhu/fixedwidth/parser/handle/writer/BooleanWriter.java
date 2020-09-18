@@ -17,13 +17,14 @@ public class BooleanWriter extends FixedWidthWriter<Boolean> {
 
     @Override
     public String write(Boolean value) {
-        String result = StringUtils.EMPTY;
         FixedFormat fixedFormat = info.getAnnotation(FixedFormat.class);
         String format = fixedFormat != null ? fixedFormat.format() : null;
 
         if (value != null) {
             String[] options;
-            if (Pattern.matches("^[^_]+_[^_]+$", format) && !Pattern.matches("^([^_]+)_\\1$", format))
+            if (format != null &&
+                    Pattern.matches("^[^_]+_[^_]+$", format) &&
+                    !Pattern.matches("^([^_]+)_\\1$", format))
                 options = format.split("_");
             else if (info.getLength() > 4)
                 options = new String[]{"TRUE", "FALSE"};
@@ -32,10 +33,10 @@ public class BooleanWriter extends FixedWidthWriter<Boolean> {
             else options = new String[]{"T", "F"};
 
             if (Boolean.TRUE.equals(value))
-                result = options[0];
+                return options[0];
             else if (Boolean.FALSE.equals(value))
-                result = options[1];
+                return options[1];
         }
-        return result;
+        return StringUtils.EMPTY;
     }
 }

@@ -67,11 +67,11 @@ public abstract class FixedModule {
         return result.isEmpty() ? null : result.get(0);
     }
 
-    public final FixedWidthReader createReaderBy(FixedTypeInfo info, FixedParseStrategy strategy) {
+    public final FixedWidthReader<Object> createReaderBy(FixedTypeInfo info, FixedParseStrategy strategy) {
         return createHandlerBy(readers, info, strategy);
     }
 
-    public final FixedWidthWriter createWriterBy(FixedTypeInfo info, FixedParseStrategy strategy) {
+    public final FixedWidthWriter<Object> createWriterBy(FixedTypeInfo info, FixedParseStrategy strategy) {
         return createHandlerBy(writers, info, strategy);
     }
 

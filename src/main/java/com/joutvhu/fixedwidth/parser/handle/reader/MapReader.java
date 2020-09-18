@@ -35,7 +35,7 @@ public class MapReader extends FixedWidthReader<Map<?, ?>> {
         if (selectedType == null)
             throw new FixedException(String.format("Not found subclass for %s", info.getLabel()));
 
-        Map objects = FixedHelper.newInstanceOf(selectedType);
+        Map<Object, Object> objects = FixedHelper.newInstanceOf(selectedType);
         if (keyLength > 0 && valueLength > 0) {
             int len = assembler.length();
             while (start < len) {

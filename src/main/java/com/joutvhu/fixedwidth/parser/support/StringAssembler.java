@@ -58,7 +58,7 @@ public class StringAssembler {
     }
 
     public String get(FixedTypeInfo info) {
-        String value = get(0, info.getLength());
+        String result = get(0, info.getLength());
         Character padding = info.getPadding();
         Alignment alignment = info.getAlignment();
         if (padding != null && alignment != null) {
@@ -66,17 +66,17 @@ public class StringAssembler {
 
             switch (alignment) {
                 case LEFT:
-                    return CommonUtil.trimLeftBy(value, padding);
+                    return CommonUtil.trimLeftBy(result, padding);
                 case RIGHT:
-                    return CommonUtil.trimRightBy(value, padding);
+                    return CommonUtil.trimRightBy(result, padding);
                 case AUTO:
                 case CENTER:
-                    return CommonUtil.trimBy(value, padding);
+                    return CommonUtil.trimBy(result, padding);
                 default:
-                    return value;
+                    return result;
             }
         }
-        return value;
+        return result;
     }
 
     public StringAssembler set(Integer start, Integer length, String value) {

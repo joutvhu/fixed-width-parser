@@ -30,7 +30,7 @@ public class FixedParseStrategy {
         assembler.pad(info);
         validate(info, assembler.getValue(), ValidationType.BEFORE_READ);
 
-        FixedWidthReader reader = module.createReaderBy(info, this);
+        FixedWidthReader<Object> reader = module.createReaderBy(info, this);
         if (reader != null)
             return reader.read(assembler);
         throw new FixedException("Reader not found.");
@@ -40,7 +40,7 @@ public class FixedParseStrategy {
         if (value == null)
             return StringAssembler.instance().black(info).getValue();
 
-        FixedWidthWriter writer = module.createWriterBy(info, this);
+        FixedWidthWriter<Object> writer = module.createWriterBy(info, this);
         if (writer != null) {
             String result = writer.write(value);
             result = StringAssembler

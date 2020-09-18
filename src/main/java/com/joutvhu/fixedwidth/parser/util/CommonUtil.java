@@ -45,13 +45,13 @@ public class CommonUtil {
 
     public <T> List<T> listOf(T... value) {
         List<T> result = new ArrayList<>();
-        for (T v : value) result.add(v);
+        Collections.addAll(result, value);
         return result;
     }
 
     public <T> Set<T> setOf(T... value) {
         Set<T> result = new HashSet<>();
-        for (T v : value) result.add(v);
+        Collections.addAll(result, value);
         return result;
     }
 
@@ -154,8 +154,6 @@ public class CommonUtil {
             return false;
         }
 
-        if (strict && (datePattern.length() != value.length()))
-            return false;
-        return true;
+        return !strict || datePattern.length() == value.length();
     }
 }

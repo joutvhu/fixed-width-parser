@@ -8,6 +8,7 @@ import com.joutvhu.fixedwidth.parser.domain.Padding;
 import com.joutvhu.fixedwidth.parser.util.*;
 import lombok.AccessLevel;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedType;
@@ -57,7 +58,7 @@ public class FixedTypeInfo implements TypeInfo {
         this.annotatedType = annotatedType;
 
         this.type = (Class<?>) t;
-        this.label = String.format("%s object", type.getName());
+        this.label = String.format("%s param", type.getName());
         this.start = 0;
         this.length = fixedParam.length();
         this.padding = fixedParam.padding();
@@ -75,7 +76,7 @@ public class FixedTypeInfo implements TypeInfo {
         this.fixedObject = type.getAnnotation(FixedObject.class);
         Assert.notNull(fixedField, String.format("The %s is not a fixed field.", field.getName()));
 
-        this.label = String.format("%s field", fixedField != null ? fixedField.label() : field.getName());
+        this.label = String.format("%s field", StringUtils.defaultIfBlank(fixedField.label(), field.getName()));
         this.start = fixedField.start();
         Assert.isTrue(start >= 0, String.format("Start position of %s can't less than 0.", this.label));
         this.length = fixedField.length();
