@@ -5,7 +5,7 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface FixedRegular {
+public @interface FixedRegex {
     String regex();
 
     String message() default "";
