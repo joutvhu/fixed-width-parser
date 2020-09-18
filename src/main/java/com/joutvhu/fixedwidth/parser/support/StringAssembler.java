@@ -93,7 +93,7 @@ public class StringAssembler {
 
     public StringAssembler pad(FixedTypeInfo info, Alignment defaultAlignment) {
         Integer length = info.getLength();
-        if (length != null) {
+        if (length != null && length > 0) {
             Alignment alignment = getAlignment(info, defaultAlignment);
             Character padding = info.defaultPadding();
 

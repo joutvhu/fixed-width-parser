@@ -14,6 +14,6 @@ public class ReaderTests {
         String line = FixedParser
                 .parser()
                 .write(event);
-//        Assert.assertNotNull(line);
+        Assert.assertNotNull(line);
     }
 }
