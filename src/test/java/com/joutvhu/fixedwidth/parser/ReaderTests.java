@@ -1,7 +1,6 @@
 package com.joutvhu.fixedwidth.parser;
 
-import com.joutvhu.fixedwidth.parser.FixedParser;
-import com.joutvhu.fixedwidth.parser.model.Event;
+import com.joutvhu.fixedwidth.parser.domain.Event;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 

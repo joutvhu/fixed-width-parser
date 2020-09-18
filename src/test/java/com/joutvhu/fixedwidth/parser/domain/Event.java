@@ -1,4 +1,4 @@
-package com.joutvhu.fixedwidth.parser.model;
+package com.joutvhu.fixedwidth.parser.domain;
 
 import com.joutvhu.fixedwidth.parser.annotation.FixedField;
 import com.joutvhu.fixedwidth.parser.annotation.FixedObject;
