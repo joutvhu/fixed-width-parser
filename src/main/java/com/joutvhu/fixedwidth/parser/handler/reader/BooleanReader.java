@@ -1,13 +1,13 @@
-package com.joutvhu.fixedwidth.parser.converter.reader;
+package com.joutvhu.fixedwidth.parser.handler.reader;
 
 import com.google.re2j.Pattern;
-import com.joutvhu.fixedwidth.parser.converter.FixedWidthReader;
+import com.joutvhu.fixedwidth.parser.handler.FixedWidthReader;
 import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.support.StringAssembler;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import com.joutvhu.fixedwidth.parser.util.TypeConstants;
-import com.joutvhu.fixedwidth.parser.validation.FixedFormat;
+import com.joutvhu.fixedwidth.parser.constraint.FixedFormat;
 
 public class BooleanReader extends FixedWidthReader<Boolean> {
     public BooleanReader(FixedTypeInfo info, FixedParseStrategy strategy) {

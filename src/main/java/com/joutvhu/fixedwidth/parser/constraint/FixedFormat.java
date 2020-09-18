@@ -1,4 +1,4 @@
-package com.joutvhu.fixedwidth.parser.validation;
+package com.joutvhu.fixedwidth.parser.constraint;
 
 import java.lang.annotation.*;
 

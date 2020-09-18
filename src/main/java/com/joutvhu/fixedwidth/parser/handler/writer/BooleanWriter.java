@@ -1,11 +1,11 @@
-package com.joutvhu.fixedwidth.parser.converter.writer;
+package com.joutvhu.fixedwidth.parser.handler.writer;
 
 import com.google.re2j.Pattern;
 import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.util.TypeConstants;
-import com.joutvhu.fixedwidth.parser.validation.FixedFormat;
-import com.joutvhu.fixedwidth.parser.converter.FixedWidthWriter;
+import com.joutvhu.fixedwidth.parser.constraint.FixedFormat;
+import com.joutvhu.fixedwidth.parser.handler.FixedWidthWriter;
 import org.apache.commons.lang3.StringUtils;
 
 public class BooleanWriter extends FixedWidthWriter<Boolean> {

@@ -1,7 +1,7 @@
 package com.joutvhu.fixedwidth.parser.module;
 
-import com.joutvhu.fixedwidth.parser.converter.reader.*;
-import com.joutvhu.fixedwidth.parser.converter.writer.*;
+import com.joutvhu.fixedwidth.parser.handler.reader.*;
+import com.joutvhu.fixedwidth.parser.handler.writer.*;
 
 public class DefaultModule extends FixedModule {
     public static final FixedModule INSTANCE = new DefaultModule();
