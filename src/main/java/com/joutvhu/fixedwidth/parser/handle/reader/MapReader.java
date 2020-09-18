@@ -1,7 +1,7 @@
-package com.joutvhu.fixedwidth.parser.reader.impl;
+package com.joutvhu.fixedwidth.parser.handle.reader;
 
 import com.joutvhu.fixedwidth.parser.exception.FixedException;
-import com.joutvhu.fixedwidth.parser.reader.FixedWidthReader;
+import com.joutvhu.fixedwidth.parser.handle.FixedWidthReader;
 import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.support.StringAssembler;

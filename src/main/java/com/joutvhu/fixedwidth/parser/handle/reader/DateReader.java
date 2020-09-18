@@ -1,13 +1,13 @@
-package com.joutvhu.fixedwidth.parser.reader.impl;
+package com.joutvhu.fixedwidth.parser.handle.reader;
 
-import com.joutvhu.fixedwidth.parser.reader.FixedWidthReader;
+import com.joutvhu.fixedwidth.parser.handle.FixedWidthReader;
 import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.support.StringAssembler;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import com.joutvhu.fixedwidth.parser.util.ObjectUtil;
 import com.joutvhu.fixedwidth.parser.util.TypeConstants;
-import com.joutvhu.fixedwidth.parser.validator.FixedFormat;
+import com.joutvhu.fixedwidth.parser.constraint.FixedFormat;
 
 public class DateReader extends FixedWidthReader<Object> {
     public DateReader(FixedTypeInfo info, FixedParseStrategy strategy) {
