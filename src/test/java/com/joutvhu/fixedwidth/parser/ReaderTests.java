@@ -1,4 +1,4 @@
-package com.joutvhu.fixedwidth.parser.reader;
+package com.joutvhu.fixedwidth.parser;
 
 import com.joutvhu.fixedwidth.parser.FixedParser;
 import com.joutvhu.fixedwidth.parser.model.Event;

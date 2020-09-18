@@ -2,10 +2,10 @@ package com.joutvhu.fixedwidth.parser.support;
 
 import com.joutvhu.fixedwidth.parser.exception.FixedException;
 import com.joutvhu.fixedwidth.parser.module.FixedModule;
-import com.joutvhu.fixedwidth.parser.reader.FixedWidthReader;
+import com.joutvhu.fixedwidth.parser.converter.FixedWidthReader;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import com.joutvhu.fixedwidth.parser.util.IgnoreError;
-import com.joutvhu.fixedwidth.parser.writer.FixedWidthWriter;
+import com.joutvhu.fixedwidth.parser.converter.FixedWidthWriter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Constructor;

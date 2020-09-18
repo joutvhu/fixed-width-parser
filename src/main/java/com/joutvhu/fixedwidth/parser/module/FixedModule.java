@@ -1,7 +1,7 @@
 package com.joutvhu.fixedwidth.parser.module;
 
-import com.joutvhu.fixedwidth.parser.reader.FixedWidthReader;
-import com.joutvhu.fixedwidth.parser.writer.FixedWidthWriter;
+import com.joutvhu.fixedwidth.parser.converter.FixedWidthReader;
+import com.joutvhu.fixedwidth.parser.converter.FixedWidthWriter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

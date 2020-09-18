@@ -1,21 +1,22 @@
-package com.joutvhu.fixedwidth.parser.writer;
+package com.joutvhu.fixedwidth.parser.converter;
 
 import com.joutvhu.fixedwidth.parser.exception.FixedException;
 import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
+import com.joutvhu.fixedwidth.parser.support.StringAssembler;
 
-public abstract class FixedWidthWriter<T> {
+public abstract class FixedWidthReader<T> {
     protected FixedTypeInfo info;
     protected FixedParseStrategy strategy;
 
-    public FixedWidthWriter(FixedTypeInfo info, FixedParseStrategy strategy) {
+    public FixedWidthReader(FixedTypeInfo info, FixedParseStrategy strategy) {
         this.info = info;
         this.strategy = strategy;
     }
 
     protected void skip() {
-        throw new FixedException("Can't use this writer.");
+        throw new FixedException("Can't use this reader.");
     }
 
-    public abstract String write(T value);
+    public abstract T read(StringAssembler assembler);
 }

@@ -1,12 +1,12 @@
-package com.joutvhu.fixedwidth.parser.validator;
+package com.joutvhu.fixedwidth.parser.validation;
 
 import java.lang.annotation.*;
 
-@Target({ElementType.FIELD})
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface FixedRegular {
-    String regex();
+public @interface FixedOption {
+    String[] options();
 
     String message() default "";
 

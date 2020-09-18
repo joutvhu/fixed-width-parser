@@ -95,7 +95,7 @@ public class ObjectUtil {
 
     public Object parseNumber(String value, Class<?> type, String format) {
         BigDecimal number = null;
-        if (CommonUtil.isBlank(format)) {
+        if (CommonUtil.isNotBlank(format)) {
             DecimalFormat decimalFormat = new DecimalFormat(format);
             decimalFormat.setParseBigDecimal(true);
             try {
