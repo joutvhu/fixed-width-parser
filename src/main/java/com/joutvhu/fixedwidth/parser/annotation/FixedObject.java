@@ -7,6 +7,11 @@ import java.lang.annotation.*;
 @Documented
 public @interface FixedObject {
     /**
+     * Object label
+     */
+    String label() default "";
+
+    /**
      * Length of object
      */
     int length() default 0;

@@ -62,7 +62,7 @@ public class StringAssembler {
         Character padding = info.getPadding();
         Alignment alignment = info.getAlignment();
         if (padding != null && alignment != null) {
-            if (padding == Padding.AUTO) padding = info.defaultPadding();
+            if (padding == Padding.AUTO) padding = info.getDefaultPadding();
 
             switch (alignment) {
                 case LEFT:
@@ -95,7 +95,7 @@ public class StringAssembler {
         Integer length = info.getLength();
         if (length != null && length > 0) {
             Alignment alignment = getAlignment(info, defaultAlignment);
-            Character padding = info.defaultPadding();
+            Character padding = info.getDefaultPadding();
 
             switch (alignment) {
                 case LEFT:
@@ -123,7 +123,7 @@ public class StringAssembler {
     private Alignment getAlignment(FixedTypeInfo info, Alignment defaultAlignment) {
         Alignment alignment = info.getAlignment();
         if (alignment == null || alignment == Alignment.AUTO) alignment = defaultAlignment;
-        if (alignment == null || alignment == Alignment.AUTO) alignment = info.defaultAlignment();
+        if (alignment == null || alignment == Alignment.AUTO) alignment = info.getDefaultAlignment();
         return alignment;
     }
 

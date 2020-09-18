@@ -91,4 +91,39 @@ public class ReflectionUtil {
         }
         return null;
     }
+
+    public <T> T getValueFromAnnotation(String name, Class<T> type, Annotation annotation) {
+        Class<? extends Annotation> classType = annotation.annotationType();
+        return IgnoreError.execute(() -> {
+            Field field = classType.getField(name);
+            return type.cast(field.get(annotation));
+        });
+    }
+
+    public <T> T getValueFromAnnotations(String name, Class<T> type, Annotation ...annotations) {
+        for (Annotation annotation : annotations) {
+            if (annotation != null) {
+                T result = getValueFromAnnotation(name, type, annotation);
+                if (result != null) return result;
+            }
+        }
+        return null;
+    }
+
+    public <T> T getDefaultValueOfAnnotation(String name, Class<T> type, Class<? extends Annotation> annotationClass) {
+        return IgnoreError.execute(() -> {
+            Method method = annotationClass.getMethod(name);
+            return type.cast(method.getDefaultValue());
+        });
+    }
+
+    public <T> T getDefaultValueOfAnnotations(String name, Class<T> type, Class<? extends Annotation> ...annotationClasses) {
+        for (Class<? extends Annotation> annotationClass : annotationClasses) {
+            if (annotationClass != null) {
+                T result = getDefaultValueOfAnnotation(name, type, annotationClass);
+                if (result != null) return result;
+            }
+        }
+        return null;
+    }
 }
