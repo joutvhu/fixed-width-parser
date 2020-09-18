@@ -2,7 +2,7 @@ package com.joutvhu.fixedwidth.parser.constraint;
 
 import java.lang.annotation.*;
 
-@Target({ElementType.FIELD})
+@Target({ElementType.TYPE, ElementType.FIELD, ElementType.TYPE_PARAMETER, ElementType.TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface FixedRegex {
