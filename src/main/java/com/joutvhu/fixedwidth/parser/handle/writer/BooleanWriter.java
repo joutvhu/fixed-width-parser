@@ -17,8 +17,7 @@ public class BooleanWriter extends FixedWidthWriter<Boolean> {
 
     @Override
     public String write(Boolean value) {
-        FixedFormat fixedFormat = info.getAnnotation(FixedFormat.class);
-        String format = fixedFormat != null ? fixedFormat.format() : null;
+        String format = info.getAnnotationValue(FixedFormat.class,"format", String.class);
 
         if (value != null) {
             String[] options;

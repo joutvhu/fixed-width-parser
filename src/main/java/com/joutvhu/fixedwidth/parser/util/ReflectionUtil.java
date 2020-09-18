@@ -55,6 +55,13 @@ public class ReflectionUtil {
             field.setAccessible(true);
     }
 
+    public static void makeAccessible(Method method) {
+        if ((!Modifier.isPublic(method.getModifiers()) ||
+                !Modifier.isPublic(method.getDeclaringClass().getModifiers())) && !method.isAccessible()) {
+            method.setAccessible(true);
+        }
+    }
+
     public Type[] getActualTypeArguments(Field field) {
         try {
             ParameterizedType integerListType = (ParameterizedType) field.getGenericType();
@@ -93,14 +100,16 @@ public class ReflectionUtil {
     }
 
     public <T> T getValueFromAnnotation(String name, Class<T> type, Annotation annotation) {
-        Class<? extends Annotation> classType = annotation.annotationType();
+        if (annotation == null || CommonUtil.isBlank(name))
+            return null;
         return IgnoreError.execute(() -> {
-            Field field = classType.getField(name);
-            return type.cast(field.get(annotation));
+            Method method = annotation.annotationType().getDeclaredMethod(name);
+            makeAccessible(method);
+            return type.cast(method.invoke(annotation));
         });
     }
 
-    public <T> T getValueFromAnnotations(String name, Class<T> type, Annotation ...annotations) {
+    public <T> T getValueFromAnnotations(String name, Class<T> type, Annotation... annotations) {
         for (Annotation annotation : annotations) {
             if (annotation != null) {
                 T result = getValueFromAnnotation(name, type, annotation);
@@ -110,17 +119,20 @@ public class ReflectionUtil {
         return null;
     }
 
-    public <T> T getDefaultValueOfAnnotation(String name, Class<T> type, Class<? extends Annotation> annotationClass) {
+    public <T> T getDefaultValueOfAnnotation(String name, Class<T> type, Class<? extends Annotation> annotationType) {
+        if (annotationType == null || CommonUtil.isBlank(name))
+            return null;
         return IgnoreError.execute(() -> {
-            Method method = annotationClass.getMethod(name);
+            Method method = annotationType.getDeclaredMethod(name);
+            makeAccessible(method);
             return type.cast(method.getDefaultValue());
         });
     }
 
-    public <T> T getDefaultValueOfAnnotations(String name, Class<T> type, Class<? extends Annotation> ...annotationClasses) {
-        for (Class<? extends Annotation> annotationClass : annotationClasses) {
-            if (annotationClass != null) {
-                T result = getDefaultValueOfAnnotation(name, type, annotationClass);
+    public <T> T getDefaultValueOfAnnotations(String name, Class<T> type, Class<? extends Annotation>... annotationTypes) {
+        for (Class<? extends Annotation> annotationType : annotationTypes) {
+            if (annotationType != null) {
+                T result = getDefaultValueOfAnnotation(name, type, annotationType);
                 if (result != null) return result;
             }
         }

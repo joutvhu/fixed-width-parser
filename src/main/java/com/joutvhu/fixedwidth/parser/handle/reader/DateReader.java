@@ -20,8 +20,7 @@ public class DateReader extends FixedWidthReader<Object> {
     public Object read(StringAssembler assembler) {
         Class<?> type = info.getType();
         String value = assembler.get(info);
-        FixedFormat fixedFormat = info.getAnnotation(FixedFormat.class);
-        String format = fixedFormat != null ? fixedFormat.format() : null;
+        String format = info.getAnnotationValue(FixedFormat.class,"format", String.class);
 
         if (CommonUtil.isNotBlank(value))
             return ObjectUtil.parseDate(value, type, format);

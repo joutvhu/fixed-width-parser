@@ -16,8 +16,7 @@ public class DateWriter extends FixedWidthWriter<Object> {
 
     @Override
     public String write(Object value) {
-        FixedFormat fixedFormat = info.getAnnotation(FixedFormat.class);
-        String format = fixedFormat != null ? fixedFormat.format() : null;
+        String format = info.getAnnotationValue(FixedFormat.class,"format", String.class);
         return ObjectUtil.formatDate(value, format);
     }
 }

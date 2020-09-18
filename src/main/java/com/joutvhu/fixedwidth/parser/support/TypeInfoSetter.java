@@ -34,9 +34,9 @@ public abstract class TypeInfoSetter extends TypeDetector {
     public TypeInfoSetter(AnnotatedType annotatedType) {
         super(annotatedType);
 
-        this.label = CommonUtil.isNotBlank(fixedParam.label()) ?
+        this.name = CommonUtil.isNotBlank(fixedParam.label()) ?
                 fixedParam.label() : annotatedType.getType().getTypeName();
-        this.name = label + " param";
+        this.label = name + " param";
 
         if (fixedParam.length() >= 0)
             this.length = fixedParam.length();
@@ -50,9 +50,9 @@ public abstract class TypeInfoSetter extends TypeDetector {
     public TypeInfoSetter(Field field) {
         super(field);
 
-        this.label = CommonUtil.isNotBlank(fixedField.label()) ?
+        this.name = CommonUtil.isNotBlank(fixedField.label()) ?
                 fixedField.label() : field.getName();
-        this.name = label + " field";
+        this.label = name + " field";
 
         Assert.isTrue(fixedField.start() >= 0, "Start position of field can't less than 0.");
         this.start = fixedField.start();
@@ -80,9 +80,9 @@ public abstract class TypeInfoSetter extends TypeDetector {
     }
 
     private void detectTypeInfo() {
-        this.label = CommonUtil.isNotBlank(fixedObject.label()) ?
+        this.name = CommonUtil.isNotBlank(fixedObject.label()) ?
                 fixedObject.label() : type.getName();
-        this.name = label + " object";
+        this.label = name + " object";
 
         Assert.isTrue(fixedObject.length() >= 0, "Length of object can't less than 0.");
         this.length = fixedObject.length();

@@ -23,8 +23,7 @@ public class NumberWriter extends FixedWidthWriter<Object> {
     @Override
     public String write(Object value) {
         Class<?> type = info.getType();
-        FixedFormat fixedFormat = info.getAnnotation(FixedFormat.class);
-        String format = fixedFormat != null ? fixedFormat.format() : null;
+        String format = info.getAnnotationValue(FixedFormat.class,"format", String.class);
 
         if (CommonUtil.isBlank(format))
             return CommonUtil.listOf(BigDecimal.class, BigInteger.class).contains(type) ?

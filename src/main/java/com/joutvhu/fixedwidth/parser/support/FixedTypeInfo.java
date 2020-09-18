@@ -3,13 +3,14 @@ package com.joutvhu.fixedwidth.parser.support;
 import com.joutvhu.fixedwidth.parser.domain.Alignment;
 import com.joutvhu.fixedwidth.parser.domain.Padding;
 import com.joutvhu.fixedwidth.parser.util.Assert;
+import com.joutvhu.fixedwidth.parser.util.ReflectionUtil;
 import com.joutvhu.fixedwidth.parser.util.TypeConstants;
-import lombok.AccessLevel;
-import lombok.Getter;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Field;
 import java.text.MessageFormat;
+import java.util.List;
 
 public class FixedTypeInfo extends TypeInfoSetter {
     private String title;
@@ -83,12 +84,18 @@ public class FixedTypeInfo extends TypeInfoSetter {
         return Alignment.RIGHT;
     }
 
-    public FixedTypeInfo findField(String name) {
-        for (FixedTypeInfo info : this.elementTypeInfo) {
-            Field f = info.getField();
-            if (f != null && f.getName().equals(name))
-                return info;
-        }
-        return null;
+    public <T> T getAnnotationValue(Class<? extends Annotation> annotationClass, String name, Class<T> type) {
+        Annotation annotation = getAnnotation(annotationClass);
+        if (annotation != null)
+            return ReflectionUtil.getValueFromAnnotation(name, type, annotation);
+        return ReflectionUtil.getDefaultValueOfAnnotation(name, type, annotationClass);
+    }
+
+    public boolean isAssignableTo(Class<?> cls) {
+        return cls != null && cls.isAssignableFrom(type);
+    }
+
+    public boolean isOneOfTypes(List<Class<?>> classes) {
+        return classes != null && classes.contains(type);
     }
 }
