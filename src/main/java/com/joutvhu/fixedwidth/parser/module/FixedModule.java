@@ -13,7 +13,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -43,17 +45,26 @@ public abstract class FixedModule {
         return this;
     }
 
-    private <T extends FixedWidthHandler> T createHandlerBy(Set<Class<? extends T>> handlers,
-                                                            FixedTypeInfo info, FixedParseStrategy strategy) {
+    private <T extends FixedWidthHandler> List<T> createHandlersBy(Set<Class<? extends T>> handlers, FixedTypeInfo info, FixedParseStrategy strategy, boolean takeOne) {
+        List<T> result = new ArrayList<>();
         for (Class<? extends T> handlerClass : handlers) {
             T handler = IgnoreError.execute(() -> {
                 Constructor<? extends T> constructor = handlerClass
                         .getConstructor(FixedTypeInfo.class, FixedParseStrategy.class);
                 return constructor != null ? constructor.newInstance(info, strategy) : null;
             });
-            if (handler != null) return handler;
+            if (handler != null) {
+                result.add(handler);
+                if (takeOne) return result;
+            }
         }
-        return null;
+        return result;
+    }
+
+    private <T extends FixedWidthHandler> T createHandlerBy(Set<Class<? extends T>> handlers,
+                                                            FixedTypeInfo info, FixedParseStrategy strategy) {
+        List<T> result = createHandlersBy(handlers, info, strategy, true);
+        return result.isEmpty() ? null : result.get(0);
     }
 
     public final FixedWidthReader createReaderBy(FixedTypeInfo info, FixedParseStrategy strategy) {
@@ -64,7 +75,7 @@ public abstract class FixedModule {
         return createHandlerBy(writers, info, strategy);
     }
 
-    public final FixedWidthValidator createValidatorBy(FixedTypeInfo info, FixedParseStrategy strategy) {
-        return createHandlerBy(validators, info, strategy);
+    public final List<FixedWidthValidator> createValidatorsBy(FixedTypeInfo info, FixedParseStrategy strategy) {
+        return createHandlersBy(validators, info, strategy, false);
     }
 }
