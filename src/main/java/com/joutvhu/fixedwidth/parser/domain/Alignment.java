@@ -1,4 +1,4 @@
-package com.joutvhu.fixedwidth.parser.model;
+package com.joutvhu.fixedwidth.parser.domain;
 
 public enum Alignment {
     AUTO,

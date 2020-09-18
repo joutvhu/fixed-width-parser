@@ -1,8 +1,11 @@
 package com.joutvhu.fixedwidth.parser.module;
 
 import com.joutvhu.fixedwidth.parser.handle.reader.*;
+import com.joutvhu.fixedwidth.parser.handle.validator.BooleanValidator;
+import com.joutvhu.fixedwidth.parser.handle.validator.DateValidator;
+import com.joutvhu.fixedwidth.parser.handle.validator.OptionValidator;
+import com.joutvhu.fixedwidth.parser.handle.validator.RegexValidator;
 import com.joutvhu.fixedwidth.parser.handle.writer.*;
-import com.joutvhu.fixedwidth.parser.handle.validator.*;
 
 public class DefaultModule extends FixedModule {
     public static final FixedModule INSTANCE = new DefaultModule();
@@ -26,7 +29,9 @@ public class DefaultModule extends FixedModule {
                 ObjectWriter.class,
 
                 RegexValidator.class,
-                OptionValidator.class
+                OptionValidator.class,
+                DateValidator.class,
+                BooleanValidator.class
         );
     }
 }

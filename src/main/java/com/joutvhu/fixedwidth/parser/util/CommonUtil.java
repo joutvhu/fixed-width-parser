@@ -4,6 +4,8 @@ import com.google.re2j.Pattern;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @UtilityClass
@@ -137,5 +139,23 @@ public class CommonUtil {
 
     public String escapeRegular(String regex) {
         return Pattern.compile("([-/\\\\^$*+?.()|\\[\\]{}])").matcher(regex).replaceAll("\\\\$1");
+    }
+
+    public boolean isDateValid(String value, String datePattern, boolean strict) {
+        if (value == null || datePattern == null || datePattern.length() <= 0)
+            return false;
+
+        SimpleDateFormat formatter = new SimpleDateFormat(datePattern);
+        formatter.setLenient(false);
+
+        try {
+            formatter.parse(value);
+        } catch (ParseException e) {
+            return false;
+        }
+
+        if (strict && (datePattern.length() != value.length()))
+            return false;
+        return true;
     }
 }

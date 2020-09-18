@@ -1,7 +1,7 @@
 package com.joutvhu.fixedwidth.parser.annotation;
 
-import com.joutvhu.fixedwidth.parser.model.Alignment;
-import com.joutvhu.fixedwidth.parser.model.Padding;
+import com.joutvhu.fixedwidth.parser.domain.Alignment;
+import com.joutvhu.fixedwidth.parser.domain.Padding;
 
 import java.lang.annotation.*;
 

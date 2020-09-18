@@ -1,4 +1,4 @@
-package com.joutvhu.fixedwidth.parser.model;
+package com.joutvhu.fixedwidth.parser.domain;
 
 import lombok.experimental.UtilityClass;
 

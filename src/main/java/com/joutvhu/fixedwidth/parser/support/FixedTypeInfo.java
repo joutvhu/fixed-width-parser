@@ -3,8 +3,8 @@ package com.joutvhu.fixedwidth.parser.support;
 import com.joutvhu.fixedwidth.parser.annotation.FixedField;
 import com.joutvhu.fixedwidth.parser.annotation.FixedObject;
 import com.joutvhu.fixedwidth.parser.annotation.FixedParam;
-import com.joutvhu.fixedwidth.parser.model.Alignment;
-import com.joutvhu.fixedwidth.parser.model.Padding;
+import com.joutvhu.fixedwidth.parser.domain.Alignment;
+import com.joutvhu.fixedwidth.parser.domain.Padding;
 import com.joutvhu.fixedwidth.parser.util.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -115,7 +115,7 @@ public class FixedTypeInfo implements TypeInfo {
         return start + 1;
     }
 
-    public String buildMessage(String template, Object ... arguments) {
+    public String buildMessage(String template, Object... arguments) {
         Assert.hasLength(template, "Title template can't be null.");
         template = template
                 .replaceAll("\\{label\\}", label)
@@ -174,7 +174,7 @@ public class FixedTypeInfo implements TypeInfo {
         FixedHelper
                 .getFixedFields(type)
                 .stream()
-                .map(f -> of(f))
+                .map(FixedTypeInfo::of)
                 .forEach(i -> this.elementTypeInfo.add(i));
     }
 
