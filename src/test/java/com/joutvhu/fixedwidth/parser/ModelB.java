@@ -1,23 +1,36 @@
 package com.joutvhu.fixedwidth.parser;
 
 import com.joutvhu.fixedwidth.parser.annotation.FixedField;
+import com.joutvhu.fixedwidth.parser.annotation.FixedObject;
 import com.joutvhu.fixedwidth.parser.annotation.FixedParam;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.*;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@FixedObject
 public class ModelB {
-    @FixedField(label = "CHILDREN", start = 8, length = 20)
-    private List<@FixedParam(length = 2) String> children;
+    @FixedField(label = "LIST", length = 30)
+    private Collection<@FixedParam(length = 2) String> collectionValues;
 
-    @FixedField(label = "CHILDREN-SET", start = 8, length = 20)
-    private Set<@FixedParam(length = 2) String> childrenSet;
+    @FixedField(label = "LIST", length = 30)
+    private List<@FixedParam(length = 2) String> listValue;
 
-    @FixedField(label = "CHILDREN-QUEUE", start = 8, length = 20)
-    private Queue<@FixedParam(length = 2) String> childrenQueue;
+    @FixedField(label = "SET", length = 30)
+    private Set<@FixedParam(length = 2) String> setValues;
 
-    @FixedField(label = "CHILDREN-STACK", start = 8, length = 20)
-    private Stack<@FixedParam(length = 2) String> childrenStack;
+    @FixedField(label = "QUEUE", length = 30)
+    private Queue<@FixedParam(length = 2) String> queueValues;
 
-    @FixedField(label = "CHILDREN-MAP", start = 28, length = 30)
-    private Map<@FixedParam(length = 2) String, @FixedParam(length = 2) String> map;
+    @FixedField(label = "STACK", length = 30)
+    private Stack<@FixedParam(length = 2) String> stackValues;
+
+    @FixedField(label = "MAP", length = 30)
+    private Map<@FixedParam(length = 2) String, @FixedParam(length = 2) String> mapValues;
 }
