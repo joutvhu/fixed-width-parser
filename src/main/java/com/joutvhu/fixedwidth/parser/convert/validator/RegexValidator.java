@@ -2,9 +2,9 @@ package com.joutvhu.fixedwidth.parser.convert.validator;
 
 import com.google.re2j.Pattern;
 import com.joutvhu.fixedwidth.parser.constraint.FixedRegex;
-import com.joutvhu.fixedwidth.parser.exception.InvalidException;
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthValidator;
 import com.joutvhu.fixedwidth.parser.convert.ValidationType;
+import com.joutvhu.fixedwidth.parser.exception.InvalidException;
 import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;

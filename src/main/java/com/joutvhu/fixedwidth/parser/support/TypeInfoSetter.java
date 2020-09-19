@@ -6,9 +6,11 @@ import com.joutvhu.fixedwidth.parser.domain.Alignment;
 import com.joutvhu.fixedwidth.parser.util.*;
 import lombok.Getter;
 
+import java.lang.reflect.AnnotatedParameterizedType;
 import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -82,18 +84,6 @@ public abstract class TypeInfoSetter extends TypeDetector {
         this.detectTypeInfo();
     }
 
-    @Override
-    public void beforeInit() {
-        super.beforeInit();
-
-        this.start = 0;
-        this.length = 0;
-        this.require = false;
-        this.alignment = Alignment.AUTO;
-        this.elementTypeInfo = new ArrayList<>();
-        this.genericTypeInfo = new ArrayList<>();
-    }
-
     private void detectTypeInfo() {
         this.name = CommonUtil.isNotBlank(fixedObject.label()) ?
                 fixedObject.label() : type.getName();
@@ -118,8 +108,7 @@ public abstract class TypeInfoSetter extends TypeDetector {
     @Override
     public void afterTypeDetected() {
         this.detectFields(type);
-        if (SourceType.FIELD_TYPE.equals(this.getSourceType()))
-            this.detectGenericTypes();
+        this.detectGenericTypes();
     }
 
     /**
@@ -128,6 +117,7 @@ public abstract class TypeInfoSetter extends TypeDetector {
      * @param type
      */
     private void detectFields(Class<?> type) {
+        this.elementTypeInfo = new ArrayList<>();
         FixedHelper
                 .getFixedFields(type)
                 .stream()
@@ -139,10 +129,24 @@ public abstract class TypeInfoSetter extends TypeDetector {
      * Find all generic types.
      */
     private void detectGenericTypes() {
+        this.genericTypeInfo = new ArrayList<>();
+        List<AnnotatedType> annotatedTypes = new ArrayList<>();
+
         if (field != null) {
-            AnnotatedType[] annotatedTypes = ReflectionUtil.getAnnotatedActualTypeArguments(field);
-            for (AnnotatedType annotatedType : CommonUtil.defaultIfNull(annotatedTypes, new AnnotatedType[0]))
-                this.genericTypeInfo.add(FixedTypeInfo.of(annotatedType));
+            AnnotatedType[] annotatedTypesArray = ReflectionUtil
+                    .getAnnotatedActualTypeArguments(field);
+            if (CommonUtil.isNotBlank(annotatedTypesArray))
+                Collections.addAll(annotatedTypes, annotatedTypesArray);
         }
+
+        if (annotatedType != null && annotatedType instanceof AnnotatedParameterizedType) {
+            AnnotatedType[] annotatedTypesArray = ReflectionUtil
+                    .getAnnotatedActualTypeArguments((AnnotatedParameterizedType) annotatedType);
+            if (CommonUtil.isNotBlank(annotatedTypesArray))
+                Collections.addAll(annotatedTypes, annotatedTypesArray);
+        }
+
+        for (AnnotatedType annotatedType : annotatedTypes)
+            this.genericTypeInfo.add(FixedTypeInfo.of(annotatedType));
     }
 }
