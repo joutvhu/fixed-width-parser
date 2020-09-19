@@ -1,10 +1,10 @@
 package com.joutvhu.fixedwidth.parser.support;
 
 import com.joutvhu.fixedwidth.parser.exception.FixedException;
-import com.joutvhu.fixedwidth.parser.handle.FixedWidthReader;
-import com.joutvhu.fixedwidth.parser.handle.FixedWidthValidator;
-import com.joutvhu.fixedwidth.parser.handle.FixedWidthWriter;
-import com.joutvhu.fixedwidth.parser.handle.ValidationType;
+import com.joutvhu.fixedwidth.parser.convert.FixedWidthReader;
+import com.joutvhu.fixedwidth.parser.convert.FixedWidthValidator;
+import com.joutvhu.fixedwidth.parser.convert.FixedWidthWriter;
+import com.joutvhu.fixedwidth.parser.convert.ValidationType;
 import com.joutvhu.fixedwidth.parser.module.FixedModule;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import org.apache.commons.lang3.StringUtils;

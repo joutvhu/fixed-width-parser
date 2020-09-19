@@ -16,7 +16,7 @@ import java.util.*;
 @AllArgsConstructor
 @FixedObject
 public class ModelB {
-    @FixedField(label = "LIST", length = 30)
+    @FixedField(label = "COLLECTION", length = 30)
     private Collection<@FixedParam(length = 2) String> collectionValues;
 
     @FixedField(label = "LIST", length = 30)

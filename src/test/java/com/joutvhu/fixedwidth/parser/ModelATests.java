@@ -34,4 +34,12 @@ public class ModelATests {
         Assertions.assertNotNull(line);
         Assertions.assertEquals("040myjY2020-09-19 12:14:2785.36", line);
     }
+
+    @Test
+    public void write2Test() {
+        ModelA model = new ModelA();
+        String line = fixedParser.deparse(model);
+        Assertions.assertNotNull(line);
+        Assertions.assertEquals("                               ", line);
+    }
 }

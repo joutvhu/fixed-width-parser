@@ -154,13 +154,11 @@ public class CommonUtil {
     }
 
     public String replaceAll(String value, String search, Supplier<String> replacementSupplier) {
-        if (value != null && search != null) {
-            if (value.contains(search)) {
-                String replacement = replacementSupplier.get();
-                if (replacement != null) {
-                    String regex = escapeRegular(search);
-                    return value.replaceAll(regex, replacement);
-                }
+        if (value != null && search != null && value.contains(search)) {
+            String replacement = replacementSupplier.get();
+            if (replacement != null) {
+                String regex = escapeRegular(search);
+                return value.replaceAll(regex, replacement);
             }
         }
         return value;

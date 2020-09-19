@@ -1,9 +1,9 @@
 package com.joutvhu.fixedwidth.parser.module;
 
-import com.joutvhu.fixedwidth.parser.handle.FixedWidthHandler;
-import com.joutvhu.fixedwidth.parser.handle.FixedWidthReader;
-import com.joutvhu.fixedwidth.parser.handle.FixedWidthValidator;
-import com.joutvhu.fixedwidth.parser.handle.FixedWidthWriter;
+import com.joutvhu.fixedwidth.parser.convert.ParsingApprover;
+import com.joutvhu.fixedwidth.parser.convert.FixedWidthReader;
+import com.joutvhu.fixedwidth.parser.convert.FixedWidthValidator;
+import com.joutvhu.fixedwidth.parser.convert.FixedWidthWriter;
 import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.util.IgnoreError;
@@ -45,7 +45,7 @@ public abstract class FixedModule {
         return this;
     }
 
-    private <T extends FixedWidthHandler> List<T> createHandlersBy(Set<Class<? extends T>> handlers, FixedTypeInfo info, FixedParseStrategy strategy, boolean takeOne) {
+    private <T extends ParsingApprover> List<T> createHandlersBy(Set<Class<? extends T>> handlers, FixedTypeInfo info, FixedParseStrategy strategy, boolean takeOne) {
         List<T> result = new ArrayList<>();
         for (Class<? extends T> handlerClass : handlers) {
             T handler = IgnoreError.execute(() -> {
@@ -61,8 +61,8 @@ public abstract class FixedModule {
         return result;
     }
 
-    private <T extends FixedWidthHandler> T createHandlerBy(Set<Class<? extends T>> handlers,
-                                                            FixedTypeInfo info, FixedParseStrategy strategy) {
+    private <T extends ParsingApprover> T createHandlerBy(Set<Class<? extends T>> handlers,
+                                                          FixedTypeInfo info, FixedParseStrategy strategy) {
         List<T> result = createHandlersBy(handlers, info, strategy, true);
         return result.isEmpty() ? null : result.get(0);
     }

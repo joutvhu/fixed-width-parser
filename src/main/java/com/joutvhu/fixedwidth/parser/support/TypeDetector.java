@@ -8,7 +8,6 @@ import com.joutvhu.fixedwidth.parser.util.FixedHelper;
 import com.joutvhu.fixedwidth.parser.util.ReflectionUtil;
 import lombok.Getter;
 
-import javax.annotation.PostConstruct;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Field;
