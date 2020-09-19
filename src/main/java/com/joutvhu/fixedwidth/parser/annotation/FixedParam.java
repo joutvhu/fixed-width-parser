@@ -9,6 +9,11 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface FixedParam {
+    /**
+     * Param label
+     */
+    String label() default "";
+
     int length();
 
     char padding() default Padding.AUTO;

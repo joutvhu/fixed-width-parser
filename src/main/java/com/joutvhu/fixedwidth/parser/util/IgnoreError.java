@@ -16,6 +16,7 @@ public class IgnoreError {
         try {
             caller.call();
         } catch (Exception e) {
+            // Ignore error
         }
     }
 
@@ -31,6 +32,7 @@ public class IgnoreError {
         try {
             caller.call(args);
         } catch (Exception e) {
+            // Ignore error
         }
     }
 

@@ -58,25 +58,25 @@ public class StringAssembler {
     }
 
     public String get(FixedTypeInfo info) {
-        String value = get(0, info.getLength());
+        String result = get(0, info.getLength());
         Character padding = info.getPadding();
         Alignment alignment = info.getAlignment();
         if (padding != null && alignment != null) {
-            if (padding == Padding.AUTO) padding = info.defaultPadding();
+            if (padding == Padding.AUTO) padding = info.getDefaultPadding();
+            if (alignment == Alignment.AUTO) alignment = info.getDefaultAlignment();
 
             switch (alignment) {
                 case LEFT:
-                    return CommonUtil.trimLeftBy(value, padding);
+                    return CommonUtil.trimLeftBy(result, padding);
                 case RIGHT:
-                    return CommonUtil.trimRightBy(value, padding);
-                case AUTO:
+                    return CommonUtil.trimRightBy(result, padding);
                 case CENTER:
-                    return CommonUtil.trimBy(value, padding);
+                    return CommonUtil.trimBy(result, padding);
                 default:
-                    return value;
+                    return result;
             }
         }
-        return value;
+        return result;
     }
 
     public StringAssembler set(Integer start, Integer length, String value) {
@@ -93,9 +93,9 @@ public class StringAssembler {
 
     public StringAssembler pad(FixedTypeInfo info, Alignment defaultAlignment) {
         Integer length = info.getLength();
-        if (length != null) {
+        if (length != null && length > 0) {
             Alignment alignment = getAlignment(info, defaultAlignment);
-            Character padding = info.defaultPadding();
+            Character padding = info.getDefaultPadding();
 
             switch (alignment) {
                 case LEFT:
@@ -123,7 +123,7 @@ public class StringAssembler {
     private Alignment getAlignment(FixedTypeInfo info, Alignment defaultAlignment) {
         Alignment alignment = info.getAlignment();
         if (alignment == null || alignment == Alignment.AUTO) alignment = defaultAlignment;
-        if (alignment == null || alignment == Alignment.AUTO) alignment = info.defaultAlignment();
+        if (alignment == null || alignment == Alignment.AUTO) alignment = info.getDefaultAlignment();
         return alignment;
     }
 

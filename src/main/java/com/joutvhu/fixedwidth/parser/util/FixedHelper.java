@@ -79,7 +79,7 @@ public class FixedHelper {
     private boolean checkSubType(FixedObject.Type subType, String value) {
         if (CommonUtil.isNotBlank(subType.oneOf()) && CommonUtil.listOf(subType.oneOf()).contains(value))
             return true;
-        if (CommonUtil.isNotBlank(subType.matchWith()) && Pattern.compile(subType.matchWith()).matches(value))
+        if (CommonUtil.isNotBlank(subType.matchWith()) && Pattern.matches(subType.matchWith(), value))
             return true;
         return false;
     }

@@ -30,7 +30,7 @@ public class CollectionReader extends FixedWidthReader<Collection<?>> {
         if (selectedType == null)
             throw new FixedException(String.format("Not found subclass for %s", info.getLabel()));
 
-        Collection objects = FixedHelper.newInstanceOf(selectedType);
+        Collection<Object> objects = FixedHelper.newInstanceOf(selectedType);
         if (length > 0) {
             int len = assembler.length();
             while (start < len) {

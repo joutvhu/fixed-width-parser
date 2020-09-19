@@ -44,7 +44,7 @@ public class ObjectUtil {
         if (CommonUtil.isNotBlank(format)) {
             Class<?> type = value.getClass();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
-            ZoneId zone = format.endsWith("Z") ? ZoneOffset.UTC : ZoneOffset.systemDefault();
+            ZoneId zone = format.endsWith("Z") ? ZoneOffset.UTC : ZoneId.systemDefault();
             formatter = formatter.withZone(zone);
 
             if (LocalDate.class.equals(type))

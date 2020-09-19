@@ -1,10 +1,7 @@
 package com.joutvhu.fixedwidth.parser.module;
 
 import com.joutvhu.fixedwidth.parser.handle.reader.*;
-import com.joutvhu.fixedwidth.parser.handle.validator.BooleanValidator;
-import com.joutvhu.fixedwidth.parser.handle.validator.DateValidator;
-import com.joutvhu.fixedwidth.parser.handle.validator.OptionValidator;
-import com.joutvhu.fixedwidth.parser.handle.validator.RegexValidator;
+import com.joutvhu.fixedwidth.parser.handle.validator.*;
 import com.joutvhu.fixedwidth.parser.handle.writer.*;
 
 public class DefaultModule extends FixedModule {

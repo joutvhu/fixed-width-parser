@@ -43,7 +43,7 @@ public class ClassUtil {
         if (CLASS_MAP.containsKey(type))
             return CLASS_MAP.get(type);
 
-        List sub = getNormalTypesOf(type, "java.util.", "java.", "javax.");
+        List<?> sub = getNormalTypesOf(type, "java.util.", "java.", "javax.");
         if (CommonUtil.isNotBlank(sub))
             return (Class<?>) sub.get(0);
         return null;
@@ -57,7 +57,7 @@ public class ClassUtil {
                 .getSubTypesOf(type)
                 .stream()
                 .filter(c -> {
-                    Constructor constructor = IgnoreError.execute(() -> c.getConstructor());
+                    Constructor<?> constructor = IgnoreError.execute(() -> c.getConstructor());
                     if (constructor == null) return false;
                     int mod = c.getModifiers();
                     return Modifier.isPublic(mod) && !Modifier.isInterface(mod) && !Modifier.isAbstract(mod);

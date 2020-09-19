@@ -1,15 +1,18 @@
 package com.joutvhu.fixedwidth.parser.handle.reader;
 
-import com.google.re2j.Pattern;
 import com.joutvhu.fixedwidth.parser.constraint.FixedFormat;
 import com.joutvhu.fixedwidth.parser.handle.FixedWidthReader;
+import com.joutvhu.fixedwidth.parser.handle.general.BooleanHandler;
 import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.support.StringAssembler;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import com.joutvhu.fixedwidth.parser.util.TypeConstants;
 
-public class BooleanReader extends FixedWidthReader<Boolean> {
+public class BooleanReader extends FixedWidthReader<Boolean> implements BooleanHandler {
+    private String trueOption;
+    private String falseOption;
+
     public BooleanReader(FixedTypeInfo info, FixedParseStrategy strategy) {
         super(info, strategy);
         if (!TypeConstants.BOOLEAN_TYPES.contains(info.getType()))
@@ -17,20 +20,23 @@ public class BooleanReader extends FixedWidthReader<Boolean> {
     }
 
     @Override
+    public void setOptions(String[] options) {
+        this.trueOption = options[0];
+        this.falseOption = options[1];
+    }
+
+    @Override
     public Boolean read(StringAssembler assembler) {
         Class<?> type = info.getType();
         String value = assembler.get(info);
-        FixedFormat fixedFormat = info.getAnnotation(FixedFormat.class);
-        String format = fixedFormat != null ? fixedFormat.format() : null;
+        String format = info.getAnnotationValue(FixedFormat.class, "format", String.class);
 
         if (CommonUtil.isNotBlank(value)) {
             String trimValue = value.trim();
-            if (format != null && Pattern.matches("^[^_]+_[^_]+$", format) &&
-                    !Pattern.matches("^([^_]+)_\\1$", format)) {
-                String[] options = format.split("_");
-                if (options[0].equalsIgnoreCase(value) || options[0].equalsIgnoreCase(trimValue))
+            if (splitOptions(format)) {
+                if (trueOption.equalsIgnoreCase(value) || trueOption.equalsIgnoreCase(trimValue))
                     return true;
-                if (options[1].equalsIgnoreCase(value) || options[1].equalsIgnoreCase(trimValue))
+                if (falseOption.equalsIgnoreCase(value) || falseOption.equalsIgnoreCase(trimValue))
                     return false;
             }
 

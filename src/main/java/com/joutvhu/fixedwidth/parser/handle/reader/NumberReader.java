@@ -21,8 +21,7 @@ public class NumberReader extends FixedWidthReader<Object> {
     public Object read(StringAssembler assembler) {
         Class<?> type = info.getType();
         String value = assembler.get(info).trim();
-        FixedFormat fixedFormat = info.getAnnotation(FixedFormat.class);
-        String format = fixedFormat != null ? fixedFormat.format() : null;
+        String format = info.getAnnotationValue(FixedFormat.class,"format", String.class);
         Object result = null;
 
         if (CommonUtil.isNotBlank(value))
