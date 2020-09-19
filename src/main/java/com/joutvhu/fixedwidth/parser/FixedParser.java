@@ -32,7 +32,7 @@ public class FixedParser {
         return (T) this.strategy.read(fixedTypeInfo, stringAssembler);
     }
 
-    public <T> String write(T object) {
+    public <T> String deparse(T object) {
         FixedTypeInfo fixedTypeInfo = FixedTypeInfo.of(object);
         return this.strategy.write(fixedTypeInfo, object);
     }

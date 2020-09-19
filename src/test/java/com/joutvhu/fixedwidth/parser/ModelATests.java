@@ -30,7 +30,7 @@ public class ModelATests {
     @Test
     public void write1Test() {
         ModelA model = new ModelA(40L, "myj", true, LocalDateTime.parse("2020-09-19T12:14:27"), 85.36);
-        String line = fixedParser.write(model);
+        String line = fixedParser.deparse(model);
         Assertions.assertNotNull(line);
         Assertions.assertEquals("040myjY2020-09-19 12:14:2785.36", line);
     }
