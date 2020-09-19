@@ -4,12 +4,13 @@ import com.google.re2j.Pattern;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 
 public interface BooleanHandler {
-    String SPLIT_SYMBOL = "_";
+    String SPLIT_SYMBOL = "|";
 
     default boolean splitOptions(String format) {
-        String regex = "^[^" + SPLIT_SYMBOL + "]+" + SPLIT_SYMBOL + "[^" + SPLIT_SYMBOL + "]+$";
+        String split = CommonUtil.escapeRegular(SPLIT_SYMBOL);
+        String regex = "^[^" + split + "]+" + split + "[^" + split + "]+$";
         if (CommonUtil.isNotBlank(format) && Pattern.matches(regex, format)) {
-            String[] options = format.split(SPLIT_SYMBOL);
+            String[] options = format.split(split);
             if (!options[0].equals(options[1])) {
                 setOptions(options);
                 return true;

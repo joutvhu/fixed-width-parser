@@ -22,7 +22,7 @@ public class ModelA {
     @FixedField(label = "FIELD-B", start = 3, length = 3)
     private String fieldB;
 
-    @FixedFormat(format = "Y_N")
+    @FixedFormat(format = "Y|N")
     @FixedField(label = "FIELD-C", start = 6, length = 1)
     private Boolean fieldC;
 

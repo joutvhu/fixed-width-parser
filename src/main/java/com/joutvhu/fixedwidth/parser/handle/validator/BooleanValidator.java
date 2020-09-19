@@ -31,8 +31,8 @@ public class BooleanValidator extends FormatValidator implements BooleanHandler 
         if (splitOptions(fixedFormat.format()) && !options.contains(value)) {
             String message = getMessage(fixedFormat.message(),
                     fixedFormat.nativeMessage(),
-                    "{title} should be in format {0}.",
-                    StringUtils.join(options, "/"));
+                    "{title} should be equal to one of the following value(s): {0}.",
+                    StringUtils.join(options, ", "));
             throw new InvalidException(message);
         }
         return true;
