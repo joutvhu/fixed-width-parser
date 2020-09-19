@@ -39,6 +39,7 @@ public class FixedParseStrategy {
     public String write(FixedTypeInfo info, Object value) {
         if (value == null)
             return StringAssembler.instance().black(info).getValue();
+        info.detectTypeWith(value);
 
         FixedWidthWriter<Object> writer = module.createWriterBy(info, this);
         if (writer != null) {

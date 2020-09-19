@@ -1,5 +1,6 @@
 package com.joutvhu.fixedwidth.parser.support;
 
+import com.joutvhu.fixedwidth.parser.annotation.FixedField;
 import com.joutvhu.fixedwidth.parser.annotation.FixedObject;
 import com.joutvhu.fixedwidth.parser.domain.Alignment;
 import com.joutvhu.fixedwidth.parser.util.*;
@@ -10,6 +11,12 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Find and save type info, annotation info
+ *
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 @Getter
 public abstract class TypeInfoSetter extends TypeDetector {
     protected String name;
@@ -75,10 +82,6 @@ public abstract class TypeInfoSetter extends TypeDetector {
         this.detectTypeInfo();
     }
 
-    @Override
-    public void afterInit() {
-    }
-
     private void detectTypeInfo() {
         this.name = CommonUtil.isNotBlank(fixedObject.label()) ?
                 fixedObject.label() : type.getName();
@@ -107,6 +110,11 @@ public abstract class TypeInfoSetter extends TypeDetector {
             this.detectGenericTypes();
     }
 
+    /**
+     * Find all field annotated by {@link FixedField}
+     *
+     * @param type
+     */
     private void detectFields(Class<?> type) {
         FixedHelper
                 .getFixedFields(type)
@@ -115,6 +123,9 @@ public abstract class TypeInfoSetter extends TypeDetector {
                 .forEach(i -> this.elementTypeInfo.add(i));
     }
 
+    /**
+     * Find all generic types.
+     */
     private void detectGenericTypes() {
         if (field != null) {
             AnnotatedType[] annotatedTypes = ReflectionUtil.getAnnotatedActualTypeArguments(field);

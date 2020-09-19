@@ -14,6 +14,12 @@ import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 
+/**
+ * Detect subtype and {@link FixedField}, {@link FixedParam} and {@link FixedObject} annotation
+ *
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 @Getter
 public abstract class TypeDetector {
     protected Field field;
@@ -88,10 +94,23 @@ public abstract class TypeDetector {
         // This is virtual method.
     }
 
+    /**
+     * Find an annotation from field, annotatedType, type by annotation class
+     *
+     * @param annotationClass the Class object corresponding to the annotation type
+     * @param <T>             the type of the annotation to query for and return if present
+     * @return annotation for the specified annotation type
+     */
     public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
         return ReflectionUtil.getAnnotation(annotationClass, field, annotatedType, type);
     }
 
+    /**
+     * Use {@link StringAssembler} to find final type
+     *
+     * @param assembler is {@link StringAssembler} of input string
+     * @return final class type
+     */
     public final Class<?> detectTypeWith(StringAssembler assembler) {
         if (!finalType) {
             if (!type.isPrimitive() && fixedObject != null) {
@@ -106,10 +125,38 @@ public abstract class TypeDetector {
         return this.type;
     }
 
+    /**
+     * Use value object to get final type
+     *
+     * @param value object
+     * @return final class type
+     */
+    public final Class<?> detectTypeWith(Object value) {
+        if (!finalType) {
+            if (value != null) {
+                Class<?> newType = value.getClass();
+                if (!type.equals(newType)) {
+                    this.detectedNewType(newType);
+                    this.type = newType;
+                }
+            }
+            this.afterTypeDetected();
+        }
+        return this.type;
+    }
+
+    /**
+     * Called when class type changing
+     *
+     * @param newType new class type
+     */
     public void detectedNewType(Class<?> newType) {
         // This is virtual method.
     }
 
+    /**
+     * After final class type detected
+     */
     public abstract void afterTypeDetected();
 
     enum SourceType {
