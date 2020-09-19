@@ -31,14 +31,21 @@ public class FixedParseStrategy {
         validate(info, assembler.getValue(), ValidationType.BEFORE_READ);
 
         FixedWidthReader<Object> reader = module.createReaderBy(info, this);
-        if (reader != null)
-            return reader.read(assembler);
+        if (reader != null) {
+            Object result = reader.read(assembler);
+            if (info.require)
+                throw new NullPointerException(info.buildMessage("{title} can't be null."));
+            return result;
+        }
         throw new FixedException("Reader not found.");
     }
 
     public String write(FixedTypeInfo info, Object value) {
-        if (value == null)
+        if (value == null) {
+            if (info.require)
+                throw new NullPointerException(info.buildMessage("{label} can't be null."));
             return StringAssembler.instance().black(info).getValue();
+        }
         info.detectTypeWith(value);
 
         FixedWidthWriter<Object> writer = module.createWriterBy(info, this);

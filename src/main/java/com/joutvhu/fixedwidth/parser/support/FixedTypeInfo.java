@@ -3,6 +3,7 @@ package com.joutvhu.fixedwidth.parser.support;
 import com.joutvhu.fixedwidth.parser.domain.Alignment;
 import com.joutvhu.fixedwidth.parser.domain.Padding;
 import com.joutvhu.fixedwidth.parser.util.Assert;
+import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import com.joutvhu.fixedwidth.parser.util.ReflectionUtil;
 import com.joutvhu.fixedwidth.parser.util.TypeConstants;
 
@@ -15,36 +16,36 @@ import java.util.List;
 public class FixedTypeInfo extends TypeInfoSetter {
     private String title;
 
-    public FixedTypeInfo(Class<?> type) {
+    protected FixedTypeInfo(Class<?> type) {
         super(type);
     }
 
-    public FixedTypeInfo(AnnotatedType annotatedType) {
+    protected FixedTypeInfo(AnnotatedType annotatedType) {
         super(annotatedType);
     }
 
-    public FixedTypeInfo(Field field) {
+    protected FixedTypeInfo(Field field) {
         super(field);
     }
 
-    public FixedTypeInfo(Object value) {
+    protected FixedTypeInfo(Object value) {
         super(value);
     }
 
     public static FixedTypeInfo of(Class<?> type) {
-        return new FixedTypeInfo(type);
+        return new FixedTypeInfo(type).postConstruct();
     }
 
     public static FixedTypeInfo of(AnnotatedType annotatedType) {
-        return new FixedTypeInfo(annotatedType);
+        return new FixedTypeInfo(annotatedType).postConstruct();
     }
 
     public static FixedTypeInfo of(Field field) {
-        return new FixedTypeInfo(field);
+        return new FixedTypeInfo(field).postConstruct();
     }
 
     public static FixedTypeInfo of(Object value) {
-        return new FixedTypeInfo(value);
+        return new FixedTypeInfo(value).postConstruct();
     }
 
     public Integer getPosition() {
@@ -58,13 +59,12 @@ public class FixedTypeInfo extends TypeInfoSetter {
     }
 
     public String buildMessage(String template, Object... arguments) {
-        Assert.hasLength(template, "Title template can't be null.");
-        template = template
-                .replaceAll("\\{label\\}", label)
-                .replaceAll("\\{start\\}", start + "")
-                .replaceAll("\\{position\\}", getPosition() + "")
-                .replaceAll("\\{length\\}", length + "")
-                .replaceAll("\\{title\\}", getTitle());
+        Assert.hasLength(template, "The template message can't be black.");
+        template = CommonUtil.replaceAll(template,"{label}", () -> label);
+        template = CommonUtil.replaceAll(template, "{start}", () -> start + "");
+        template = CommonUtil.replaceAll(template,"{position}", () -> getPosition() + "");
+        template = CommonUtil.replaceAll(template,"{length}", () -> length + "");
+        template = CommonUtil.replaceAll(template,"{title}", this::getTitle);
         return MessageFormat.format(template, arguments);
     }
 

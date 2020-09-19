@@ -20,7 +20,7 @@ public class DateValidator extends FormatValidator {
                 !CommonUtil.isDateValid(value, fixedFormat.format(), true)) {
             String message = getMessage(fixedFormat.message(),
                     fixedFormat.nativeMessage(),
-                    "{title} should be in format {}.",
+                    "{title} should be in format {0}.",
                     fixedFormat.format());
             throw new InvalidException(message);
         }

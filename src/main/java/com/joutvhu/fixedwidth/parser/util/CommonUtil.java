@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.function.Supplier;
 
 @UtilityClass
 public class CommonUtil {
@@ -24,6 +25,8 @@ public class CommonUtil {
             return ((Collection) value).isEmpty();
         if (value instanceof Map)
             return ((Map) value).isEmpty();
+        if (value instanceof CharSequence)
+            return ((CharSequence) value).length() == 0;
         if (value instanceof Object[])
             return ((Object[]) value).length == 0;
         return false;
@@ -137,8 +140,30 @@ public class CommonUtil {
         return trimLeftBy(trimRightBy(value, pad), pad);
     }
 
+    public boolean containsText(CharSequence str) {
+        int strLen = str.length();
+        for (int i = 0; i < strLen; i++) {
+            if (!Character.isWhitespace(str.charAt(i)))
+                return true;
+        }
+        return false;
+    }
+
     public String escapeRegular(String regex) {
         return Pattern.compile("([-/\\\\^$*+?.()|\\[\\]{}])").matcher(regex).replaceAll("\\\\$1");
+    }
+
+    public String replaceAll(String value, String search, Supplier<String> replacementSupplier) {
+        if (value != null && search != null) {
+            if (value.contains(search)) {
+                String replacement = replacementSupplier.get();
+                if (replacement != null) {
+                    String regex = escapeRegular(search);
+                    return value.replaceAll(regex, replacement);
+                }
+            }
+        }
+        return value;
     }
 
     public boolean isDateValid(String value, String datePattern, boolean strict) {

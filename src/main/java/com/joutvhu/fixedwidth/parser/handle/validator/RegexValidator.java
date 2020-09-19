@@ -20,10 +20,10 @@ public class RegexValidator extends FixedWidthValidator {
 
     @Override
     public boolean validate(String value, ValidationType type) {
-        if (CommonUtil.isNotBlank(fixedRegex.regex()) && !Pattern.compile(fixedRegex.regex()).matches(value)) {
+        if (CommonUtil.isNotBlank(fixedRegex.regex()) && !Pattern.matches(fixedRegex.regex(), value)) {
             String message = getMessage(fixedRegex.message(),
                     fixedRegex.nativeMessage(),
-                    "{title} doesn't match by /{}/ regex.",
+                    "{title} doesn't match by /{0}/ regex.",
                     fixedRegex.regex());
             throw new InvalidException(message);
         }

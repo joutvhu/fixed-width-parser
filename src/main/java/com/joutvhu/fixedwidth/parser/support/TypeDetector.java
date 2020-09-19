@@ -33,7 +33,8 @@ public abstract class TypeDetector {
     private boolean finalType = false;
     private SourceType sourceType;
 
-    public TypeDetector(Class<?> type) {
+    protected TypeDetector(Class<?> type) {
+        this.beforeInit();
         Assert.notNull(type, "Class Type must not be null!");
         this.type = type;
 
@@ -44,7 +45,8 @@ public abstract class TypeDetector {
         this.sourceType = SourceType.CLASS_TYPE;
     }
 
-    public TypeDetector(AnnotatedType annotatedType) {
+    protected TypeDetector(AnnotatedType annotatedType) {
+        this.beforeInit();
         Assert.notNull(annotatedType, "AnnotatedType must not be null!");
         Type t = annotatedType.getType();
         Assert.isTrue(t instanceof Class, String.format("The %s type is not a class.", t.getTypeName()));
@@ -60,7 +62,8 @@ public abstract class TypeDetector {
         this.sourceType = SourceType.PARAM_TYPE;
     }
 
-    public TypeDetector(Field field) {
+    protected TypeDetector(Field field) {
+        this.beforeInit();
         Assert.notNull(field, "Field must not be null!");
         this.field = field;
         this.type = field.getType();
@@ -72,7 +75,8 @@ public abstract class TypeDetector {
         this.sourceType = SourceType.FIELD_TYPE;
     }
 
-    public TypeDetector(Object value) {
+    protected TypeDetector(Object value) {
+        this.beforeInit();
         Assert.notNull(value, "Object must not be null!");
         this.type = value.getClass();
 
@@ -83,15 +87,19 @@ public abstract class TypeDetector {
         this.sourceType = SourceType.OBJECT_TYPE;
     }
 
-    @PostConstruct
-    private void postConstruct() {
+    protected <T extends TypeDetector> T postConstruct() {
         this.afterInit();
         if (finalType)
             this.afterTypeDetected();
+        return (T) this;
+    }
+
+    public void beforeInit() {
+        // Virtual method.
     }
 
     public void afterInit() {
-        // This is virtual method.
+        // Virtual method.
     }
 
     /**
@@ -151,7 +159,7 @@ public abstract class TypeDetector {
      * @param newType new class type
      */
     public void detectedNewType(Class<?> newType) {
-        // This is virtual method.
+        // Virtual method.
     }
 
     /**

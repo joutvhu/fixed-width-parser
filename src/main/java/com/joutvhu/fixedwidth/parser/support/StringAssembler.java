@@ -63,13 +63,13 @@ public class StringAssembler {
         Alignment alignment = info.getAlignment();
         if (padding != null && alignment != null) {
             if (padding == Padding.AUTO) padding = info.getDefaultPadding();
+            if (alignment == Alignment.AUTO) alignment = info.getDefaultAlignment();
 
             switch (alignment) {
                 case LEFT:
                     return CommonUtil.trimLeftBy(result, padding);
                 case RIGHT:
                     return CommonUtil.trimRightBy(result, padding);
-                case AUTO:
                 case CENTER:
                     return CommonUtil.trimBy(result, padding);
                 default:

@@ -30,7 +30,7 @@ public abstract class TypeInfoSetter extends TypeDetector {
     protected List<FixedTypeInfo> elementTypeInfo = new ArrayList<>();
     protected List<FixedTypeInfo> genericTypeInfo = new ArrayList<>();
 
-    public TypeInfoSetter(Class<?> type) {
+    protected TypeInfoSetter(Class<?> type) {
         super(type);
 
         if (TypeConstants.NOT_NULL_TYPES.contains(type))
@@ -38,7 +38,7 @@ public abstract class TypeInfoSetter extends TypeDetector {
         this.detectTypeInfo();
     }
 
-    public TypeInfoSetter(AnnotatedType annotatedType) {
+    protected TypeInfoSetter(AnnotatedType annotatedType) {
         super(annotatedType);
 
         this.name = CommonUtil.isNotBlank(fixedParam.label()) ?
@@ -54,7 +54,7 @@ public abstract class TypeInfoSetter extends TypeDetector {
         this.alignment = fixedParam.alignment();
     }
 
-    public TypeInfoSetter(Field field) {
+    protected TypeInfoSetter(Field field) {
         super(field);
 
         this.name = CommonUtil.isNotBlank(fixedField.label()) ?
@@ -74,12 +74,24 @@ public abstract class TypeInfoSetter extends TypeDetector {
         this.alignment = fixedField.alignment();
     }
 
-    public TypeInfoSetter(Object value) {
+    protected TypeInfoSetter(Object value) {
         super(value);
 
         if (TypeConstants.NOT_NULL_TYPES.contains(type))
             require = true;
         this.detectTypeInfo();
+    }
+
+    @Override
+    public void beforeInit() {
+        super.beforeInit();
+
+        this.start = 0;
+        this.length = 0;
+        this.require = false;
+        this.alignment = Alignment.AUTO;
+        this.elementTypeInfo = new ArrayList<>();
+        this.genericTypeInfo = new ArrayList<>();
     }
 
     private void detectTypeInfo() {
@@ -130,7 +142,7 @@ public abstract class TypeInfoSetter extends TypeDetector {
         if (field != null) {
             AnnotatedType[] annotatedTypes = ReflectionUtil.getAnnotatedActualTypeArguments(field);
             for (AnnotatedType annotatedType : CommonUtil.defaultIfNull(annotatedTypes, new AnnotatedType[0]))
-                this.genericTypeInfo.add(new FixedTypeInfo(annotatedType));
+                this.genericTypeInfo.add(FixedTypeInfo.of(annotatedType));
         }
     }
 }

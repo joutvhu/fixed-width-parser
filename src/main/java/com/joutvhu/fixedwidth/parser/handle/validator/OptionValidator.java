@@ -27,7 +27,7 @@ public class OptionValidator extends FixedWidthValidator {
             if (!options.contains(value)) {
                 String message = getMessage(fixedOption.message(),
                         fixedOption.nativeMessage(),
-                        "{label} at position {position} should be equal to one of the following value(s): {}.",
+                        "{label} at position {position} should be equal to one of the following value(s): {0}.",
                         StringUtils.join(", ", options));
                 throw new InvalidException(message);
             }
