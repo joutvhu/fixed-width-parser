@@ -7,6 +7,8 @@ import com.joutvhu.fixedwidth.parser.domain.Padding;
 import java.lang.annotation.*;
 
 /**
+ * Used to annotate the fixed width param
+ *
  * @author Giao Ho
  * @since 1.0.0
  */
