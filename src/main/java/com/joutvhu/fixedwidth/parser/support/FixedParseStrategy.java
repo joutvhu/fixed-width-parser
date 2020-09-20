@@ -31,7 +31,12 @@ public class FixedParseStrategy {
 
     public Object read(FixedTypeInfo info, StringAssembler assembler) {
         info.detectTypeWith(assembler);
-        assembler.pad(info);
+        assembler.trim(info);
+        if (assembler.isBlank(info)) {
+            if (info.require)
+                throw new NullPointerException(info.buildMessage("{label} can\'t be blank."));
+            return null;
+        }
         validate(info, assembler.getValue(), ValidationType.BEFORE_READ);
 
         FixedWidthReader<Object> reader = module.createReaderBy(info, this);
@@ -48,20 +53,22 @@ public class FixedParseStrategy {
         if (value == null) {
             if (info.require)
                 throw new NullPointerException(info.buildMessage("{label} can\'t be null."));
-            return StringAssembler.instance().black(info).getValue();
+            return FixedStringAssembler.black(info).getValue();
         }
         info.detectTypeWith(value);
 
         FixedWidthWriter<Object> writer = module.createWriterBy(info, this);
         if (writer != null) {
             String result = writer.write(value);
-            result = StringAssembler
+            StringAssembler assembler = FixedStringAssembler
                     .of(CommonUtil.defaultIfNull(result, StringUtils.EMPTY))
-                    .pad(info)
-                    .getValue();
+                    .pad(info);
 
-            validate(info, result, ValidationType.AFTER_WRITE);
-            return result;
+            if (assembler.isBlank(info)) {
+                if (info.require)
+                    throw new NullPointerException(info.buildMessage("{label} can\'t be blank."));
+            } else validate(info, assembler.getValue(), ValidationType.AFTER_WRITE);
+            return assembler.getValue();
         }
         throw new FixedException("Writer not found.");
     }

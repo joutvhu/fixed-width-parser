@@ -3,7 +3,7 @@ package com.joutvhu.fixedwidth.parser.domain;
 import lombok.experimental.UtilityClass;
 
 /**
- * Padding character
+ * Default padding character constant
  *
  * @author Giao Ho
  * @since 1.0.0

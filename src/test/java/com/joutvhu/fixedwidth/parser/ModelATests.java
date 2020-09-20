@@ -49,6 +49,13 @@ public class ModelATests {
     }
 
     @Test
+    public void read4Test() {
+        ModelA model = fixedParser.parse("000", ModelA.class);
+        Assertions.assertNotNull(model);
+        Assertions.assertEquals(0L, model.getFieldA());
+    }
+
+    @Test
     public void write1Test() {
         ModelA model = new ModelA(40L, "myj", true, LocalDateTime.parse("2020-09-19T12:14:27"), 85.36);
         String line = fixedParser.export(model);

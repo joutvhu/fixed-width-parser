@@ -2,6 +2,7 @@ package com.joutvhu.fixedwidth.parser.convert.writer;
 
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthWriter;
 import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
+import com.joutvhu.fixedwidth.parser.support.FixedStringAssembler;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.support.StringAssembler;
 
@@ -31,7 +32,7 @@ public class MapWriter extends FixedWidthWriter<Map<?, ?>> {
 
     @Override
     public String write(Map<?, ?> value) {
-        StringAssembler assembler = StringAssembler.instance();
+        StringAssembler assembler = FixedStringAssembler.instance();
         for (Map.Entry<?, ?> entry : value.entrySet()) {
             assembler.set(start, keyLength, strategy.write(keyInfo, entry.getKey()));
             start += keyLength;

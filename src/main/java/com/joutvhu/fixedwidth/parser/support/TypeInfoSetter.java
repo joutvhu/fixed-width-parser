@@ -3,6 +3,8 @@ package com.joutvhu.fixedwidth.parser.support;
 import com.joutvhu.fixedwidth.parser.annotation.FixedField;
 import com.joutvhu.fixedwidth.parser.annotation.FixedObject;
 import com.joutvhu.fixedwidth.parser.domain.Alignment;
+import com.joutvhu.fixedwidth.parser.domain.KeepPadding;
+import com.joutvhu.fixedwidth.parser.domain.Padding;
 import com.joutvhu.fixedwidth.parser.util.*;
 import lombok.Getter;
 
@@ -26,7 +28,9 @@ public abstract class TypeInfoSetter extends TypeDetector {
     protected Integer start = 0;
     protected Integer length = 0;
     protected boolean require = false;
-    protected Character padding;
+    protected Character padding = Padding.AUTO;
+    protected Character nullPadding = Padding.AUTO;
+    protected KeepPadding keepPadding = KeepPadding.AUTO;
     protected Alignment alignment = Alignment.AUTO;
 
     protected List<FixedTypeInfo> elementTypeInfo = new ArrayList<>();
@@ -36,7 +40,7 @@ public abstract class TypeInfoSetter extends TypeDetector {
         super(type);
 
         if (TypeConstants.NOT_NULL_TYPES.contains(type))
-            require = true;
+            this.require = true;
         this.detectTypeInfo();
     }
 
@@ -51,8 +55,10 @@ public abstract class TypeInfoSetter extends TypeDetector {
             this.length = fixedParam.length();
 
         if (TypeConstants.NOT_NULL_TYPES.contains(type))
-            require = true;
+            this.require = true;
         this.padding = fixedParam.padding();
+        this.nullPadding = fixedParam.nullPadding();
+        this.keepPadding = fixedParam.keepPadding();
         this.alignment = fixedParam.alignment();
     }
 
@@ -69,10 +75,12 @@ public abstract class TypeInfoSetter extends TypeDetector {
         this.length = fixedField.length();
 
         if (TypeConstants.NOT_NULL_TYPES.contains(type))
-            require = true;
+            this.require = true;
         else
             this.require = fixedField.require();
         this.padding = fixedField.padding();
+        this.nullPadding = fixedField.nullPadding();
+        this.keepPadding = fixedField.keepPadding();
         this.alignment = fixedField.alignment();
     }
 
@@ -80,17 +88,32 @@ public abstract class TypeInfoSetter extends TypeDetector {
         super(value);
 
         if (TypeConstants.NOT_NULL_TYPES.contains(type))
-            require = true;
+            this.require = true;
         this.detectTypeInfo();
     }
 
     private void detectTypeInfo() {
-        this.name = CommonUtil.isNotBlank(fixedObject.label()) ?
-                fixedObject.label() : type.getName();
+        this.name = CommonUtil.isNotBlank(fixedObject.label()) ? fixedObject.label() : type.getName();
         this.label = name + " object";
 
         Assert.isTrue(fixedObject.length() >= 0, "Length of object can't less than 0.");
         this.length = fixedObject.length();
+
+        if (SourceType.FIELD_TYPE.equals(getSourceType()) || SourceType.PARAM_TYPE.equals(getSourceType())) {
+            this.padding = fixedObject.padding();
+            this.nullPadding = fixedObject.nullPadding();
+            this.keepPadding = fixedObject.keepPadding();
+            this.alignment = fixedObject.alignment();
+        } else {
+            if (padding == null || Padding.AUTO == padding)
+                this.padding = fixedObject.padding();
+            if (nullPadding == null || Padding.AUTO == nullPadding)
+                this.nullPadding = fixedObject.nullPadding();
+            if (keepPadding == null || KeepPadding.AUTO.equals(keepPadding))
+                this.keepPadding = fixedObject.keepPadding();
+            if (alignment == null || Alignment.AUTO.equals(alignment))
+                this.alignment = fixedObject.alignment();
+        }
     }
 
     @Override
@@ -100,7 +123,7 @@ public abstract class TypeInfoSetter extends TypeDetector {
             this.fixedObject = fixedObject;
             Assert.isTrue(fixedObject.length() >= 0, "Length of object can't less than 0.");
             if (TypeConstants.NOT_NULL_TYPES.contains(type))
-                require = true;
+                this.require = true;
             this.detectTypeInfo();
         }
     }

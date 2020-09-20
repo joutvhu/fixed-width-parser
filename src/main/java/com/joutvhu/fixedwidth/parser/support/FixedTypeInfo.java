@@ -1,6 +1,7 @@
 package com.joutvhu.fixedwidth.parser.support;
 
 import com.joutvhu.fixedwidth.parser.domain.Alignment;
+import com.joutvhu.fixedwidth.parser.domain.KeepPadding;
 import com.joutvhu.fixedwidth.parser.domain.Padding;
 import com.joutvhu.fixedwidth.parser.util.Assert;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
@@ -73,19 +74,43 @@ public class FixedTypeInfo extends TypeInfoSetter {
     }
 
     public char getDefaultPadding() {
-        if (padding == null) return ' ';
-        if (Padding.AUTO != padding) return padding;
-        if ((TypeConstants.INTEGER_NUMBER_TYPES.contains(type) || TypeConstants.DECIMAL_NUMBER_TYPES.contains(type)) &&
-                (alignment == null || Alignment.AUTO == alignment || Alignment.LEFT == alignment))
-            return '0';
-        return ' ';
+        if (padding == null || padding == Padding.AUTO) {
+            if ((TypeConstants.INTEGER_NUMBER_TYPES.contains(type) ||
+                    TypeConstants.DECIMAL_NUMBER_TYPES.contains(type)) &&
+                    (alignment == null || Alignment.AUTO == alignment || Alignment.LEFT == alignment))
+                return '0';
+            return ' ';
+        }
+        return padding;
     }
 
+    public Character getDefaultNullPadding() {
+        if (nullPadding == null || nullPadding == Padding.AUTO) {
+            if (TypeConstants.STRING_TYPES.contains(type))
+                return null;
+            return ' ';
+        }
+        return nullPadding;
+    }
+
+    public boolean getDefaultKeepPadding() {
+        if (keepPadding == null || KeepPadding.AUTO.equals(keepPadding)) {
+            return TypeConstants.INTEGER_NUMBER_TYPES.contains(type) ||
+                    TypeConstants.DECIMAL_NUMBER_TYPES.contains(type) ||
+                    TypeConstants.STRING_TYPES.contains(type) ||
+                    TypeConstants.NOT_NULL_TYPES.contains(type);
+        }
+        return KeepPadding.KEEP.equals(keepPadding);
+    }
+
+
     public Alignment getDefaultAlignment() {
-        if (alignment != null && Alignment.AUTO != alignment) return alignment;
-        if (TypeConstants.INTEGER_NUMBER_TYPES.contains(type) || TypeConstants.DECIMAL_NUMBER_TYPES.contains(type))
-            return Alignment.LEFT;
-        return Alignment.RIGHT;
+        if (alignment == null || Alignment.AUTO.equals(alignment)) {
+            if (TypeConstants.INTEGER_NUMBER_TYPES.contains(type) || TypeConstants.DECIMAL_NUMBER_TYPES.contains(type))
+                return Alignment.LEFT;
+            return Alignment.RIGHT;
+        }
+        return alignment;
     }
 
     public <T> T getAnnotationValue(Class<? extends Annotation> annotationClass, String name, Class<T> type) {

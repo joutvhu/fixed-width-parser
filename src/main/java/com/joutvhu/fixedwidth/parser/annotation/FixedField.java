@@ -1,6 +1,7 @@
 package com.joutvhu.fixedwidth.parser.annotation;
 
 import com.joutvhu.fixedwidth.parser.domain.Alignment;
+import com.joutvhu.fixedwidth.parser.domain.KeepPadding;
 import com.joutvhu.fixedwidth.parser.domain.Padding;
 
 import java.lang.annotation.*;
@@ -48,6 +49,20 @@ public @interface FixedField {
      * @return padding of the fixed width field
      */
     char padding() default Padding.AUTO;
+
+    /**
+     * Sets the padding character for null value
+     *
+     * @return padding for the null value
+     */
+    char nullPadding() default Padding.AUTO;
+
+    /**
+     * Configures whether to retain the padding character when parsing values for this field
+     *
+     * @return flag indicating the padding character should be kept in the parsed value
+     */
+    KeepPadding keepPadding() default KeepPadding.AUTO;
 
     /**
      * Sets the alignment of the fixed width field
