@@ -13,6 +13,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 @UtilityClass
 public class FixedHelper {
     /**

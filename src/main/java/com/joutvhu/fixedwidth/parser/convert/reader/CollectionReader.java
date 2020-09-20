@@ -10,6 +10,10 @@ import com.joutvhu.fixedwidth.parser.util.FixedHelper;
 
 import java.util.Collection;
 
+/**
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 public class CollectionReader extends FixedWidthReader<Collection<?>> {
     protected FixedTypeInfo valueInfo;
     protected Integer start = 0;

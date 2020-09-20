@@ -9,6 +9,10 @@ import com.joutvhu.fixedwidth.parser.support.StringAssembler;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import com.joutvhu.fixedwidth.parser.util.TypeConstants;
 
+/**
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 public class BooleanReader extends FixedWidthReader<Boolean> implements BooleanHelper {
     private String trueOption;
     private String falseOption;

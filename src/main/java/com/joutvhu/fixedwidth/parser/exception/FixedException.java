@@ -1,5 +1,9 @@
 package com.joutvhu.fixedwidth.parser.exception;
 
+/**
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 public class FixedException extends RuntimeException {
     private static final long serialVersionUID = -5641430689223945394L;
 

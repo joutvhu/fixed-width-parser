@@ -5,6 +5,10 @@ import lombok.experimental.UtilityClass;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 
+/**
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 @UtilityClass
 public class ReflectionUtil {
     public void rethrowRuntimeException(Throwable ex) {

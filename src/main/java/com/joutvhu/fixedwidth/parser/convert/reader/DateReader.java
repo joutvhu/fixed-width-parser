@@ -9,6 +9,10 @@ import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import com.joutvhu.fixedwidth.parser.util.ObjectUtil;
 import com.joutvhu.fixedwidth.parser.util.TypeConstants;
 
+/**
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 public class DateReader extends FixedWidthReader<Object> {
     public DateReader(FixedTypeInfo info, FixedParseStrategy strategy) {
         super(info, strategy);

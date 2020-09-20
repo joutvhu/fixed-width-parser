@@ -7,9 +7,11 @@ import com.joutvhu.fixedwidth.parser.convert.validator.OptionValidator;
 import com.joutvhu.fixedwidth.parser.convert.validator.RegexValidator;
 import com.joutvhu.fixedwidth.parser.convert.writer.*;
 
+/**
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 public class DefaultModule extends FixedModule {
-    public static final FixedModule INSTANCE = new DefaultModule();
-
     public DefaultModule() {
         super(
                 StringReader.class,

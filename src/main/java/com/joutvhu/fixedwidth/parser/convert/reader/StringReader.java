@@ -8,6 +8,10 @@ import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import com.joutvhu.fixedwidth.parser.util.TypeConstants;
 import jdk.nashorn.internal.runtime.ParserException;
 
+/**
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 public class StringReader extends FixedWidthReader<Object> {
     public StringReader(FixedTypeInfo info, FixedParseStrategy strategy) {
         super(info, strategy);

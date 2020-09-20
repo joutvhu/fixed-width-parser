@@ -10,6 +10,10 @@ import com.joutvhu.fixedwidth.parser.util.ReflectionUtil;
 import java.lang.reflect.Field;
 import java.util.List;
 
+/**
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 public class ObjectReader extends FixedWidthReader<Object> {
     public ObjectReader(FixedTypeInfo info, FixedParseStrategy strategy) {
         super(info, strategy);

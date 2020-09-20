@@ -34,7 +34,7 @@ public class ModelCTests {
                         CommonUtil.mapEntryOf("qD", "o0")
                 )
         ));
-        String line = fixedParser.deparse(model);
+        String line = fixedParser.export(model);
         Assertions.assertNotNull(line);
         Assertions.assertTrue(line.contains("d0R1"));
         Assertions.assertTrue(line.contains("7imj"));

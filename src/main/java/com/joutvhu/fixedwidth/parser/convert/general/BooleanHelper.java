@@ -3,6 +3,10 @@ package com.joutvhu.fixedwidth.parser.convert.general;
 import com.google.re2j.Pattern;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 
+/**
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 public interface BooleanHelper {
     String SPLIT_SYMBOL = "|";
 

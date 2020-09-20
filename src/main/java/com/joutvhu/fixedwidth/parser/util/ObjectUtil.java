@@ -17,6 +17,10 @@ import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 @UtilityClass
 public class ObjectUtil {
     public final ObjectMapper MAPPER = new ObjectMapper()

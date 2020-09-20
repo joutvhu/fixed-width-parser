@@ -7,6 +7,10 @@ import com.joutvhu.fixedwidth.parser.support.StringAssembler;
 
 import java.util.Map;
 
+/**
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 public class MapWriter extends FixedWidthWriter<Map<?, ?>> {
     protected FixedTypeInfo keyInfo;
     protected FixedTypeInfo valueInfo;
