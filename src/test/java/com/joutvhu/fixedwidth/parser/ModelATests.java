@@ -1,5 +1,6 @@
 package com.joutvhu.fixedwidth.parser;
 
+import com.joutvhu.fixedwidth.parser.exception.InvalidException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -25,6 +26,26 @@ public class ModelATests {
         Assertions.assertEquals(true, model.getFieldC());
         Assertions.assertEquals(LocalDateTime.parse("2020-09-19T12:14:27"), model.getFieldD());
         Assertions.assertEquals(85.36, model.getFieldE());
+    }
+
+    @Test
+    public void read2Test() {
+        try {
+            fixedParser.parse("040myjY2020-09-19T12:14:2785.36", ModelA.class);
+            Assertions.fail();
+        } catch (Exception e) {
+            Assertions.assertTrue(e instanceof InvalidException);
+        }
+    }
+
+    @Test
+    public void read3Test() {
+        try {
+            fixedParser.parse("040myjL2020-09-19 12:14:2785.36", ModelA.class);
+            Assertions.fail();
+        } catch (Exception e) {
+            Assertions.assertTrue(e instanceof InvalidException);
+        }
     }
 
     @Test

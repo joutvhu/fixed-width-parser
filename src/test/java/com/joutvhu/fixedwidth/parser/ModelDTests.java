@@ -1,5 +1,6 @@
 package com.joutvhu.fixedwidth.parser;
 
+import com.joutvhu.fixedwidth.parser.exception.InvalidException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -16,10 +17,10 @@ public class ModelDTests {
 
     @Test
     public void read1Test() {
-        ModelD model = fixedParser.parse("0111,741,404", ModelD.class);
+        ModelD model = fixedParser.parse("0111,741,000", ModelD.class);
         Assertions.assertNotNull(model);
         Assertions.assertTrue(model instanceof ModelE);
-        Assertions.assertEquals(1741404, ((ModelE) model).getFieldB());
+        Assertions.assertEquals(1741000, ((ModelE) model).getFieldB());
     }
 
     @Test
