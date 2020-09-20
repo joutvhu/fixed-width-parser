@@ -37,8 +37,8 @@ public class FixedParseStrategy {
         FixedWidthReader<Object> reader = module.createReaderBy(info, this);
         if (reader != null) {
             Object result = reader.read(assembler);
-            if (info.require)
-                throw new NullPointerException(info.buildMessage("{title} can't be null."));
+            if (result == null && info.require)
+                throw new NullPointerException(info.buildMessage("{title} can\'t be null."));
             return result;
         }
         throw new FixedException("Reader not found.");
@@ -47,7 +47,7 @@ public class FixedParseStrategy {
     public String write(FixedTypeInfo info, Object value) {
         if (value == null) {
             if (info.require)
-                throw new NullPointerException(info.buildMessage("{label} can't be null."));
+                throw new NullPointerException(info.buildMessage("{label} can\'t be null."));
             return StringAssembler.instance().black(info).getValue();
         }
         info.detectTypeWith(value);
