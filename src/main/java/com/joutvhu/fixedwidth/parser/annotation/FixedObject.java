@@ -2,6 +2,10 @@ package com.joutvhu.fixedwidth.parser.annotation;
 
 import java.lang.annotation.*;
 
+/**
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

@@ -2,6 +2,10 @@ package com.joutvhu.fixedwidth.parser.constraint;
 
 import java.lang.annotation.*;
 
+/**
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 @Target({ElementType.TYPE, ElementType.FIELD, ElementType.TYPE_PARAMETER, ElementType.TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

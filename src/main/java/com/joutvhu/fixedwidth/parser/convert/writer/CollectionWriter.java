@@ -7,6 +7,10 @@ import com.joutvhu.fixedwidth.parser.support.StringAssembler;
 
 import java.util.Collection;
 
+/**
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 public class CollectionWriter extends FixedWidthWriter<Collection<?>> {
     protected FixedTypeInfo valueInfo;
     protected Integer start = 0;

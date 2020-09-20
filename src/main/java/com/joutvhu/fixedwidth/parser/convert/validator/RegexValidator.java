@@ -9,6 +9,10 @@ import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 
+/**
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 public class RegexValidator extends FixedWidthValidator {
     private FixedRegex fixedRegex;
 

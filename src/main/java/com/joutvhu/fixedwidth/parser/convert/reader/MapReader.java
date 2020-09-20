@@ -10,6 +10,10 @@ import com.joutvhu.fixedwidth.parser.util.FixedHelper;
 
 import java.util.Map;
 
+/**
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 public class MapReader extends FixedWidthReader<Map<?, ?>> {
     protected FixedTypeInfo keyInfo;
     protected FixedTypeInfo valueInfo;

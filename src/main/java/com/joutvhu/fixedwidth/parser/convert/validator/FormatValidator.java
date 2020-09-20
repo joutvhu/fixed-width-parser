@@ -5,6 +5,10 @@ import com.joutvhu.fixedwidth.parser.convert.FixedWidthValidator;
 import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 
+/**
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 public abstract class FormatValidator extends FixedWidthValidator {
     protected FixedFormat fixedFormat;
 

@@ -13,6 +13,10 @@ import java.lang.reflect.Field;
 import java.text.MessageFormat;
 import java.util.List;
 
+/**
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 public class FixedTypeInfo extends TypeInfoSetter {
     private String title;
 

@@ -4,6 +4,10 @@ import lombok.experimental.UtilityClass;
 
 import java.util.Collection;
 
+/**
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 @UtilityClass
 public class Assert {
     /**

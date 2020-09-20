@@ -13,6 +13,12 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * List types constants
+ *
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 @UtilityClass
 public class TypeConstants {
     public final List<Class<?>> STRING_TYPES = CommonUtil

@@ -10,6 +10,10 @@ import java.time.temporal.Temporal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 @UtilityClass
 public class ClassUtil {
     private Map<Class<?>, Class<?>> CLASS_MAP = CommonUtil.mapOfEntries(

@@ -7,6 +7,10 @@ import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import com.joutvhu.fixedwidth.parser.util.TypeConstants;
 
+/**
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 public class DateValidator extends FormatValidator {
     public DateValidator(FixedTypeInfo info, FixedParseStrategy strategy) {
         super(info, strategy);

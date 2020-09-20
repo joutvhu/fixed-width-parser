@@ -10,6 +10,10 @@ import com.joutvhu.fixedwidth.parser.util.ReflectionUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 public class ObjectWriter extends FixedWidthWriter<Object> {
     public ObjectWriter(FixedTypeInfo info, FixedParseStrategy strategy) {
         super(info, strategy);

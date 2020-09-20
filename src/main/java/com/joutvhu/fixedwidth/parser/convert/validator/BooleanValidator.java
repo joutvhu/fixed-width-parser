@@ -12,6 +12,10 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 public class BooleanValidator extends FormatValidator implements BooleanHelper {
     private List<String> options = new ArrayList<>();
 

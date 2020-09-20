@@ -7,6 +7,10 @@ import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.util.ObjectUtil;
 import com.joutvhu.fixedwidth.parser.util.TypeConstants;
 
+/**
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 public class DateWriter extends FixedWidthWriter<Object> {
     public DateWriter(FixedTypeInfo info, FixedParseStrategy strategy) {
         super(info, strategy);

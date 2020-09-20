@@ -12,6 +12,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 
+/**
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 public class NumberWriter extends FixedWidthWriter<Object> {
     public NumberWriter(FixedTypeInfo info, FixedParseStrategy strategy) {
         super(info, strategy);

@@ -5,6 +5,10 @@ import com.joutvhu.fixedwidth.parser.domain.Padding;
 
 import java.lang.annotation.*;
 
+/**
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

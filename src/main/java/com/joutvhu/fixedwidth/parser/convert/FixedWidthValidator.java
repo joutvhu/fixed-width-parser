@@ -4,6 +4,10 @@ import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 
+/**
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 public abstract class FixedWidthValidator extends ParsingApprover implements StringValidator {
     public FixedWidthValidator(FixedTypeInfo info, FixedParseStrategy strategy) {
         super(info, strategy);

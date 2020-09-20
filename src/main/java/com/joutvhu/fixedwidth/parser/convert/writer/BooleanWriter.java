@@ -8,6 +8,10 @@ import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.util.TypeConstants;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 public class BooleanWriter extends FixedWidthWriter<Boolean> implements BooleanHelper {
     private String[] options;
 
