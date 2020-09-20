@@ -17,6 +17,6 @@ import java.util.Map;
 @AllArgsConstructor
 @FixedObject
 public class ModelC {
-    @FixedField(label = "LIST-MAP", length = 36)
+    @FixedField(label = "LIST-MAP", length = 0)
     private List<@FixedParam(length = 12) Map<@FixedParam(length = 2) String, @FixedParam(length = 2) String>> listMap;
 }

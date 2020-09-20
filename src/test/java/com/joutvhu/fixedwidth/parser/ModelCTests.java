@@ -1,5 +1,6 @@
 package com.joutvhu.fixedwidth.parser;
 
+import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -22,5 +23,30 @@ public class ModelCTests {
         Assertions.assertEquals("Bx", model.getListMap().get(0).get("hW"));
         Assertions.assertEquals("0m", model.getListMap().get(1).get("8L"));
         Assertions.assertEquals("tD", model.getListMap().get(2).get("qH"));
+    }
+
+    @Test
+    public void write1Test() {
+        ModelC model = new ModelC(CommonUtil.listOf(
+                CommonUtil.mapOfEntries(
+                        CommonUtil.mapEntryOf("d0", "R1"),
+                        CommonUtil.mapEntryOf("7i", "mj"),
+                        CommonUtil.mapEntryOf("qD", "o0")
+                )
+        ));
+        String line = fixedParser.deparse(model);
+        Assertions.assertNotNull(line);
+        Assertions.assertTrue(line.contains("d0R1"));
+        Assertions.assertTrue(line.contains("7imj"));
+        Assertions.assertTrue(line.contains("qDo0"));
+    }
+
+    @Test
+    public void read2Test() {
+        ModelC model = fixedParser.parse("BfhgtnoT", ModelC.class);
+        Assertions.assertNotNull(model);
+        Assertions.assertEquals(1, model.getListMap().size());
+        Assertions.assertEquals("hg", model.getListMap().get(0).get("Bf"));
+        Assertions.assertEquals("oT", model.getListMap().get(0).get("tn"));
     }
 }

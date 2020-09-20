@@ -38,12 +38,12 @@ public class StringAssembler {
     }
 
     private void replaceAt(Integer start, Integer length, String value) {
-        if (length == null)
-            this.value = this.value.substring(0, start) + value;
-        else
+        if (length != null && length > 0)
             this.value = this.value.substring(0, start) +
                     CommonUtil.rightPadValue(value, length, ' ') +
                     this.value.substring(start + length);
+        else
+            this.value = this.value.substring(0, start) + value;
     }
 
     public int length() {
