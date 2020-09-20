@@ -20,7 +20,7 @@ public class FixedHelper {
      *
      * @param type class
      * @param <T>  is type of the object
-     * @return
+     * @return new instance object
      */
     public <T> T newInstanceOf(Class<T> type) {
         try {
@@ -36,6 +36,9 @@ public class FixedHelper {
 
     /**
      * Get all fixed fields of a object type
+     *
+     * @param type class
+     * @return all fixed width fields
      */
     public List<Field> getFixedFields(Class<?> type) {
         List<Field> fields = new ArrayList<>();
@@ -49,10 +52,11 @@ public class FixedHelper {
     }
 
     /**
-     * Get real type of a string by supper FixedObject
+     * Get final type of a string by supper FixedObject
      *
-     * @param type of supper FixedObject
-     * @return
+     * @param assembler is {@link StringAssembler}
+     * @param type      of supper {@link FixedObject}
+     * @return final class
      */
     public Class<?> detectType(StringAssembler assembler, Class<?> type) {
         FixedObject fixedObject = type.getAnnotation(FixedObject.class);

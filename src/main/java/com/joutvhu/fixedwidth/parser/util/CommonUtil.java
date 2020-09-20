@@ -72,10 +72,10 @@ public class CommonUtil {
     /**
      * Left pad a String with a specified character.
      *
-     * @param value
-     * @param size
-     * @param pad
-     * @return
+     * @param value the String to pad out, may be null
+     * @param size  the size to pad to
+     * @param pad   the character to pad with
+     * @return left padded String, original String if no padding is necessary or cut String if the original String too long
      */
     public String leftPadValue(String value, int size, char pad) {
         int len = value.length();

@@ -10,13 +10,31 @@ import java.lang.annotation.*;
 @Documented
 public @interface FixedParam {
     /**
-     * Param label
+     * Setups the label name
+     *
+     * @return label name of the param
      */
     String label() default "";
 
+    /**
+     * Setups the length of the param
+     * 0 is unlimited length
+     *
+     * @return length for the param
+     */
     int length();
 
+    /**
+     * Sets the padding character of the fixed width field
+     *
+     * @return padding of the fixed width field
+     */
     char padding() default Padding.AUTO;
 
+    /**
+     * Sets the alignment of the fixed width field
+     *
+     * @return alignment of the fixed width field
+     */
     Alignment alignment() default Alignment.AUTO;
 }
