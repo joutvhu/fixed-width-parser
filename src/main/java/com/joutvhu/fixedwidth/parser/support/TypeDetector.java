@@ -8,10 +8,10 @@ import com.joutvhu.fixedwidth.parser.util.FixedHelper;
 import com.joutvhu.fixedwidth.parser.util.ReflectionUtil;
 import lombok.Getter;
 
-import javax.annotation.PostConstruct;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 /**
@@ -25,6 +25,7 @@ public abstract class TypeDetector {
     protected Field field;
     protected Class<?> type;
     protected AnnotatedType annotatedType;
+    protected ParameterizedType parameterizedType;
 
     protected FixedField fixedField;
     protected FixedParam fixedParam;
@@ -48,10 +49,17 @@ public abstract class TypeDetector {
     protected TypeDetector(AnnotatedType annotatedType) {
         this.beforeInit();
         Assert.notNull(annotatedType, "AnnotatedType must not be null!");
-        Type t = annotatedType.getType();
-        Assert.isTrue(t instanceof Class, String.format("The %s type is not a class.", t.getTypeName()));
-        this.type = (Class<?>) t;
         this.annotatedType = annotatedType;
+
+        Type t = annotatedType.getType();
+        if (t instanceof ParameterizedType) {
+            this.parameterizedType = (ParameterizedType) t;
+            t = parameterizedType.getRawType();
+        }
+
+        Assert.isTrue(t instanceof Class, String
+                .format("The %s type is not a class.", t.getTypeName()));
+        this.type = (Class<?>) t;
 
         this.fixedParam = getAnnotation(FixedParam.class);
         Assert.notNull(fixedParam, String.format("The %s type must be annotated with FixedParam.", t.getTypeName()));

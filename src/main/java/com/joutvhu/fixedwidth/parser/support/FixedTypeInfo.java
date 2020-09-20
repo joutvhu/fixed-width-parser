@@ -60,11 +60,11 @@ public class FixedTypeInfo extends TypeInfoSetter {
 
     public String buildMessage(String template, Object... arguments) {
         Assert.hasLength(template, "The template message can't be black.");
-        template = CommonUtil.replaceAll(template,"{label}", () -> label);
+        template = CommonUtil.replaceAll(template, "{label}", () -> label);
         template = CommonUtil.replaceAll(template, "{start}", () -> start + "");
-        template = CommonUtil.replaceAll(template,"{position}", () -> getPosition() + "");
-        template = CommonUtil.replaceAll(template,"{length}", () -> length + "");
-        template = CommonUtil.replaceAll(template,"{title}", this::getTitle);
+        template = CommonUtil.replaceAll(template, "{position}", () -> getPosition() + "");
+        template = CommonUtil.replaceAll(template, "{length}", () -> length + "");
+        template = CommonUtil.replaceAll(template, "{title}", this::getTitle);
         return MessageFormat.format(template, arguments);
     }
 

@@ -34,6 +34,9 @@ public class ClassUtil {
 
     /**
      * Select a perfect type of a given type
+     *
+     * @param type supper-class type
+     * @return sub-class type
      */
     public Class<?> selectSubTypeOf(Class<?> type) {
         int modifiers = type.getModifiers();
@@ -50,7 +53,12 @@ public class ClassUtil {
     }
 
     /**
-     * Gets all sub types in hierarchy of a given type
+     * Gets all sub-types in hierarchy of a given type
+     *
+     * @param type        supper-class type
+     * @param firstPrefix is prefixes are ranked first on the list
+     * @param <T>         supper type
+     * @return list of sub-types
      */
     public <T> List<Class<?>> getNormalTypesOf(Class<T> type, String... firstPrefix) {
         return new Reflections()

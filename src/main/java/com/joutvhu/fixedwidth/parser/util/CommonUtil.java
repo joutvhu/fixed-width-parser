@@ -72,10 +72,10 @@ public class CommonUtil {
     /**
      * Left pad a String with a specified character.
      *
-     * @param value
-     * @param size
-     * @param pad
-     * @return
+     * @param value the String to pad out, may be null
+     * @param size  the size to pad to
+     * @param pad   the character to pad with
+     * @return left padded String, original String if no padding is necessary or cut String if the original String too long
      */
     public String leftPadValue(String value, int size, char pad) {
         int len = value.length();
@@ -154,13 +154,11 @@ public class CommonUtil {
     }
 
     public String replaceAll(String value, String search, Supplier<String> replacementSupplier) {
-        if (value != null && search != null) {
-            if (value.contains(search)) {
-                String replacement = replacementSupplier.get();
-                if (replacement != null) {
-                    String regex = escapeRegular(search);
-                    return value.replaceAll(regex, replacement);
-                }
+        if (value != null && search != null && value.contains(search)) {
+            String replacement = replacementSupplier.get();
+            if (replacement != null) {
+                String regex = escapeRegular(search);
+                return value.replaceAll(regex, replacement);
             }
         }
         return value;

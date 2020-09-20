@@ -10,26 +10,45 @@ import java.lang.annotation.*;
 @Documented
 public @interface FixedField {
     /**
-     * Field label
+     * Setups the label name
+     *
+     * @return label name of the field
      */
     String label();
 
     /**
-     * Start position of value
+     * Setups the start position of the field
+     *
+     * @return start position for the field
      */
     int start() default 0;
 
     /**
-     * Length of value
+     * Setups the length of the field
+     * 0 is unlimited length
+     *
+     * @return length for the field
      */
     int length();
 
     /**
-     * Value can't blank.
+     * The field is nullable
+     *
+     * @return is nullable
      */
     boolean require() default false;
 
+    /**
+     * Sets the padding character of the fixed width field
+     *
+     * @return padding of the fixed width field
+     */
     char padding() default Padding.AUTO;
 
+    /**
+     * Sets the alignment of the fixed width field
+     *
+     * @return alignment of the fixed width field
+     */
     Alignment alignment() default Alignment.AUTO;
 }

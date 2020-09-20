@@ -80,6 +80,14 @@ public class ReflectionUtil {
         }
     }
 
+    public AnnotatedType[] getAnnotatedActualTypeArguments(AnnotatedParameterizedType annotatedType) {
+        try {
+            return annotatedType.getAnnotatedActualTypeArguments();
+        } catch (Exception e) {
+            return new AnnotatedType[0];
+        }
+    }
+
     /**
      * Find an annotation from some {@link AnnotatedElement}
      *
