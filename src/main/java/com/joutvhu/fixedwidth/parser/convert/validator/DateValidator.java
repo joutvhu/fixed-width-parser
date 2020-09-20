@@ -8,6 +8,8 @@ import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import com.joutvhu.fixedwidth.parser.util.TypeConstants;
 
 /**
+ * Date time validator
+ *
  * @author Giao Ho
  * @since 1.0.0
  */
@@ -19,19 +21,14 @@ public class DateValidator extends FormatValidator {
     }
 
     @Override
-    public boolean validate(String value, ValidationType type) {
-        if (CommonUtil.isNotBlank(value)) {
-            if (CommonUtil.isNotBlank(fixedFormat.format()) &&
-                    !CommonUtil.isDateValid(value, fixedFormat.format(), true)) {
-                String message = getMessage(fixedFormat.message(),
-                        fixedFormat.nativeMessage(),
-                        "{title} should be in format {0}.",
-                        fixedFormat.format());
-                throw new InvalidException(message);
-            }
-        } else {
-
+    public void validate(String value, ValidationType type) {
+        if (CommonUtil.isNotBlank(fixedFormat.format()) &&
+                !CommonUtil.isDateValid(value, fixedFormat.format(), true)) {
+            String message = getMessage(fixedFormat.message(),
+                    fixedFormat.nativeMessage(),
+                    "{title} should be in format {0}.",
+                    fixedFormat.format());
+            throw new InvalidException(message);
         }
-        return true;
     }
 }

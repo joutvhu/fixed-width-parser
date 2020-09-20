@@ -6,6 +6,8 @@ import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 
 /**
+ * Validator for {@link FixedFormat} annotation
+ *
  * @author Giao Ho
  * @since 1.0.0
  */

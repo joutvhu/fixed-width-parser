@@ -5,6 +5,8 @@ import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 
 /**
+ * Fixed width validator
+ *
  * @author Giao Ho
  * @since 1.0.0
  */
@@ -13,6 +15,15 @@ public abstract class FixedWidthValidator extends ParsingApprover implements Str
         super(info, strategy);
     }
 
+    /**
+     * Get error message
+     *
+     * @param message        native message or message template
+     * @param nativeMessage  the message is native message
+     * @param defaultMessage use this message if the message is blank
+     * @param arguments      the arguments
+     * @return message
+     */
     protected String getMessage(String message, boolean nativeMessage, String defaultMessage, Object... arguments) {
         if (CommonUtil.isBlank(message)) {
             message = defaultMessage;

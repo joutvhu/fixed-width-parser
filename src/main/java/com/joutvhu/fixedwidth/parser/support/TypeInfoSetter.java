@@ -95,6 +95,9 @@ public abstract class TypeInfoSetter extends TypeDetector {
         this.detectTypeInfo();
     }
 
+    /**
+     * Detect type information of {@link FixedObject}
+     */
     private void detectTypeInfo() {
         this.name = CommonUtil.isNotBlank(fixedObject.label()) ? fixedObject.label() : type.getName();
         this.label = name + " object";
@@ -119,6 +122,11 @@ public abstract class TypeInfoSetter extends TypeDetector {
         }
     }
 
+    /**
+     * Called when class type changing
+     *
+     * @param newType new class type
+     */
     @Override
     public void detectedNewType(Class<?> newType) {
         FixedObject fixedObject = type.getAnnotation(FixedObject.class);
@@ -131,6 +139,9 @@ public abstract class TypeInfoSetter extends TypeDetector {
         }
     }
 
+    /**
+     * After final class type detected
+     */
     @Override
     public void afterTypeDetected() {
         this.detectFields(type);

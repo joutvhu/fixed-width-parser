@@ -1,6 +1,8 @@
 package com.joutvhu.fixedwidth.parser.convert;
 
 /**
+ * Validation type enum, before read or after write
+ *
  * @author Giao Ho
  * @since 1.0.0
  */
