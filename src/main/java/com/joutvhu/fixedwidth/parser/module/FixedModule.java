@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * Fixed module.
+ * Management readers, writers and validators
+ *
  * @author Giao Ho
  * @since 1.0.0
  */
@@ -42,6 +45,12 @@ public abstract class FixedModule {
         }
     }
 
+    /**
+     * Merge another module to this module
+     *
+     * @param module another module
+     * @return this
+     */
     public FixedModule merge(FixedModule module) {
         readers.addAll(module.readers);
         writers.addAll(module.writers);
@@ -49,6 +58,16 @@ public abstract class FixedModule {
         return this;
     }
 
+    /**
+     * Create readers, writers or validators by class types
+     *
+     * @param handlers {@link Set} of class types
+     * @param info     the {@link FixedTypeInfo}
+     * @param strategy the {@link FixedParseStrategy}
+     * @param takeOne  create only one instance
+     * @param <T>      result type
+     * @return list of reader, writer or validator
+     */
     private <T extends ParsingApprover> List<T> createHandlersBy(Set<Class<? extends T>> handlers, FixedTypeInfo info, FixedParseStrategy strategy, boolean takeOne) {
         List<T> result = new ArrayList<>();
         for (Class<? extends T> handlerClass : handlers) {
@@ -65,20 +84,50 @@ public abstract class FixedModule {
         return result;
     }
 
+    /**
+     * Create one reader, writer or validator by class types
+     *
+     * @param handlers {@link Set} of class types
+     * @param info     the {@link FixedTypeInfo}
+     * @param strategy the {@link FixedParseStrategy}
+     * @param <T>      result type
+     * @return reader, writer or validator
+     */
     private <T extends ParsingApprover> T createHandlerBy(Set<Class<? extends T>> handlers,
                                                           FixedTypeInfo info, FixedParseStrategy strategy) {
         List<T> result = createHandlersBy(handlers, info, strategy, true);
         return result.isEmpty() ? null : result.get(0);
     }
 
+    /**
+     * Create reader by {@link FixedTypeInfo} and {@link FixedParseStrategy}
+     *
+     * @param info     the {@link FixedTypeInfo}
+     * @param strategy the {@link FixedParseStrategy}
+     * @return reader
+     */
     public final FixedWidthReader<Object> createReaderBy(FixedTypeInfo info, FixedParseStrategy strategy) {
         return createHandlerBy(readers, info, strategy);
     }
 
+    /**
+     * Create writer by {@link FixedTypeInfo} and {@link FixedParseStrategy}
+     *
+     * @param info     the {@link FixedTypeInfo}
+     * @param strategy the {@link FixedParseStrategy}
+     * @return writer
+     */
     public final FixedWidthWriter<Object> createWriterBy(FixedTypeInfo info, FixedParseStrategy strategy) {
         return createHandlerBy(writers, info, strategy);
     }
 
+    /**
+     * Create validators by {@link FixedTypeInfo} and {@link FixedParseStrategy}
+     *
+     * @param info     the {@link FixedTypeInfo}
+     * @param strategy the {@link FixedParseStrategy}
+     * @return validators
+     */
     public final List<FixedWidthValidator> createValidatorsBy(FixedTypeInfo info, FixedParseStrategy strategy) {
         return createHandlersBy(validators, info, strategy, false);
     }

@@ -46,6 +46,7 @@ public class ModelCTests {
         ModelC model = fixedParser.parse("BfhgtnoT", ModelC.class);
         Assertions.assertNotNull(model);
         Assertions.assertEquals(1, model.getListMap().size());
+        Assertions.assertEquals(2, model.getListMap().get(0).size());
         Assertions.assertEquals("hg", model.getListMap().get(0).get("Bf"));
         Assertions.assertEquals("oT", model.getListMap().get(0).get("tn"));
     }

@@ -5,6 +5,8 @@ import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 
 /**
+ * Parsing approver
+ *
  * @author Giao Ho
  * @since 1.0.0
  */
@@ -17,6 +19,9 @@ public abstract class ParsingApprover {
         this.strategy = strategy;
     }
 
+    /**
+     * Can't use this class to read, write or validate fixed width string
+     */
     protected void reject() {
         throw new FixedException("Can't use this class.");
     }

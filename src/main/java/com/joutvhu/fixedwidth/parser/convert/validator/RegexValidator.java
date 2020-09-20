@@ -10,6 +10,8 @@ import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 
 /**
+ * Validator for {@link FixedRegex} annotation
+ *
  * @author Giao Ho
  * @since 1.0.0
  */
@@ -23,7 +25,7 @@ public class RegexValidator extends FixedWidthValidator {
     }
 
     @Override
-    public boolean validate(String value, ValidationType type) {
+    public void validate(String value, ValidationType type) {
         if (CommonUtil.isNotBlank(fixedRegex.regex()) && !Pattern.matches(fixedRegex.regex(), value)) {
             String message = getMessage(fixedRegex.message(),
                     fixedRegex.nativeMessage(),
@@ -31,6 +33,5 @@ public class RegexValidator extends FixedWidthValidator {
                     fixedRegex.regex());
             throw new InvalidException(message);
         }
-        return true;
     }
 }

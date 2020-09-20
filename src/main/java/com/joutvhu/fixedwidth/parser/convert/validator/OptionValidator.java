@@ -12,6 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 /**
+ * Validator for {@link FixedOption} annotation
+ *
  * @author Giao Ho
  * @since 1.0.0
  */
@@ -25,7 +27,7 @@ public class OptionValidator extends FixedWidthValidator {
     }
 
     @Override
-    public boolean validate(String value, ValidationType type) {
+    public void validate(String value, ValidationType type) {
         if (CommonUtil.isNotBlank(fixedOption.options())) {
             List<String> options = CommonUtil.listOf(fixedOption.options());
             if (!options.contains(value)) {
@@ -36,6 +38,5 @@ public class OptionValidator extends FixedWidthValidator {
                 throw new InvalidException(message);
             }
         }
-        return true;
     }
 }

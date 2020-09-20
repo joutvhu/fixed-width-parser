@@ -4,6 +4,9 @@ import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 
 /**
+ * Fixed width writer
+ *
+ * @param <T> input type
  * @author Giao Ho
  * @since 1.0.0
  */

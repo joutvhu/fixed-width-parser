@@ -12,6 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 /**
+ * Fixed width string serialization and deserialization
+ *
  * @author Giao Ho
  * @since 1.0.0
  */
@@ -22,6 +24,13 @@ public class FixedParseStrategy {
         this.module = module;
     }
 
+    /**
+     * Validate string value with type information form {@link FixedTypeInfo}
+     *
+     * @param info  {@link FixedTypeInfo}
+     * @param value string
+     * @param type  is {@link ValidationType}, before read or after write.
+     */
     public void validate(FixedTypeInfo info, String value, ValidationType type) {
         List<FixedWidthValidator> validators = module.createValidatorsBy(info, this);
         for (FixedWidthValidator validator : validators) {
@@ -29,6 +38,13 @@ public class FixedParseStrategy {
         }
     }
 
+    /**
+     * Read value from {@link StringAssembler} with type information form {@link FixedTypeInfo}
+     *
+     * @param info      {@link FixedTypeInfo}
+     * @param assembler {@link StringAssembler}
+     * @return object value
+     */
     public Object read(FixedTypeInfo info, StringAssembler assembler) {
         info.detectTypeWith(assembler);
         assembler.trim(info);
@@ -49,6 +65,13 @@ public class FixedParseStrategy {
         throw new FixedException("Reader not found.");
     }
 
+    /**
+     * Write object value to string with type information form {@link FixedTypeInfo}
+     *
+     * @param info  {@link FixedTypeInfo}
+     * @param value object
+     * @return string value
+     */
     public String write(FixedTypeInfo info, Object value) {
         if (value == null) {
             if (info.require)

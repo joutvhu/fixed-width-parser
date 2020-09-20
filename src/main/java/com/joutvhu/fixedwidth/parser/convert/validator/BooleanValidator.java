@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Boolean validator
+ *
  * @author Giao Ho
  * @since 1.0.0
  */
@@ -31,7 +33,7 @@ public class BooleanValidator extends FormatValidator implements BooleanHelper {
     }
 
     @Override
-    public boolean validate(String value, ValidationType type) {
+    public void validate(String value, ValidationType type) {
         if (splitOptions(fixedFormat.format()) && !options.contains(value)) {
             String message = getMessage(fixedFormat.message(),
                     fixedFormat.nativeMessage(),
@@ -39,6 +41,5 @@ public class BooleanValidator extends FormatValidator implements BooleanHelper {
                     "\"" + StringUtils.join(options, "\", \"") + "\"");
             throw new InvalidException(message);
         }
-        return true;
     }
 }

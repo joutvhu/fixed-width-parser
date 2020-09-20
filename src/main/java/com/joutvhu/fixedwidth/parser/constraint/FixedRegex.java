@@ -3,6 +3,8 @@ package com.joutvhu.fixedwidth.parser.constraint;
 import java.lang.annotation.*;
 
 /**
+ * Setups constraint for value by regular expression
+ *
  * @author Giao Ho
  * @since 1.0.0
  */
