@@ -2,6 +2,7 @@ package com.joutvhu.fixedwidth.parser.convert.writer;
 
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthWriter;
 import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
+import com.joutvhu.fixedwidth.parser.support.FixedStringAssembler;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.support.StringAssembler;
 
@@ -26,7 +27,7 @@ public class CollectionWriter extends FixedWidthWriter<Collection<?>> {
 
     @Override
     public String write(Collection<?> value) {
-        StringAssembler assembler = StringAssembler.instance();
+        StringAssembler assembler = FixedStringAssembler.instance();
         for (Object item : value) {
             assembler.set(start, length, strategy.write(valueInfo, item));
             start += length;

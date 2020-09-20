@@ -23,7 +23,7 @@ public class DateReader extends FixedWidthReader<Object> {
     @Override
     public Object read(StringAssembler assembler) {
         Class<?> type = info.getType();
-        String value = assembler.get(info);
+        String value = assembler.getValue();
         String format = info.getAnnotationValue(FixedFormat.class, "format", String.class);
 
         if (CommonUtil.isNotBlank(value))

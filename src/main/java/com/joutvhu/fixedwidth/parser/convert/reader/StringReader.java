@@ -21,7 +21,7 @@ public class StringReader extends FixedWidthReader<Object> {
 
     @Override
     public Object read(StringAssembler assembler) {
-        String value = assembler.get(info);
+        String value = assembler.getValue();
         if (!String.class.equals(info.getType())) {
             if (info.getLength() != 1)
                 throw new ParserException(info

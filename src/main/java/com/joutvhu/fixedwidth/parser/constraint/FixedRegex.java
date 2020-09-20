@@ -30,5 +30,5 @@ public @interface FixedRegex {
      *
      * @return is native message
      */
-    boolean nativeMessage() default true;
+    boolean nativeMessage() default false;
 }

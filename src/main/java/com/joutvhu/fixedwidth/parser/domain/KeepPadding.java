@@ -1,14 +1,13 @@
 package com.joutvhu.fixedwidth.parser.domain;
 
 /**
- * Padding alignment options
+ * Keep padding options
  *
  * @author Giao Ho
  * @since 1.0.0
  */
-public enum Alignment {
+public enum KeepPadding {
     AUTO,
-    LEFT,
-    CENTER,
-    RIGHT
+    KEEP,
+    DROP
 }

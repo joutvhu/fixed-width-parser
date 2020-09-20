@@ -4,6 +4,7 @@ import com.joutvhu.fixedwidth.parser.module.DefaultModule;
 import com.joutvhu.fixedwidth.parser.module.FixedModule;
 import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
+import com.joutvhu.fixedwidth.parser.support.FixedStringAssembler;
 import com.joutvhu.fixedwidth.parser.support.StringAssembler;
 
 /**
@@ -53,7 +54,7 @@ public class FixedParser {
      * @return object
      */
     public <T> T parse(String line, Class<T> type) {
-        StringAssembler stringAssembler = StringAssembler.of(line);
+        StringAssembler stringAssembler = FixedStringAssembler.of(line);
         FixedTypeInfo fixedTypeInfo = FixedTypeInfo.of(type);
         return (T) this.strategy.read(fixedTypeInfo, stringAssembler);
     }

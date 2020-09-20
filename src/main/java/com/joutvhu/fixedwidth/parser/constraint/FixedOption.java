@@ -30,5 +30,5 @@ public @interface FixedOption {
      *
      * @return is native message
      */
-    boolean nativeMessage() default true;
+    boolean nativeMessage() default false;
 }
