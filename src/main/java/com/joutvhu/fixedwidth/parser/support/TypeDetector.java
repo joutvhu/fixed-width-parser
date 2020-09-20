@@ -4,7 +4,6 @@ import com.joutvhu.fixedwidth.parser.annotation.FixedField;
 import com.joutvhu.fixedwidth.parser.annotation.FixedObject;
 import com.joutvhu.fixedwidth.parser.annotation.FixedParam;
 import com.joutvhu.fixedwidth.parser.util.Assert;
-import com.joutvhu.fixedwidth.parser.util.FixedHelper;
 import com.joutvhu.fixedwidth.parser.util.ReflectionUtil;
 import lombok.Getter;
 
@@ -21,7 +20,7 @@ import java.lang.reflect.Type;
  * @since 1.0.0
  */
 @Getter
-public abstract class TypeDetector {
+public abstract class TypeDetector implements FinalTypeFinder {
     protected Field field;
     protected Class<?> type;
     protected AnnotatedType annotatedType;
@@ -130,7 +129,8 @@ public abstract class TypeDetector {
     public final Class<?> detectTypeWith(StringAssembler assembler) {
         if (!finalType) {
             if (!type.isPrimitive() && fixedObject != null) {
-                Class<?> newType = FixedHelper.detectType(assembler, type);
+                Class<?> newType = detectFinalType(assembler, type);
+                checkFinalClass(newType);
                 if (!type.equals(newType)) {
                     this.detectedNewType(newType);
                     this.type = newType;

@@ -1,17 +1,16 @@
 package com.joutvhu.fixedwidth.parser.util;
 
-import com.google.re2j.Pattern;
-import com.joutvhu.fixedwidth.parser.annotation.FixedField;
-import com.joutvhu.fixedwidth.parser.annotation.FixedObject;
 import com.joutvhu.fixedwidth.parser.exception.FixedException;
-import com.joutvhu.fixedwidth.parser.support.StringAssembler;
 import lombok.experimental.UtilityClass;
+import org.reflections.Reflections;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.Modifier;
+import java.time.Instant;
+import java.time.temporal.Temporal;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Giao Ho
@@ -19,6 +18,26 @@ import java.util.List;
  */
 @UtilityClass
 public class FixedHelper {
+    private Map<Class<?>, Class<?>> CLASS_MAP = CommonUtil.mapOfEntries(
+            CommonUtil.mapEntryOf(Collection.class, ArrayList.class),
+            CommonUtil.mapEntryOf(AbstractCollection.class, ArrayList.class),
+            CommonUtil.mapEntryOf(AbstractList.class, ArrayList.class),
+            CommonUtil.mapEntryOf(List.class, ArrayList.class),
+            CommonUtil.mapEntryOf(Set.class, HashSet.class),
+            CommonUtil.mapEntryOf(AbstractSet.class, HashSet.class),
+            CommonUtil.mapEntryOf(SortedSet.class, TreeSet.class),
+            CommonUtil.mapEntryOf(NavigableSet.class, TreeSet.class),
+            CommonUtil.mapEntryOf(Queue.class, LinkedList.class),
+            CommonUtil.mapEntryOf(Deque.class, LinkedList.class),
+            CommonUtil.mapEntryOf(AbstractSequentialList.class, LinkedList.class),
+            CommonUtil.mapEntryOf(Map.class, HashMap.class),
+            CommonUtil.mapEntryOf(AbstractMap.class, HashMap.class),
+            CommonUtil.mapEntryOf(SortedMap.class, TreeMap.class),
+            CommonUtil.mapEntryOf(NavigableMap.class, TreeMap.class),
+            CommonUtil.mapEntryOf(Dictionary.class, Hashtable.class),
+            CommonUtil.mapEntryOf(Temporal.class, Instant.class)
+    );
+
     /**
      * New instance by object type.
      *
@@ -39,76 +58,54 @@ public class FixedHelper {
     }
 
     /**
-     * Get all fixed fields of a object type
+     * Select a perfect type of a given type
      *
-     * @param type class
-     * @return all fixed width fields
+     * @param type supper-class type
+     * @return sub-class type
      */
-    public List<Field> getFixedFields(Class<?> type) {
-        List<Field> fields = new ArrayList<>();
-        Class<?> superType = type.getSuperclass();
-        if (superType != null) fields.addAll(getFixedFields(superType));
-        for (Field field : type.getDeclaredFields()) {
-            FixedField fixedField = field.getAnnotation(FixedField.class);
-            if (fixedField != null) fields.add(field);
-        }
-        return fields;
+    public Class<?> selectSubTypeOf(Class<?> type) {
+        int modifiers = type.getModifiers();
+        if (!Modifier.isInterface(modifiers) && !Modifier.isAbstract(modifiers))
+            return type;
+
+        if (CLASS_MAP.containsKey(type))
+            return CLASS_MAP.get(type);
+
+        List<?> sub = getNormalTypesOf(type, "java.util.", "java.", "javax.");
+        if (CommonUtil.isNotBlank(sub))
+            return (Class<?>) sub.get(0);
+        return null;
     }
 
     /**
-     * Get final type of a string by supper FixedObject
+     * Gets all sub-types in hierarchy of a given type
      *
-     * @param assembler is {@link StringAssembler}
-     * @param type      of supper {@link FixedObject}
-     * @return final class
+     * @param type        supper-class type
+     * @param firstPrefix is prefixes are ranked first on the list
+     * @param <T>         supper type
+     * @return list of sub-types
      */
-    public Class<?> detectType(StringAssembler assembler, Class<?> type) {
-        FixedObject fixedObject = type.getAnnotation(FixedObject.class);
-        if (fixedObject != null && CommonUtil.isNotBlank(fixedObject.subTypes())) {
-            for (FixedObject.Type subType : fixedObject.subTypes()) {
-                if (type.isAssignableFrom(subType.value())) {
-                    if (checkSubType(subType, valueOf(assembler, type, subType)))
-                        return detectType(assembler, subType.value());
-                } else throw new UnsupportedOperationException(
-                        String.format("%s class is not a subclass of %s class.",
-                                subType.value().getName(), type.getName()));
-            }
-            if (!void.class.equals(fixedObject.defaultSubType())) {
-                if (type.isAssignableFrom(fixedObject.defaultSubType()))
-                    return detectType(assembler, fixedObject.defaultSubType());
-                else throw new UnsupportedOperationException(
-                        String.format("%s class is not a subclass of %s class.",
-                                fixedObject.defaultSubType().getName(), type.getName()));
-            }
-        }
-        return type;
-    }
-
-    private boolean checkSubType(FixedObject.Type subType, String value) {
-        if (CommonUtil.isNotBlank(subType.oneOf()) && CommonUtil.listOf(subType.oneOf()).contains(value))
-            return true;
-        if (CommonUtil.isNotBlank(subType.matchWith()) && Pattern.matches(subType.matchWith(), value))
-            return true;
-        return false;
-    }
-
-    public String valueOf(StringAssembler assembler, Class<?> type, FixedObject.Type subType) {
-        if (subType.length() > 0)
-            return assembler.get(subType.start(), subType.length());
-        else if (CommonUtil.isNotBlank(subType.prop()))
-            return valueOf(assembler, type, subType.prop());
-        else return null;
-    }
-
-    public String valueOf(StringAssembler assembler, Class<?> type, String prop) {
-        for (Field field : getFixedFields(type)) {
-            if (field.getName().equals(prop)) {
-                FixedField fixedField = field.getAnnotation(FixedField.class);
-                if (fixedField != null)
-                    return assembler.get(fixedField.start(), fixedField.length());
-                else throw new UnsupportedOperationException(String.format("%s field is not a fixed field.", prop));
-            }
-        }
-        throw new NullPointerException(String.format("Can't found %s field.", prop));
+    public <T> List<Class<?>> getNormalTypesOf(Class<T> type, String... firstPrefix) {
+        return new Reflections()
+                .getSubTypesOf(type)
+                .stream()
+                .filter(c -> {
+                    Constructor<?> constructor = IgnoreError.execute(() -> c.getConstructor());
+                    if (constructor == null) return false;
+                    int mod = c.getModifiers();
+                    return Modifier.isPublic(mod) && !Modifier.isInterface(mod) && !Modifier.isAbstract(mod);
+                })
+                .sorted((o1, o2) -> {
+                    String n1 = o1.getName();
+                    String n2 = o2.getName();
+                    for (String p : firstPrefix) {
+                        boolean j1 = n1.startsWith(p);
+                        boolean j2 = n2.startsWith(p);
+                        if (j1 && !j2) return -1;
+                        if (!j1 && j2) return 1;
+                    }
+                    return 0;
+                })
+                .collect(Collectors.toList());
     }
 }

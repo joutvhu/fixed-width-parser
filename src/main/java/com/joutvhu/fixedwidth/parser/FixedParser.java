@@ -3,8 +3,8 @@ package com.joutvhu.fixedwidth.parser;
 import com.joutvhu.fixedwidth.parser.module.DefaultModule;
 import com.joutvhu.fixedwidth.parser.module.FixedModule;
 import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
-import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.support.FixedStringAssembler;
+import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.support.StringAssembler;
 
 /**
@@ -50,7 +50,7 @@ public class FixedParser {
      *
      * @param line fixed-width string
      * @param type class type of result
-     * @param <T> type of result
+     * @param <T>  type of result
      * @return object
      */
     public <T> T parse(String line, Class<T> type) {
@@ -63,7 +63,7 @@ public class FixedParser {
      * Export object to fixed-width string
      *
      * @param object value
-     * @param <T> object type
+     * @param <T>    object type
      * @return fixed-width string
      */
     public <T> String export(T object) {

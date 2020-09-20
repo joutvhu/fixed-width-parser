@@ -5,7 +5,10 @@ import com.joutvhu.fixedwidth.parser.annotation.FixedObject;
 import com.joutvhu.fixedwidth.parser.domain.Alignment;
 import com.joutvhu.fixedwidth.parser.domain.KeepPadding;
 import com.joutvhu.fixedwidth.parser.domain.Padding;
-import com.joutvhu.fixedwidth.parser.util.*;
+import com.joutvhu.fixedwidth.parser.util.Assert;
+import com.joutvhu.fixedwidth.parser.util.CommonUtil;
+import com.joutvhu.fixedwidth.parser.util.ReflectionUtil;
+import com.joutvhu.fixedwidth.parser.util.TypeConstants;
 import lombok.Getter;
 
 import java.lang.reflect.AnnotatedParameterizedType;
@@ -141,8 +144,7 @@ public abstract class TypeInfoSetter extends TypeDetector {
      */
     private void detectFields(Class<?> type) {
         this.elementTypeInfo = new ArrayList<>();
-        FixedHelper
-                .getFixedFields(type)
+        this.getFixedFields(type)
                 .stream()
                 .map(FixedTypeInfo::of)
                 .forEach(i -> this.elementTypeInfo.add(i));

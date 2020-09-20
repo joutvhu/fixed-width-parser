@@ -1,7 +1,6 @@
 package com.joutvhu.fixedwidth.parser.support;
 
 import com.joutvhu.fixedwidth.parser.domain.Alignment;
-import com.joutvhu.fixedwidth.parser.domain.Padding;
 import com.joutvhu.fixedwidth.parser.util.Assert;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import org.apache.commons.lang3.StringUtils;

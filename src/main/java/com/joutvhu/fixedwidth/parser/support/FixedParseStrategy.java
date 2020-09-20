@@ -34,7 +34,7 @@ public class FixedParseStrategy {
         assembler.trim(info);
         if (assembler.isBlank(info)) {
             if (info.require)
-                throw new NullPointerException(info.buildMessage("{label} can\'t be blank."));
+                throw new NullPointerException(info.buildMessage("{title} can\'t be blank."));
             return null;
         }
         validate(info, assembler.getValue(), ValidationType.BEFORE_READ);
@@ -43,7 +43,7 @@ public class FixedParseStrategy {
         if (reader != null) {
             Object result = reader.read(assembler);
             if (result == null && info.require)
-                throw new NullPointerException(info.buildMessage("{title} can\'t be null."));
+                throw new NullPointerException(info.buildMessage("{label} can\'t be null."));
             return result;
         }
         throw new FixedException("Reader not found.");
@@ -66,7 +66,7 @@ public class FixedParseStrategy {
 
             if (assembler.isBlank(info)) {
                 if (info.require)
-                    throw new NullPointerException(info.buildMessage("{label} can\'t be blank."));
+                    throw new NullPointerException(info.buildMessage("{title} can\'t be blank."));
             } else validate(info, assembler.getValue(), ValidationType.AFTER_WRITE);
             return assembler.getValue();
         }
