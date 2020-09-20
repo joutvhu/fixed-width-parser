@@ -36,7 +36,7 @@ public class BooleanValidator extends FormatValidator implements BooleanHelper {
             String message = getMessage(fixedFormat.message(),
                     fixedFormat.nativeMessage(),
                     "{title} should be equal to one of the following value(s): {0}.",
-                    StringUtils.join(options, ", "));
+                    "\"" + StringUtils.join(options, "\", \"") + "\"");
             throw new InvalidException(message);
         }
         return true;
