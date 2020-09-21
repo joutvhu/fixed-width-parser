@@ -3,7 +3,7 @@ package com.joutvhu.fixedwidth.parser.convert.reader;
 import com.joutvhu.fixedwidth.parser.constraint.FixedFormat;
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthReader;
 import com.joutvhu.fixedwidth.parser.convert.general.NumberHelper;
-import com.joutvhu.fixedwidth.parser.exception.InvalidException;
+import com.joutvhu.fixedwidth.parser.exception.ParserException;
 import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.support.StringAssembler;
@@ -32,7 +32,7 @@ public class NumberReader extends FixedWidthReader<Object> implements NumberHelp
             try {
                 result = ObjectUtil.parseNumber(value, type, format);
             } catch (Exception e) {
-                throw new InvalidException(info.buildMessage("{title} is not a number."));
+                throw new ParserException(info.buildMessage("{title} is not a number."));
             }
         }
         if (result == null && info.isRequire())
