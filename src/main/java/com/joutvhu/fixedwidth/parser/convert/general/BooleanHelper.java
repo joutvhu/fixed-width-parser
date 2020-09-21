@@ -4,6 +4,8 @@ import com.google.re2j.Pattern;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 
 /**
+ * Split boolean from options
+ *
  * @author Giao Ho
  * @since 1.0.0
  */
