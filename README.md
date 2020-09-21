@@ -11,13 +11,13 @@ Fixed Width Parser is a small library that purpose is:
 - Add dependency
 
 ```groovy
-compile "com.github.joutvhu:fixed-width-parser:1.0.0"
+compile "com.github.joutvhu:fixed-width-parser:1.0.1"
 ```
 
 ```xml
 <dependency>
     <groupId>com.github.joutvhu</groupId>
     <artifactId>fixed-width-parser</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
