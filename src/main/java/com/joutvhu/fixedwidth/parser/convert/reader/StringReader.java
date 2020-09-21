@@ -1,12 +1,12 @@
 package com.joutvhu.fixedwidth.parser.convert.reader;
 
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthReader;
+import com.joutvhu.fixedwidth.parser.exception.ParserException;
 import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.support.StringAssembler;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import com.joutvhu.fixedwidth.parser.util.TypeConstants;
-import jdk.nashorn.internal.runtime.ParserException;
 
 /**
  * @author Giao Ho

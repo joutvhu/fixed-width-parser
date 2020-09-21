@@ -2,10 +2,10 @@ package com.joutvhu.fixedwidth.parser.convert.writer;
 
 import com.joutvhu.fixedwidth.parser.constraint.FixedFormat;
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthWriter;
+import com.joutvhu.fixedwidth.parser.convert.general.NumberHelper;
 import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
-import com.joutvhu.fixedwidth.parser.util.TypeConstants;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
@@ -16,11 +16,10 @@ import java.text.DecimalFormat;
  * @author Giao Ho
  * @since 1.0.0
  */
-public class NumberWriter extends FixedWidthWriter<Object> {
+public class NumberWriter extends FixedWidthWriter<Object> implements NumberHelper {
     public NumberWriter(FixedTypeInfo info, FixedParseStrategy strategy) {
         super(info, strategy);
-        Class<?> type = info.getType();
-        if (!TypeConstants.INTEGER_NUMBER_TYPES.contains(type) && !TypeConstants.DECIMAL_NUMBER_TYPES.contains(type))
+        if (!isNumeric(info, strategy))
             this.reject();
     }
 
@@ -37,5 +36,9 @@ public class NumberWriter extends FixedWidthWriter<Object> {
             decimalFormat.setParseBigDecimal(true);
             return decimalFormat.format(value);
         }
+    }
+
+    @Override
+    public void setIsDecimal(boolean isDecimal) {
     }
 }
