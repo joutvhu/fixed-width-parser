@@ -17,7 +17,7 @@ import java.text.ParseException;
  * Numeric validator
  *
  * @author Giao Ho
- * @since 1.0.0
+ * @since 1.0.1
  */
 public class NumberValidator extends FixedWidthValidator implements NumberHelper {
     private boolean isDecimal;

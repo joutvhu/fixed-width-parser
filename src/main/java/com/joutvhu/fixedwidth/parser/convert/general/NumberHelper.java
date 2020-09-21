@@ -8,7 +8,7 @@ import com.joutvhu.fixedwidth.parser.util.TypeConstants;
  * Check field is number field
  *
  * @author Giao Ho
- * @since 1.0.0
+ * @since 1.0.1
  */
 public interface NumberHelper {
     default boolean isNumeric(FixedTypeInfo info, FixedParseStrategy strategy) {

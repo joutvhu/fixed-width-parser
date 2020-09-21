@@ -1,5 +1,11 @@
 package com.joutvhu.fixedwidth.parser.exception;
 
+/**
+ * Find class type exception
+ *
+ * @author Giao Ho
+ * @since 1.0.0
+ */
 public class FindTypeException extends FixedException {
     private static final long serialVersionUID = 6135055750143821303L;
 

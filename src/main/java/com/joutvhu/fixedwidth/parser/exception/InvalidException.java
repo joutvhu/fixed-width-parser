@@ -1,6 +1,8 @@
 package com.joutvhu.fixedwidth.parser.exception;
 
 /**
+ * Fixed width invalid exceptions
+ *
  * @author Giao Ho
  * @since 1.0.0
  */
