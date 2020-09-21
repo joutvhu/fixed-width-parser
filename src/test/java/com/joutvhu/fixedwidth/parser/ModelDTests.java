@@ -1,6 +1,5 @@
 package com.joutvhu.fixedwidth.parser;
 
-import com.joutvhu.fixedwidth.parser.exception.InvalidException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
