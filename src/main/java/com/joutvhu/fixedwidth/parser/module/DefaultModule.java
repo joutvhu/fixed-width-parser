@@ -1,10 +1,7 @@
 package com.joutvhu.fixedwidth.parser.module;
 
 import com.joutvhu.fixedwidth.parser.convert.reader.*;
-import com.joutvhu.fixedwidth.parser.convert.validator.BooleanValidator;
-import com.joutvhu.fixedwidth.parser.convert.validator.DateValidator;
-import com.joutvhu.fixedwidth.parser.convert.validator.OptionValidator;
-import com.joutvhu.fixedwidth.parser.convert.validator.RegexValidator;
+import com.joutvhu.fixedwidth.parser.convert.validator.*;
 import com.joutvhu.fixedwidth.parser.convert.writer.*;
 
 /**
@@ -32,6 +29,7 @@ public class DefaultModule extends FixedModule {
 
                 RegexValidator.class,
                 OptionValidator.class,
+                NumberValidator.class,
                 DateValidator.class,
                 BooleanValidator.class
         );
