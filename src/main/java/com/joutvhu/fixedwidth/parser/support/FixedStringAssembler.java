@@ -15,7 +15,7 @@ public class FixedStringAssembler implements StringAssembler {
     private String value;
 
     public FixedStringAssembler(String value) {
-        Assert.notNull(value, "String value can't be null.");
+        Assert.notNull(value, "String value cannot be null.");
         this.value = value;
     }
 

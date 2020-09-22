@@ -26,7 +26,7 @@ public class DateValidator extends FormatValidator {
                 !CommonUtil.isDateValid(value, fixedFormat.format(), true)) {
             String message = getMessage(fixedFormat.message(),
                     fixedFormat.nativeMessage(),
-                    "{title} doesn't match the {0} format.",
+                    "{title} does not match the {0} format.",
                     fixedFormat.format());
             throw new InvalidException(message);
         }

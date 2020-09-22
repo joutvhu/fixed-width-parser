@@ -29,7 +29,7 @@ public class RegexValidator extends FixedWidthValidator {
         if (CommonUtil.isNotBlank(fixedRegex.regex()) && !Pattern.matches(fixedRegex.regex(), value)) {
             String message = getMessage(fixedRegex.message(),
                     fixedRegex.nativeMessage(),
-                    "{title} doesn't match the /{0}/ regex.",
+                    "{title} does not match the /{0}/ regex.",
                     fixedRegex.regex());
             throw new InvalidException(message);
         }

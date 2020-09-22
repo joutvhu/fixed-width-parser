@@ -72,9 +72,9 @@ public abstract class TypeInfoSetter extends TypeDetector {
                 fixedField.label() : field.getName();
         this.label = name + " field";
 
-        Assert.isTrue(fixedField.start() >= 0, "Start position of field can't less than 0.");
+        Assert.isTrue(fixedField.start() >= 0, "Start position of field cannot less than 0.");
         this.start = fixedField.start();
-        Assert.isTrue(fixedField.length() >= 0, "Length of field can't less than 0.");
+        Assert.isTrue(fixedField.length() >= 0, "Length of field cannot less than 0.");
         this.length = fixedField.length();
 
         if (TypeConstants.NOT_NULL_TYPES.contains(type))
@@ -102,7 +102,7 @@ public abstract class TypeInfoSetter extends TypeDetector {
         this.name = CommonUtil.isNotBlank(fixedObject.label()) ? fixedObject.label() : type.getName();
         this.label = name + " object";
 
-        Assert.isTrue(fixedObject.length() >= 0, "Length of object can't less than 0.");
+        Assert.isTrue(fixedObject.length() >= 0, "Length of object cannot less than 0.");
         this.length = fixedObject.length();
 
         if (SourceType.FIELD_TYPE.equals(getSourceType()) || SourceType.PARAM_TYPE.equals(getSourceType())) {
@@ -132,7 +132,7 @@ public abstract class TypeInfoSetter extends TypeDetector {
         FixedObject fixedObject = type.getAnnotation(FixedObject.class);
         if (fixedObject != null) {
             this.fixedObject = fixedObject;
-            Assert.isTrue(fixedObject.length() >= 0, "Length of object can't less than 0.");
+            Assert.isTrue(fixedObject.length() >= 0, "Length of object cannot less than 0.");
             if (TypeConstants.NOT_NULL_TYPES.contains(type))
                 this.require = true;
             this.detectTypeInfo();

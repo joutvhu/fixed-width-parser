@@ -23,6 +23,6 @@ public abstract class ParsingApprover {
      * Can't use this class to read, write or validate fixed width string
      */
     protected void reject() {
-        throw new FixedException("Can't use this class.");
+        throw new FixedException("Cannot use this class.");
     }
 }

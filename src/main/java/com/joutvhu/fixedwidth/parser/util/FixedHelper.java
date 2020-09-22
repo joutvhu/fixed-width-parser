@@ -50,7 +50,7 @@ public class FixedHelper {
             Constructor<?> constructor = type.getConstructor();
             if (constructor != null) return (T) constructor.newInstance();
             else throw new UnsupportedOperationException(String
-                    .format("%s class don't have a no-arg constructor.", type.getName()));
+                    .format("%s class do not have a no-arg constructor.", type.getName()));
         } catch (NoSuchMethodException | SecurityException | InstantiationException |
                 IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             throw new FixedException(e);
