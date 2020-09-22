@@ -39,7 +39,7 @@ public class NumberValidator extends FixedWidthValidator implements NumberHelper
                 decimalFormat.parse(value);
             } catch (ParseException e) {
                 String message = getMessage(fixedFormat.message(), fixedFormat.nativeMessage(),
-                        "{title} with value \"{0}\" doesn't match the {1} format.",
+                        "{title} with value \"{0}\" does not match the {1} format.",
                         value, fixedFormat.format());
                 throw new InvalidException(message);
             }
@@ -47,7 +47,7 @@ public class NumberValidator extends FixedWidthValidator implements NumberHelper
             String regex = isDecimal ? "^[0-9]+(\\.[0-9]+)?$" : "^[0-9]+$";
             if (!Pattern.matches(regex, value))
                 throw new InvalidException(info.buildMessage("{title} with value \"{0}\" is not a {1}.",
-                        value, isDecimal ? "number" : "integer number"));
+                        value, isDecimal ? "number" : "integer"));
         }
     }
 

@@ -83,7 +83,7 @@ public interface FinalTypeFinder {
         if (!Modifier.isInterface(modifiers) && !Modifier.isAbstract(modifiers))
             return type;
         else {
-            String message = String.format("Can't find the final class of %s.", type.getName());
+            String message = String.format("Cannot find the final class of %s.", type.getName());
             if (Modifier.isInterface(modifiers))
                 message += String.format(" The %s is a interface.", type.getName());
             if (Modifier.isAbstract(modifiers))
@@ -140,6 +140,6 @@ public interface FinalTypeFinder {
                 else throw new UnsupportedOperationException(String.format("%s field is not a fixed field.", prop));
             }
         }
-        throw new NullPointerException(String.format("Can't found %s field.", prop));
+        throw new NullPointerException(String.format("Cannot found %s field.", prop));
     }
 }

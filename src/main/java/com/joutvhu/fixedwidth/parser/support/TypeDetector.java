@@ -40,7 +40,7 @@ public abstract class TypeDetector implements FinalTypeFinder {
 
         this.fixedObject = getAnnotation(FixedObject.class);
         Assert.notNull(fixedObject, String.format("The %s class must be annotated with FixedObject.", type.getName()));
-        Assert.isTrue(fixedObject.length() >= 0, "Length of object can't less than 0.");
+        Assert.isTrue(fixedObject.length() >= 0, "Length of object cannot less than 0.");
 
         this.sourceType = SourceType.CLASS_TYPE;
     }
@@ -62,9 +62,9 @@ public abstract class TypeDetector implements FinalTypeFinder {
 
         this.fixedParam = getAnnotation(FixedParam.class);
         Assert.notNull(fixedParam, String.format("The %s type must be annotated with FixedParam.", t.getTypeName()));
-        Assert.isTrue(fixedParam.length() >= 0, "Length of param can't less than 0.");
+        Assert.isTrue(fixedParam.length() >= 0, "Length of param cannot less than 0.");
         this.fixedObject = getAnnotation(FixedObject.class);
-        Assert.isTrue(fixedObject == null || fixedObject.length() >= 0, "Length of object can't less than 0.");
+        Assert.isTrue(fixedObject == null || fixedObject.length() >= 0, "Length of object cannot less than 0.");
 
         this.sourceType = SourceType.PARAM_TYPE;
     }
