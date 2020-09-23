@@ -40,16 +40,65 @@ The parser will ignore any fields that are not annotated by this annotation.
 
 - `@FixedParam` will be used to annotate the generic params. Ex: `List<@FixedParam(length = 5) String>`.
 
+In addition to the annotations to describe the fixed width fields,
+the _fixed-width-parser_ provides the following constraint annotations to validate fixed width value.
+
+- `@FixedFormat` is used to check for formatting and help parse with certain types of fields like `date`, `number`, `boolean`.
+
+- `@FixedOption` is used to ensure that the fixed width string is one of the specified options.
+
+- `@FixedRegex` is used to check that the fixed width string must match a regular expression.
+
+See the following example:
+
+```java
+@FixedObject(subTypes = {
+    @FixedObject.Type(value = Food.class, prop = "id", matchWith = "^[0-5]")
+}, defaultSubType = Other.class)
+public class Product {
+    @FixedField(label = "Product Id", start = 0, length = 5)
+    private Long id;
+
+    @FixedField(label = "Product Name", start = 5, length = 12)
+    private String name;
+}
+
+@FixedObject
+public class Food extends Product {
+    @FixedFormat(format = "MM/dd/yyyy")
+    @FixedField(label = "Expiry Date", start = 17, length = 10)
+    private LocalDate expiryDate;
+
+    @FixedOption(options = {"rice  ", "breads", "fruit "})
+    @FixedField(label = "Type", start = 27, length = 6)
+    private String type;
+}
+
+@FixedObject
+public class Other extends Product {
+    @FixedFormat(format = "Y|N")
+    @FixedField(label = "Refrigerated", start = 17, length = 1)
+    private Boolean refrigerated;
+
+    @FixedField(label = "Tags", start = 18, length = 20)
+    private List<@FixedParam(length = 5) String> tags;
+}
+```
+
 ### Convert fixed width string
 
 - Parse fixed width string to java object.
 
 ```java
-Model model = FixedParser.parser().parse("string value", Model.class);
+Food food = (Food) FixedParser
+    .parser()
+    .parse("00001Dragon Food 09/30/2020fruit ", Product.class);
 ```
 
 - Export java object to fixed width string.
 
 ```java
-String value = FixedParser.parser().export(modelObject);
+String value = FixedParser
+    .parser()
+    .export(food);
 ```
