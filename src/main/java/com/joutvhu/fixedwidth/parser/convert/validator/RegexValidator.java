@@ -27,10 +27,10 @@ public class RegexValidator extends FixedWidthValidator {
     @Override
     public void validate(String value, ValidationType type) {
         if (CommonUtil.isNotBlank(fixedRegex.regex()) && !Pattern.matches(fixedRegex.regex(), value)) {
-            String message = getMessage(fixedRegex.message(),
-                    fixedRegex.nativeMessage(),
-                    "{title} does not match the /{0}/ regex.",
-                    fixedRegex.regex());
+            String message = formatMessage(fixedRegex.message(), fixedRegex.nativeMessage(),
+                    "{title} does not match the {regex} regex.",
+                    CommonUtil.putToMap(super.getArguments(value),
+                            "{regex}", () -> "/" + fixedRegex.regex() + "/"));
             throw new InvalidException(message);
         }
     }

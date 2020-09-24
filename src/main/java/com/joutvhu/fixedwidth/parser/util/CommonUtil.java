@@ -62,11 +62,35 @@ public class CommonUtil {
         return result;
     }
 
+    public <K, V> Map<K, V> mapOf(K k0, V v0) {
+        Map<K, V> result = new HashMap<>();
+        result.put(k0, v0);
+        return result;
+    }
+
+    public <K, V> Map<K, V> mapOf(K k0, V v0, K k1, V v1) {
+        Map<K, V> result = mapOf(k0, v0);
+        result.put(k1, v1);
+        return result;
+    }
+
+    public <K, V> Map<K, V> mapOf(K k0, V v0, K k1, V v1, K k2, V v2) {
+        Map<K, V> result = mapOf(k0, v0, k1, v1);
+        result.put(k2, v2);
+        return result;
+    }
+
+    public <K, V> Map<K, V> putToMap(Map<K, V> map, K key, V value) {
+        Assert.notNull(map, "The map cannot be null.");
+        map.put(key, value);
+        return map;
+    }
+
     public <K, V> Map.Entry<K, V> mapEntryOf(K key, V value) {
         return new HashMap.SimpleEntry<>(key, value);
     }
 
-    public static <K, V> Map<K, V> mapOfEntries(Map.Entry<? extends K, ? extends V>... entries) {
+    public <K, V> Map<K, V> mapOfEntries(Map.Entry<? extends K, ? extends V>... entries) {
         Map<K, V> result = new HashMap<>();
         for (Map.Entry<? extends K, ? extends V> e : entries)
             result.put(e.getKey(), e.getValue());
@@ -164,6 +188,14 @@ public class CommonUtil {
                 String regex = escapeRegular(search);
                 return value.replaceAll(regex, replacement);
             }
+        }
+        return value;
+    }
+
+    public String formatMessage(String value, Map<String, Supplier<String>> arguments) {
+        if (arguments != null) {
+            for (String key : arguments.keySet())
+                value = replaceAll(value, key, arguments.get(key));
         }
         return value;
     }

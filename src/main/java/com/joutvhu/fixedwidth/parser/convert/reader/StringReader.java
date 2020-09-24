@@ -24,8 +24,7 @@ public class StringReader extends FixedWidthReader<Object> {
         String value = assembler.getValue();
         if (!String.class.equals(info.getType())) {
             if (info.getLength() != 1)
-                throw new ParserException(info
-                        .buildMessage("Type of {label} is char then its length must be 1."));
+                throw new ParserException(info.buildMessage("Type of {label} is char then its length must be 1."));
             return CommonUtil.isNotBlank(value) ? value.charAt(0) : null;
         }
         return value;

@@ -38,16 +38,20 @@ public class NumberValidator extends FixedWidthValidator implements NumberHelper
             try {
                 decimalFormat.parse(value);
             } catch (ParseException e) {
-                String message = getMessage(fixedFormat.message(), fixedFormat.nativeMessage(),
-                        "{title} with value \"{0}\" does not match the {1} format.",
-                        value, fixedFormat.format());
+                String message = formatMessage(fixedFormat.message(), fixedFormat.nativeMessage(),
+                        "{title} with value \"{value}\" does not match the {format} format.",
+                        CommonUtil.putToMap(super.getArguments(value),
+                                "{format}", () -> fixedFormat.format()));
                 throw new InvalidException(message);
             }
         } else {
             String regex = isDecimal ? "^[0-9]+(\\.[0-9]+)?$" : "^[0-9]+$";
-            if (!Pattern.matches(regex, value))
-                throw new InvalidException(info.buildMessage("{title} with value \"{0}\" is not a {1}.",
-                        value, isDecimal ? "number" : "integer"));
+            if (!Pattern.matches(regex, value)) {
+                throw new InvalidException(info.formatMessage(
+                        "{title} with value \"{value}\" is not a {number_type}.",
+                        CommonUtil.putToMap(super.getArguments(value),
+                                "{number_type}", () -> isDecimal ? "number" : "integer")));
+            }
         }
     }
 
