@@ -53,35 +53,35 @@ See the following example:
 
 ```java
 @FixedObject(subTypes = {
-    @FixedObject.Type(value = Food.class, prop = "id", matchWith = "^[0-5].+$")
-}, defaultSubType = Other.class)
+        @FixedObject.Type(value = Food.class, prop = "id", matchWith = "^[0-5].+$")
+}, defaultSubType = Medicine.class)
 public class Product {
     @FixedField(label = "Product Id", start = 0, length = 5)
     private Long id;
 
-    @FixedField(label = "Product Name", start = 5, length = 12)
+    @FixedField(label = "Product Name", start = 5, length = 20)
     private String name;
 }
 
 @FixedObject
 public class Food extends Product {
     @FixedFormat(format = "MM/dd/yyyy")
-    @FixedField(label = "Expiry Date", start = 17, length = 10)
+    @FixedField(label = "Expiry Date", start = 25, length = 10)
     private LocalDate expiryDate;
 
     @FixedOption(options = {"rice  ", "breads", "fruit "})
-    @FixedField(label = "Type", start = 27, length = 6)
+    @FixedField(label = "Type", start = 35, length = 6)
     private String type;
 }
 
 @FixedObject
-public class Other extends Product {
+public class Medicine extends Product {
     @FixedFormat(format = "Y|N")
-    @FixedField(label = "Refrigerated", start = 17, length = 1)
-    private Boolean refrigerated;
+    @FixedField(label = "Topical", start = 25, length = 1)
+    private Boolean topical;
 
-    @FixedField(label = "Tags", start = 18, length = 20)
-    private List<@FixedParam(length = 5) String> tags;
+    @FixedField(label = "Ingredients", start = 26, length = 60)
+    private List<@FixedParam(length = 15) String> ingredients;
 }
 ```
 
@@ -91,8 +91,12 @@ public class Other extends Product {
 
 ```java
 Food food = (Food) FixedParser
-    .parser()
-    .parse("00001Dragon Food 09/30/2020fruit ", Product.class);
+        .parser()
+        .parse("00001Dragon Food         09/30/2020fruit ", Product.class);
+
+Medicine medicine = (Medicine) FixedParser
+        .parser()
+        .parse("60002Golden Star Balm    YCamphor        Peppermint oil Menthol        Tea Tree Oil   ", Product.class);
 ```
 
 - Export java object to fixed width string.
