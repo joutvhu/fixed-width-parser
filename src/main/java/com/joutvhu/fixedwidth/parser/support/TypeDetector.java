@@ -5,6 +5,7 @@ import com.joutvhu.fixedwidth.parser.annotation.FixedObject;
 import com.joutvhu.fixedwidth.parser.annotation.FixedParam;
 import com.joutvhu.fixedwidth.parser.util.Assert;
 import com.joutvhu.fixedwidth.parser.util.ReflectionUtil;
+import lombok.AccessLevel;
 import lombok.Getter;
 
 import java.lang.annotation.Annotation;
@@ -21,6 +22,9 @@ import java.lang.reflect.Type;
  */
 @Getter
 public abstract class TypeDetector implements FinalTypeFinder {
+    @Getter(AccessLevel.NONE)
+    private Class<?> rootType;
+
     protected Field field;
     protected Class<?> type;
     protected AnnotatedType annotatedType;
@@ -37,6 +41,7 @@ public abstract class TypeDetector implements FinalTypeFinder {
         this.beforeInit();
         Assert.notNull(type, "Class Type must not be null!");
         this.type = type;
+        this.rootType = type;
 
         this.fixedObject = getAnnotation(FixedObject.class);
         Assert.notNull(fixedObject, String.format("The %s class must be annotated with FixedObject.", type.getName()));
@@ -59,6 +64,7 @@ public abstract class TypeDetector implements FinalTypeFinder {
         Assert.isTrue(t instanceof Class, String
                 .format("The %s type is not a class.", t.getTypeName()));
         this.type = (Class<?>) t;
+        this.rootType = type;
 
         this.fixedParam = getAnnotation(FixedParam.class);
         Assert.notNull(fixedParam, String.format("The %s type must be annotated with FixedParam.", t.getTypeName()));
@@ -74,6 +80,7 @@ public abstract class TypeDetector implements FinalTypeFinder {
         Assert.notNull(field, "Field must not be null!");
         this.field = field;
         this.type = field.getType();
+        this.rootType = type;
 
         this.fixedField = getAnnotation(FixedField.class);
         Assert.notNull(fixedField, String.format("The %s field must be annotated with FixedField.", field.getName()));
@@ -86,6 +93,7 @@ public abstract class TypeDetector implements FinalTypeFinder {
         this.beforeInit();
         Assert.notNull(value, "Object must not be null!");
         this.type = value.getClass();
+        this.rootType = type;
 
         this.fixedObject = getAnnotation(FixedObject.class);
         Assert.notNull(fixedObject, String.format("The %s class must be annotated with FixedObject.", type.getName()));
@@ -129,7 +137,7 @@ public abstract class TypeDetector implements FinalTypeFinder {
     public final Class<?> detectTypeWith(StringAssembler assembler) {
         if (!finalType) {
             if (!type.isPrimitive() && fixedObject != null) {
-                Class<?> newType = detectFinalType(assembler, type);
+                Class<?> newType = detectFinalType(assembler, rootType);
                 checkFinalClass(newType);
                 if (!type.equals(newType)) {
                     this.detectedNewType(newType);

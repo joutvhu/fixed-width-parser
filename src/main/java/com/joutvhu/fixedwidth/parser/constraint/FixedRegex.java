@@ -20,6 +20,13 @@ public @interface FixedRegex {
     String regex();
 
     /**
+     * Regex flags
+     *
+     * @return {@link com.google.re2j.Pattern} flags
+     */
+    int flags() default 0;
+
+    /**
      * Customize error message
      * If message is blank the system with be generate a message.
      *

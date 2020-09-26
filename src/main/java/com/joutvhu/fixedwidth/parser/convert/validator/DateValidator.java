@@ -24,10 +24,10 @@ public class DateValidator extends FormatValidator {
     public void validate(String value, ValidationType type) {
         if (CommonUtil.isNotBlank(fixedFormat.format()) &&
                 !CommonUtil.isDateValid(value, fixedFormat.format(), true)) {
-            String message = getMessage(fixedFormat.message(),
+            String message = formatMessage(fixedFormat.message(),
                     fixedFormat.nativeMessage(),
-                    "{title} does not match the {0} format.",
-                    fixedFormat.format());
+                    "{title} does not match the {format} format.",
+                    getArguments(value));
             throw new InvalidException(message);
         }
     }

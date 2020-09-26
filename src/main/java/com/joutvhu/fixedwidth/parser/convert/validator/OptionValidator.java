@@ -31,10 +31,10 @@ public class OptionValidator extends FixedWidthValidator {
         if (CommonUtil.isNotBlank(fixedOption.options())) {
             List<String> options = CommonUtil.listOf(fixedOption.options());
             if (!options.contains(value)) {
-                String message = getMessage(fixedOption.message(),
-                        fixedOption.nativeMessage(),
-                        "{label} at position {position} should be equal to one of the following value(s): {0}.",
-                        "\"" + StringUtils.join(options, "\", \"") + "\"");
+                String message = formatMessage(fixedOption.message(), fixedOption.nativeMessage(),
+                        "{label} at position {position} should be equal to one of the following value(s): {options}.",
+                        CommonUtil.putToMap(super.getArguments(value),
+                                "{options}", () -> "\"" + StringUtils.join(options, "\", \"") + "\""));
                 throw new InvalidException(message);
             }
         }

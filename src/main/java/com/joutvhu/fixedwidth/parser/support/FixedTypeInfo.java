@@ -13,6 +13,8 @@ import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Field;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * @author Giao Ho
@@ -64,6 +66,21 @@ public class FixedTypeInfo extends TypeInfoSetter {
     }
 
     /**
+     * Get default arguments
+     *
+     * @return default argument map
+     */
+    private Map<String, Supplier<String>> getDefaultArguments() {
+        return CommonUtil.mapOfEntries(
+                CommonUtil.mapEntryOf("{label}", () -> label),
+                CommonUtil.mapEntryOf("{start}", start::toString),
+                CommonUtil.mapEntryOf("{position}", () -> getPosition().toString()),
+                CommonUtil.mapEntryOf("{length}", length::toString),
+                CommonUtil.mapEntryOf("{title}", this::getTitle)
+        );
+    }
+
+    /**
      * Build message from message template and arguments
      *
      * @param template  message template
@@ -71,13 +88,22 @@ public class FixedTypeInfo extends TypeInfoSetter {
      * @return message
      */
     public String buildMessage(String template, Object... arguments) {
-        Assert.hasLength(template, "The template message cannot be black.");
-        template = CommonUtil.replaceAll(template, "{label}", () -> label);
-        template = CommonUtil.replaceAll(template, "{start}", () -> start + "");
-        template = CommonUtil.replaceAll(template, "{position}", () -> getPosition() + "");
-        template = CommonUtil.replaceAll(template, "{length}", () -> length + "");
-        template = CommonUtil.replaceAll(template, "{title}", this::getTitle);
+        template = formatMessage(template, null);
         return MessageFormat.format(template, arguments);
+    }
+
+    /**
+     * Format message with a message template and argument map
+     *
+     * @param template  of message
+     * @param arguments map
+     * @return message
+     */
+    public String formatMessage(String template, Map<String, Supplier<String>> arguments) {
+        Assert.hasLength(template, "The template message cannot be black.");
+        if (arguments == null) arguments = getDefaultArguments();
+        else arguments.putAll(getDefaultArguments());
+        return CommonUtil.formatMessage(template, arguments);
     }
 
     /**

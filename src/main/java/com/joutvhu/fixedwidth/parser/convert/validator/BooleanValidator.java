@@ -7,7 +7,6 @@ import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import com.joutvhu.fixedwidth.parser.util.TypeConstants;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,10 +34,10 @@ public class BooleanValidator extends FormatValidator implements BooleanHelper {
     @Override
     public void validate(String value, ValidationType type) {
         if (splitOptions(fixedFormat.format()) && !options.contains(value)) {
-            String message = getMessage(fixedFormat.message(),
+            String message = formatMessage(fixedFormat.message(),
                     fixedFormat.nativeMessage(),
-                    "{title} should be equal to one of the following value(s): {0}.",
-                    "\"" + StringUtils.join(options, "\", \"") + "\"");
+                    "{title} should be equal to one of the following value(s): {format}.",
+                    getArguments(value));
             throw new InvalidException(message);
         }
     }
