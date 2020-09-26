@@ -26,7 +26,8 @@ public class RegexValidator extends FixedWidthValidator {
 
     @Override
     public void validate(String value, ValidationType type) {
-        if (CommonUtil.isNotBlank(fixedRegex.regex()) && !Pattern.matches(fixedRegex.regex(), value)) {
+        if (CommonUtil.isNotBlank(fixedRegex.regex()) &&
+                !Pattern.compile(fixedRegex.regex(), fixedRegex.flags()).matches(value)) {
             String message = formatMessage(fixedRegex.message(), fixedRegex.nativeMessage(),
                     "{title} does not match the {regex} regex.",
                     CommonUtil.putToMap(super.getArguments(value),

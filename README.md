@@ -53,7 +53,7 @@ See the following example:
 
 ```java
 @FixedObject(subTypes = {
-    @FixedObject.Type(value = Food.class, prop = "id", matchWith = "^[0-5]")
+    @FixedObject.Type(value = Food.class, prop = "id", matchWith = "^[0-5].+$")
 }, defaultSubType = Other.class)
 public class Product {
     @FixedField(label = "Product Id", start = 0, length = 5)
