@@ -10,6 +10,7 @@ import lombok.experimental.UtilityClass;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -97,11 +98,9 @@ public class ObjectUtil {
         return readValue(value, type);
     }
 
-    public Object parseNumber(String value, Class<?> type, String format) {
+    public Object parseNumber(String value, Class<?> type, DecimalFormat decimalFormat) {
         BigDecimal number = null;
-        if (CommonUtil.isNotBlank(format)) {
-            DecimalFormat decimalFormat = new DecimalFormat(format);
-            decimalFormat.setParseBigDecimal(true);
+        if (decimalFormat != null) {
             try {
                 number = (BigDecimal) decimalFormat.parse(value);
             } catch (ParseException e) {

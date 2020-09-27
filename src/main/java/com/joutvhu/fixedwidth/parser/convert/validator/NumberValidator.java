@@ -31,10 +31,9 @@ public class NumberValidator extends FixedWidthValidator implements NumberHelper
     @Override
     public void validate(String value, ValidationType type) {
         FixedFormat fixedFormat = info.getAnnotation(FixedFormat.class);
+        DecimalFormat decimalFormat = getDecimalFormat(fixedFormat);
 
-        if (fixedFormat != null && CommonUtil.isNotBlank(fixedFormat.format())) {
-            DecimalFormat decimalFormat = new DecimalFormat(fixedFormat.format());
-            decimalFormat.setParseBigDecimal(true);
+        if (decimalFormat != null) {
             try {
                 decimalFormat.parse(value);
             } catch (ParseException e) {

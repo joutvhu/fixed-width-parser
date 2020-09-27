@@ -26,14 +26,13 @@ public class NumberWriter extends FixedWidthWriter<Object> implements NumberHelp
     @Override
     public String write(Object value) {
         Class<?> type = info.getType();
-        String format = info.getAnnotationValue(FixedFormat.class, "format", String.class);
+        FixedFormat fixedFormat = info.getAnnotation(FixedFormat.class);
+        DecimalFormat decimalFormat = getDecimalFormat(fixedFormat);
 
-        if (CommonUtil.isBlank(format))
+        if (decimalFormat == null)
             return CommonUtil.listOf(BigDecimal.class, BigInteger.class).contains(type) ?
                     value.toString() : value + StringUtils.EMPTY;
         else {
-            DecimalFormat decimalFormat = new DecimalFormat(format);
-            decimalFormat.setParseBigDecimal(true);
             return decimalFormat.format(value);
         }
     }

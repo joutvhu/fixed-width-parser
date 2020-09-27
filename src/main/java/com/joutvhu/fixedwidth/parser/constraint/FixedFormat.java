@@ -20,6 +20,13 @@ public @interface FixedFormat {
     String format();
 
     /**
+     * For create {@link java.text.DecimalFormatSymbols} when parse number.
+     *
+     * @return {@link FixedFormatSymbols}
+     */
+    FixedFormatSymbols formatSymbols() default @FixedFormatSymbols;
+
+    /**
      * Customize error message
      * If message is blank the system with be generate a message.
      *

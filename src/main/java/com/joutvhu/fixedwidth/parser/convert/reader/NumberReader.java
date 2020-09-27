@@ -25,12 +25,12 @@ public class NumberReader extends FixedWidthReader<Object> implements NumberHelp
     public Object read(StringAssembler assembler) {
         Class<?> type = info.getType();
         String value = assembler.getValue();
-        String format = info.getAnnotationValue(FixedFormat.class, "format", String.class);
+        FixedFormat fixedFormat = info.getAnnotation(FixedFormat.class);
         Object result = null;
 
         if (CommonUtil.isNotBlank(value)) {
             try {
-                result = ObjectUtil.parseNumber(value, type, format);
+                result = ObjectUtil.parseNumber(value, type, getDecimalFormat(fixedFormat));
             } catch (Exception e) {
                 throw new ParserException(info.buildMessage("{title} is not a number."));
             }
