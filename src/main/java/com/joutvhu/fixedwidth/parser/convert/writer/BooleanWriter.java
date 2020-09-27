@@ -3,8 +3,8 @@ package com.joutvhu.fixedwidth.parser.convert.writer;
 import com.joutvhu.fixedwidth.parser.constraint.FixedFormat;
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthWriter;
 import com.joutvhu.fixedwidth.parser.convert.general.BooleanHelper;
-import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
+import com.joutvhu.fixedwidth.parser.support.WriteStrategy;
 import com.joutvhu.fixedwidth.parser.util.TypeConstants;
 import org.apache.commons.lang3.StringUtils;
 
@@ -15,7 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 public class BooleanWriter extends FixedWidthWriter<Boolean> implements BooleanHelper {
     private String[] options;
 
-    public BooleanWriter(FixedTypeInfo info, FixedParseStrategy strategy) {
+    public BooleanWriter(FixedTypeInfo info, WriteStrategy strategy) {
         super(info, strategy);
         if (!TypeConstants.BOOLEAN_TYPES.contains(info.getType()))
             this.reject();

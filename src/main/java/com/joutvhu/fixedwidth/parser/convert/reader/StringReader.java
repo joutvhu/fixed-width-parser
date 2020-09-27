@@ -2,8 +2,8 @@ package com.joutvhu.fixedwidth.parser.convert.reader;
 
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthReader;
 import com.joutvhu.fixedwidth.parser.exception.ParserException;
-import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
+import com.joutvhu.fixedwidth.parser.support.ReadStrategy;
 import com.joutvhu.fixedwidth.parser.support.StringAssembler;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import com.joutvhu.fixedwidth.parser.util.TypeConstants;
@@ -13,7 +13,7 @@ import com.joutvhu.fixedwidth.parser.util.TypeConstants;
  * @since 1.0.0
  */
 public class StringReader extends FixedWidthReader<Object> {
-    public StringReader(FixedTypeInfo info, FixedParseStrategy strategy) {
+    public StringReader(FixedTypeInfo info, ReadStrategy strategy) {
         super(info, strategy);
         if (!TypeConstants.STRING_TYPES.contains(info.getType()))
             this.reject();

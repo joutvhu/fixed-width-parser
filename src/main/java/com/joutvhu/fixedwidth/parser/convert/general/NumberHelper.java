@@ -2,7 +2,6 @@ package com.joutvhu.fixedwidth.parser.convert.general;
 
 import com.joutvhu.fixedwidth.parser.constraint.FixedFormat;
 import com.joutvhu.fixedwidth.parser.constraint.FixedFormatSymbols;
-import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import com.joutvhu.fixedwidth.parser.util.TypeConstants;
@@ -18,7 +17,7 @@ import java.util.Locale;
  * @since 1.0.1
  */
 public interface NumberHelper {
-    default boolean isNumeric(FixedTypeInfo info, FixedParseStrategy strategy) {
+    default boolean isNumeric(FixedTypeInfo info) {
         Class<?> type = info.getType();
         boolean isDecimal = TypeConstants.DECIMAL_NUMBER_TYPES.contains(type);
         if (!TypeConstants.INTEGER_NUMBER_TYPES.contains(type) && !isDecimal)

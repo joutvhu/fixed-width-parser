@@ -2,8 +2,8 @@ package com.joutvhu.fixedwidth.parser.convert.reader;
 
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthReader;
 import com.joutvhu.fixedwidth.parser.exception.ParserException;
-import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
+import com.joutvhu.fixedwidth.parser.support.ReadStrategy;
 import com.joutvhu.fixedwidth.parser.support.StringAssembler;
 import com.joutvhu.fixedwidth.parser.util.FixedHelper;
 
@@ -18,7 +18,7 @@ public class CollectionReader extends FixedWidthReader<Collection<?>> {
     protected Integer start = 0;
     protected Integer length = 0;
 
-    public CollectionReader(FixedTypeInfo info, FixedParseStrategy strategy) {
+    public CollectionReader(FixedTypeInfo info, ReadStrategy strategy) {
         super(info, strategy);
         if (!Collection.class.isAssignableFrom(info.getType()) || info.getGenericTypeInfo().size() != 1)
             this.reject();
@@ -37,7 +37,7 @@ public class CollectionReader extends FixedWidthReader<Collection<?>> {
         if (length > 0) {
             int len = assembler.length();
             while (start < len) {
-                Object item = strategy.read(valueInfo, assembler.child(start, length));
+                Object item = read(valueInfo, assembler.child(start, length));
                 objects.add(item);
                 start += length;
             }

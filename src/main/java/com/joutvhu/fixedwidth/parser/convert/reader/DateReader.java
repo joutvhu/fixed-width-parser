@@ -2,8 +2,8 @@ package com.joutvhu.fixedwidth.parser.convert.reader;
 
 import com.joutvhu.fixedwidth.parser.constraint.FixedFormat;
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthReader;
-import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
+import com.joutvhu.fixedwidth.parser.support.ReadStrategy;
 import com.joutvhu.fixedwidth.parser.support.StringAssembler;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import com.joutvhu.fixedwidth.parser.util.ObjectUtil;
@@ -14,7 +14,7 @@ import com.joutvhu.fixedwidth.parser.util.TypeConstants;
  * @since 1.0.0
  */
 public class DateReader extends FixedWidthReader<Object> {
-    public DateReader(FixedTypeInfo info, FixedParseStrategy strategy) {
+    public DateReader(FixedTypeInfo info, ReadStrategy strategy) {
         super(info, strategy);
         if (!TypeConstants.DATE_TYPES.contains(info.getType()))
             this.reject();

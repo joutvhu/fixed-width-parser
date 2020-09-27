@@ -2,7 +2,6 @@ package com.joutvhu.fixedwidth.parser.convert.validator;
 
 import com.joutvhu.fixedwidth.parser.constraint.FixedFormat;
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthValidator;
-import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 
@@ -18,8 +17,8 @@ import java.util.function.Supplier;
 public abstract class FormatValidator extends FixedWidthValidator {
     protected FixedFormat fixedFormat;
 
-    public FormatValidator(FixedTypeInfo info, FixedParseStrategy strategy) {
-        super(info, strategy);
+    public FormatValidator(FixedTypeInfo info) {
+        super(info);
         this.fixedFormat = info.getAnnotation(FixedFormat.class);
         if (fixedFormat == null) this.reject();
     }

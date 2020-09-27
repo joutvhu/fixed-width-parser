@@ -1,10 +1,10 @@
 package com.joutvhu.fixedwidth.parser.convert.writer;
 
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthWriter;
-import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedStringAssembler;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.support.StringAssembler;
+import com.joutvhu.fixedwidth.parser.support.WriteStrategy;
 
 import java.util.Map;
 
@@ -20,7 +20,7 @@ public class MapWriter extends FixedWidthWriter<Map<?, ?>> {
     protected Integer keyLength = 0;
     protected Integer valueLength = 0;
 
-    public MapWriter(FixedTypeInfo info, FixedParseStrategy strategy) {
+    public MapWriter(FixedTypeInfo info, WriteStrategy strategy) {
         super(info, strategy);
         if (!Map.class.isAssignableFrom(info.getType()) || info.getGenericTypeInfo().size() != 2)
             this.reject();
@@ -34,9 +34,9 @@ public class MapWriter extends FixedWidthWriter<Map<?, ?>> {
     public String write(Map<?, ?> value) {
         StringAssembler assembler = FixedStringAssembler.instance();
         for (Map.Entry<?, ?> entry : value.entrySet()) {
-            assembler.set(start, keyLength, strategy.write(keyInfo, entry.getKey()));
+            assembler.set(start, keyLength, write(keyInfo, entry.getKey()));
             start += keyLength;
-            assembler.set(start, valueLength, strategy.write(valueInfo, entry.getValue()));
+            assembler.set(start, valueLength, write(valueInfo, entry.getValue()));
             start += valueLength;
         }
         return assembler.getValue();

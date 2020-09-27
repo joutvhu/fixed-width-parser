@@ -17,7 +17,7 @@ import java.util.List;
  * @author Giao Ho
  * @since 1.0.0
  */
-public class FixedParseStrategy {
+public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
     private FixedModule module;
 
     public FixedParseStrategy(FixedModule module) {
@@ -31,7 +31,7 @@ public class FixedParseStrategy {
      * @param value string
      * @param type  is {@link ValidationType}, before read or after write.
      */
-    public void validate(FixedTypeInfo info, String value, ValidationType type) {
+    private void validate(FixedTypeInfo info, String value, ValidationType type) {
         List<FixedWidthValidator> validators = module.createValidatorsBy(info, this);
         for (FixedWidthValidator validator : validators) {
             validator.validate(value, type);
@@ -45,6 +45,7 @@ public class FixedParseStrategy {
      * @param assembler {@link StringAssembler}
      * @return object value
      */
+    @Override
     public Object read(FixedTypeInfo info, StringAssembler assembler) {
         info.detectTypeWith(assembler);
         assembler.trim(info);
@@ -72,6 +73,7 @@ public class FixedParseStrategy {
      * @param value object
      * @return string value
      */
+    @Override
     public String write(FixedTypeInfo info, Object value) {
         if (value == null) {
             if (info.require)

@@ -1,10 +1,10 @@
 package com.joutvhu.fixedwidth.parser.convert.writer;
 
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthWriter;
-import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedStringAssembler;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.support.StringAssembler;
+import com.joutvhu.fixedwidth.parser.support.WriteStrategy;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import com.joutvhu.fixedwidth.parser.util.ReflectionUtil;
 
@@ -16,7 +16,7 @@ import java.util.List;
  * @since 1.0.0
  */
 public class ObjectWriter extends FixedWidthWriter<Object> {
-    public ObjectWriter(FixedTypeInfo info, FixedParseStrategy strategy) {
+    public ObjectWriter(FixedTypeInfo info, WriteStrategy strategy) {
         super(info, strategy);
         if (info.getFixedObject() == null) this.reject();
     }
@@ -28,7 +28,7 @@ public class ObjectWriter extends FixedWidthWriter<Object> {
         for (FixedTypeInfo info : children) {
             ReflectionUtil.makeAccessible(info.getField());
             Object item = ReflectionUtil.getField(info.getField(), value);
-            assembler.set(info, strategy.write(info, item));
+            assembler.set(info, write(info, item));
         }
         return assembler.getValue();
     }
