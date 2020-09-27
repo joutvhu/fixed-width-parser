@@ -30,10 +30,12 @@ public class OptionValidator extends FixedWidthValidator {
     public void validate(String value, ValidationType type) {
         if (CommonUtil.isNotBlank(fixedOption.options())) {
             List<String> options = CommonUtil.listOf(fixedOption.options());
-            if (!options.contains(value)) {
-                String message = formatMessage(fixedOption.message(), fixedOption.nativeMessage(),
-                        "{label} at position {position} should be equal to one of the following value(s): {options}.",
-                        CommonUtil.putToMap(super.getArguments(value),
+            if (fixedOption.contains() != options.contains(value)) {
+                String message = fixedOption.contains() ?
+                        "{label} at position {position} should be equal to one of the following value(s): {options}." :
+                        "{label} at position {position} cannot be one of the following value(s): {options}.";
+                message = formatMessage(fixedOption.message(), fixedOption.nativeMessage(),
+                        message, CommonUtil.putToMap(super.getArguments(value),
                                 "{options}", () -> "\"" + StringUtils.join(options, "\", \"") + "\""));
                 throw new InvalidException(message);
             }

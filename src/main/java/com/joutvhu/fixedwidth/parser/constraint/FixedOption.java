@@ -20,6 +20,14 @@ public @interface FixedOption {
     String[] options();
 
     /**
+     * Return {@code true} if you want the value must be contains in the options,
+     * otherwise {@code false} is returned.
+     *
+     * @return contains or not contains
+     */
+    boolean contains() default true;
+
+    /**
      * Customize error message
      * If message is blank the system with be generate a message.
      *
