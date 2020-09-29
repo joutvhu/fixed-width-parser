@@ -92,11 +92,11 @@ public class Medicine extends Product {
 ```java
 Food food = (Food) FixedParser
         .parser()
-        .parse("00001Dragon Food         09/30/2020fruit ", Product.class);
+        .parse(Product.class, "00001Dragon Food         09/30/2020fruit ");
 
 Medicine medicine = (Medicine) FixedParser
         .parser()
-        .parse("60002Golden Star Balm    YCamphor        Peppermint oil Menthol        Tea Tree Oil   ", Product.class);
+        .parse(Product.class, "60002Golden Star Balm    YCamphor        Peppermint oil Menthol        Tea Tree Oil   ");
 ```
 
 - Export java object to fixed width string.

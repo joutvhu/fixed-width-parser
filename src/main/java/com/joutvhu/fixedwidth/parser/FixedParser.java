@@ -52,8 +52,22 @@ public class FixedParser {
      * @param type class type of result
      * @param <T>  type of result
      * @return object
+     * @deprecated use the {@link FixedParser#parse(Class, String)} method.
      */
+    @Deprecated
     public <T> T parse(String line, Class<T> type) {
+        return this.parse(type, line);
+    }
+
+    /**
+     * Parse fixed-width string with class type to object
+     *
+     * @param type class type of result
+     * @param line fixed-width string
+     * @param <T>  type of result
+     * @return object
+     */
+    public <T> T parse(Class<T> type, String line) {
         StringAssembler stringAssembler = FixedStringAssembler.of(line);
         FixedTypeInfo fixedTypeInfo = FixedTypeInfo.of(type);
         return (T) this.strategy.read(fixedTypeInfo, stringAssembler);
