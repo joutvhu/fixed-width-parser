@@ -2,10 +2,11 @@ package com.joutvhu.fixedwidth.parser;
 
 import com.joutvhu.fixedwidth.parser.module.DefaultModule;
 import com.joutvhu.fixedwidth.parser.module.FixedModule;
-import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
-import com.joutvhu.fixedwidth.parser.support.FixedStringAssembler;
-import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
-import com.joutvhu.fixedwidth.parser.support.StringAssembler;
+import com.joutvhu.fixedwidth.parser.support.*;
+import com.joutvhu.fixedwidth.parser.util.Assert;
+
+import java.io.InputStream;
+import java.util.stream.Stream;
 
 /**
  * Fixed width parser
@@ -68,9 +69,61 @@ public class FixedParser {
      * @return object
      */
     public <T> T parse(Class<T> type, String line) {
+        Assert.notNull(type, "The class type must not be null!");
+        Assert.notNull(line, "The line must not be null!");
+
         StringAssembler stringAssembler = FixedStringAssembler.of(line);
         FixedTypeInfo fixedTypeInfo = FixedTypeInfo.of(type);
         return (T) this.strategy.read(fixedTypeInfo, stringAssembler);
+    }
+
+    /**
+     * Parse fixed-width string from stream
+     *
+     * @param type   class type of result
+     * @param stream string
+     * @param <T>    type of result
+     * @return {@link Stream<T>}
+     */
+    public <T> Stream<T> parse(Class<T> type, Stream<String> stream) {
+        Assert.notNull(type, "The class type must not be null!");
+        Assert.notNull(stream, "The stream must not be null!");
+
+        FixedTypeInfo fixedTypeInfo = FixedTypeInfo.of(type);
+        return stream.map(s -> {
+            StringAssembler stringAssembler = FixedStringAssembler.of(s);
+            return (T) strategy.read(fixedTypeInfo, stringAssembler);
+        });
+    }
+
+    /**
+     * Parse fixed-width line by line from {@link InputStream}
+     *
+     * @param type  class type of result
+     * @param input the {@link InputStream}
+     * @param <T>   type of result
+     * @return {@link ItemReader <T>}
+     */
+    public <T> ItemReader<T> parse(Class<T> type, InputStream input) {
+        return this.parse(type, input, null);
+    }
+
+    /**
+     * Parse fixed-width line by line from {@link InputStream}
+     *
+     * @param type     class type of result
+     * @param input    the {@link InputStream}
+     * @param encoding of the {@link InputStream}
+     * @param <T>      type of result
+     * @return {@link ItemReader <T>}
+     */
+    public <T> ItemReader<T> parse(Class<T> type, InputStream input, String encoding) {
+        Assert.notNull(type, "The class type must not be null!");
+        Assert.notNull(input, "The input stream must not be null!");
+
+        FixedTypeInfo fixedTypeInfo = FixedTypeInfo.of(type);
+        StringLineReader stringLineReader = new StringLineReader(input, encoding);
+        return (ItemReader<T>) new FixedLineItemReader(stringLineReader, strategy, fixedTypeInfo);
     }
 
     /**
@@ -81,6 +134,8 @@ public class FixedParser {
      * @return fixed-width string
      */
     public <T> String export(T object) {
+        Assert.notNull(object, "The object must not be null!");
+
         FixedTypeInfo fixedTypeInfo = FixedTypeInfo.of(object);
         return this.strategy.write(fixedTypeInfo, object);
     }
