@@ -17,4 +17,9 @@ public class ModelF extends ModelD {
     @FixedFormat(format = "#,##0.000")
     @FixedField(label = "FIELD-C", start = 3, length = 9)
     private Double fieldC;
+
+    public ModelF(Long fieldA, @FixedFormat(format = "#,##0.000") Double fieldC) {
+        super(fieldA);
+        this.fieldC = fieldC;
+    }
 }

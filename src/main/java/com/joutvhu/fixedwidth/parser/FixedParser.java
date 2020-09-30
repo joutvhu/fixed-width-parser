@@ -139,4 +139,43 @@ public class FixedParser {
         FixedTypeInfo fixedTypeInfo = FixedTypeInfo.of(object);
         return this.strategy.write(fixedTypeInfo, object);
     }
+
+    /**
+     * Export stream object to stream fixed-width string
+     *
+     * @param objects stream
+     * @param <T>     type of objects
+     * @return stream string
+     */
+    public <T> Stream<String> export(Stream<? extends T> objects) {
+        Assert.notNull(objects, "The stream must not be null!");
+
+        return objects.map(t -> {
+            if (t != null) {
+                FixedTypeInfo fixedTypeInfo = FixedTypeInfo.of(t);
+                return strategy.write(fixedTypeInfo, t);
+            }
+            return null;
+        });
+    }
+
+    /**
+     * Export stream object to stream fixed-width string
+     *
+     * @param type    class type of objects
+     * @param objects stream
+     * @param <T>     type of objects
+     * @return stream string
+     */
+    public <T> Stream<String> export(Class<T> type, Stream<? extends T> objects) {
+        Assert.notNull(type, "The class type must not be null!");
+        Assert.notNull(objects, "The stream must not be null!");
+
+        FixedTypeInfo fixedTypeInfo = FixedTypeInfo.of(type);
+        return objects.map(t -> {
+            if (t != null)
+                return strategy.write(fixedTypeInfo, t);
+            return null;
+        });
+    }
 }
