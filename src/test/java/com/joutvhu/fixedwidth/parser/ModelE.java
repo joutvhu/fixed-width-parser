@@ -22,4 +22,10 @@ public class ModelE extends ModelD {
     @FixedOption(options = {"000", "111"})
     @FixedField(label = "FIELD-E", start = 9, length = 3)
     private Integer fieldE;
+
+    public ModelE(Long fieldA, Integer fieldB, Integer fieldE) {
+        super(fieldA);
+        this.fieldB = fieldB;
+        this.fieldE = fieldE;
+    }
 }

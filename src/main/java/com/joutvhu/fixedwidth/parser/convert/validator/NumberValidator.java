@@ -6,7 +6,6 @@ import com.joutvhu.fixedwidth.parser.convert.FixedWidthValidator;
 import com.joutvhu.fixedwidth.parser.convert.ValidationType;
 import com.joutvhu.fixedwidth.parser.convert.general.NumberHelper;
 import com.joutvhu.fixedwidth.parser.exception.InvalidException;
-import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 
@@ -22,19 +21,18 @@ import java.text.ParseException;
 public class NumberValidator extends FixedWidthValidator implements NumberHelper {
     private boolean isDecimal;
 
-    public NumberValidator(FixedTypeInfo info, FixedParseStrategy strategy) {
-        super(info, strategy);
-        if (!isNumeric(info, strategy))
+    public NumberValidator(FixedTypeInfo info) {
+        super(info);
+        if (!isNumeric(info))
             this.reject();
     }
 
     @Override
     public void validate(String value, ValidationType type) {
         FixedFormat fixedFormat = info.getAnnotation(FixedFormat.class);
+        DecimalFormat decimalFormat = getDecimalFormat(fixedFormat);
 
-        if (fixedFormat != null && CommonUtil.isNotBlank(fixedFormat.format())) {
-            DecimalFormat decimalFormat = new DecimalFormat(fixedFormat.format());
-            decimalFormat.setParseBigDecimal(true);
+        if (decimalFormat != null) {
             try {
                 decimalFormat.parse(value);
             } catch (ParseException e) {

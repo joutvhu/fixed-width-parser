@@ -4,7 +4,6 @@ import com.joutvhu.fixedwidth.parser.constraint.FixedOption;
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthValidator;
 import com.joutvhu.fixedwidth.parser.convert.ValidationType;
 import com.joutvhu.fixedwidth.parser.exception.InvalidException;
-import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -20,8 +19,8 @@ import java.util.List;
 public class OptionValidator extends FixedWidthValidator {
     private FixedOption fixedOption;
 
-    public OptionValidator(FixedTypeInfo info, FixedParseStrategy strategy) {
-        super(info, strategy);
+    public OptionValidator(FixedTypeInfo info) {
+        super(info);
         this.fixedOption = info.getAnnotation(FixedOption.class);
         if (fixedOption == null) this.reject();
     }
@@ -30,10 +29,12 @@ public class OptionValidator extends FixedWidthValidator {
     public void validate(String value, ValidationType type) {
         if (CommonUtil.isNotBlank(fixedOption.options())) {
             List<String> options = CommonUtil.listOf(fixedOption.options());
-            if (!options.contains(value)) {
-                String message = formatMessage(fixedOption.message(), fixedOption.nativeMessage(),
-                        "{label} at position {position} should be equal to one of the following value(s): {options}.",
-                        CommonUtil.putToMap(super.getArguments(value),
+            if (fixedOption.contains() != options.contains(value)) {
+                String message = fixedOption.contains() ?
+                        "{label} at position {position} should be equal to one of the following value(s): {options}." :
+                        "{label} at position {position} cannot be one of the following value(s): {options}.";
+                message = formatMessage(fixedOption.message(), fixedOption.nativeMessage(),
+                        message, CommonUtil.putToMap(super.getArguments(value),
                                 "{options}", () -> "\"" + StringUtils.join(options, "\", \"") + "\""));
                 throw new InvalidException(message);
             }

@@ -1,7 +1,6 @@
 package com.joutvhu.fixedwidth.parser.convert;
 
 import com.joutvhu.fixedwidth.parser.exception.FixedException;
-import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 
 /**
@@ -10,11 +9,15 @@ import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
  * @author Giao Ho
  * @since 1.0.0
  */
-public abstract class ParsingApprover {
+public abstract class ParsingApprover<T> {
+    protected T strategy;
     protected FixedTypeInfo info;
-    protected FixedParseStrategy strategy;
 
-    public ParsingApprover(FixedTypeInfo info, FixedParseStrategy strategy) {
+    public ParsingApprover(FixedTypeInfo info) {
+        this.info = info;
+    }
+
+    public ParsingApprover(FixedTypeInfo info, T strategy) {
         this.info = info;
         this.strategy = strategy;
     }

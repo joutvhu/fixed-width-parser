@@ -1,7 +1,8 @@
 package com.joutvhu.fixedwidth.parser.convert;
 
-import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
+import com.joutvhu.fixedwidth.parser.support.ReadStrategy;
+import com.joutvhu.fixedwidth.parser.support.StringAssembler;
 
 /**
  * Fixed width reader
@@ -10,8 +11,14 @@ import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
  * @author Giao Ho
  * @since 1.0.0
  */
-public abstract class FixedWidthReader<T> extends ParsingApprover implements StringReader<T> {
-    public FixedWidthReader(FixedTypeInfo info, FixedParseStrategy strategy) {
+public abstract class FixedWidthReader<T> extends ParsingApprover<ReadStrategy>
+        implements StringReader<T>, ReadStrategy {
+    public FixedWidthReader(FixedTypeInfo info, ReadStrategy strategy) {
         super(info, strategy);
+    }
+
+    @Override
+    public Object read(FixedTypeInfo info, StringAssembler assembler) {
+        return strategy.read(info, assembler);
     }
 }

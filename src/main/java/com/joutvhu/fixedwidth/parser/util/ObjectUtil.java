@@ -97,11 +97,9 @@ public class ObjectUtil {
         return readValue(value, type);
     }
 
-    public Object parseNumber(String value, Class<?> type, String format) {
+    public Object parseNumber(String value, Class<?> type, DecimalFormat decimalFormat) {
         BigDecimal number = null;
-        if (CommonUtil.isNotBlank(format)) {
-            DecimalFormat decimalFormat = new DecimalFormat(format);
-            decimalFormat.setParseBigDecimal(true);
+        if (decimalFormat != null) {
             try {
                 number = (BigDecimal) decimalFormat.parse(value);
             } catch (ParseException e) {

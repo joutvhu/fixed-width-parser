@@ -2,8 +2,8 @@ package com.joutvhu.fixedwidth.parser.convert.reader;
 
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthReader;
 import com.joutvhu.fixedwidth.parser.exception.ParserException;
-import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
+import com.joutvhu.fixedwidth.parser.support.ReadStrategy;
 import com.joutvhu.fixedwidth.parser.support.StringAssembler;
 import com.joutvhu.fixedwidth.parser.util.FixedHelper;
 
@@ -21,7 +21,7 @@ public class MapReader extends FixedWidthReader<Map<?, ?>> {
     protected Integer keyLength = 0;
     protected Integer valueLength = 0;
 
-    public MapReader(FixedTypeInfo info, FixedParseStrategy strategy) {
+    public MapReader(FixedTypeInfo info, ReadStrategy strategy) {
         super(info, strategy);
         if (!Map.class.isAssignableFrom(info.getType()) || info.getGenericTypeInfo().size() != 2)
             this.reject();
@@ -42,9 +42,9 @@ public class MapReader extends FixedWidthReader<Map<?, ?>> {
         if (keyLength > 0 && valueLength > 0) {
             int len = assembler.length();
             while (start < len) {
-                Object key = strategy.read(keyInfo, assembler.child(start, keyLength));
+                Object key = read(keyInfo, assembler.child(start, keyLength));
                 start += keyLength;
-                Object value = strategy.read(valueInfo, assembler.child(start, valueLength));
+                Object value = read(valueInfo, assembler.child(start, valueLength));
                 start += valueLength;
                 objects.put(key, value);
             }

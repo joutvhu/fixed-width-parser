@@ -5,7 +5,6 @@ import com.joutvhu.fixedwidth.parser.constraint.FixedRegex;
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthValidator;
 import com.joutvhu.fixedwidth.parser.convert.ValidationType;
 import com.joutvhu.fixedwidth.parser.exception.InvalidException;
-import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 
@@ -18,8 +17,8 @@ import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 public class RegexValidator extends FixedWidthValidator {
     private FixedRegex fixedRegex;
 
-    public RegexValidator(FixedTypeInfo info, FixedParseStrategy strategy) {
-        super(info, strategy);
+    public RegexValidator(FixedTypeInfo info) {
+        super(info);
         this.fixedRegex = info.getAnnotation(FixedRegex.class);
         if (fixedRegex == null) this.reject();
     }

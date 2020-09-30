@@ -1,6 +1,5 @@
 package com.joutvhu.fixedwidth.parser.convert;
 
-import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 
@@ -13,9 +12,9 @@ import java.util.function.Supplier;
  * @author Giao Ho
  * @since 1.0.0
  */
-public abstract class FixedWidthValidator extends ParsingApprover implements StringValidator {
-    public FixedWidthValidator(FixedTypeInfo info, FixedParseStrategy strategy) {
-        super(info, strategy);
+public abstract class FixedWidthValidator extends ParsingApprover<Void> implements StringValidator {
+    public FixedWidthValidator(FixedTypeInfo info) {
+        super(info);
     }
 
     protected Map<String, Supplier<String>> getArguments(String value) {

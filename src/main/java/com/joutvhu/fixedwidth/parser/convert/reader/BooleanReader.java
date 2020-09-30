@@ -3,8 +3,8 @@ package com.joutvhu.fixedwidth.parser.convert.reader;
 import com.joutvhu.fixedwidth.parser.constraint.FixedFormat;
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthReader;
 import com.joutvhu.fixedwidth.parser.convert.general.BooleanHelper;
-import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
+import com.joutvhu.fixedwidth.parser.support.ReadStrategy;
 import com.joutvhu.fixedwidth.parser.support.StringAssembler;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import com.joutvhu.fixedwidth.parser.util.TypeConstants;
@@ -17,7 +17,7 @@ public class BooleanReader extends FixedWidthReader<Boolean> implements BooleanH
     private String trueOption;
     private String falseOption;
 
-    public BooleanReader(FixedTypeInfo info, FixedParseStrategy strategy) {
+    public BooleanReader(FixedTypeInfo info, ReadStrategy strategy) {
         super(info, strategy);
         if (!TypeConstants.BOOLEAN_TYPES.contains(info.getType()))
             this.reject();
