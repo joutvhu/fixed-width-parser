@@ -83,7 +83,7 @@ public class FixedParser {
      * @param type   class type of result
      * @param stream string
      * @param <T>    type of result
-     * @return {@link Stream<T>}
+     * @return {@link Stream} of T
      */
     public <T> Stream<T> parse(Class<T> type, Stream<String> stream) {
         Assert.notNull(type, "The class type must not be null!");
@@ -102,7 +102,7 @@ public class FixedParser {
      * @param type  class type of result
      * @param input the {@link InputStream}
      * @param <T>   type of result
-     * @return {@link ItemReader <T>}
+     * @return {@link ItemReader} of T
      */
     public <T> ItemReader<T> parse(Class<T> type, InputStream input) {
         return this.parse(type, input, null);
@@ -115,7 +115,7 @@ public class FixedParser {
      * @param input    the {@link InputStream}
      * @param encoding of the {@link InputStream}
      * @param <T>      type of result
-     * @return {@link ItemReader <T>}
+     * @return {@link ItemReader} of T
      */
     public <T> ItemReader<T> parse(Class<T> type, InputStream input, String encoding) {
         Assert.notNull(type, "The class type must not be null!");
