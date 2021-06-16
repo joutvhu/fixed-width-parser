@@ -21,7 +21,7 @@ public @interface FixedField {
      *
      * @return label name of the field
      */
-    String label();
+    String label() default "";
 
     /**
      * Setups the start position of the field
