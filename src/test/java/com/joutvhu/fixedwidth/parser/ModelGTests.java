@@ -22,6 +22,7 @@ public class ModelGTests {
             Assertions.fail();
         } catch (Exception e) {
             Assertions.assertTrue(e instanceof InvalidException);
+            Assertions.assertEquals("fieldD field at position 4 and length 1 does not match the /[a-zA-Z]/ regex.", e.getMessage());
         }
     }
 

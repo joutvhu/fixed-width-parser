@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'com.github.joutvhu'
-version '1.1.0'
+version '1.1.2'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -24,26 +24,26 @@ repositories {
 
 dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
-    compile 'org.projectlombok:lombok:1.18.12'
+    compileOnly 'org.projectlombok:lombok:1.18.12'
 
-    compile 'org.apache.commons:commons-lang3:3.11'
-    compile 'com.google.code.findbugs:jsr305:3.0.2'
+    implementation 'org.apache.commons:commons-lang3:3.11'
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
-    compile 'org.apache.logging.log4j:log4j-api:2.13.3'
-    compile 'org.apache.logging.log4j:log4j-core:2.13.3'
+    implementation 'org.apache.logging.log4j:log4j-api:2.13.3'
+    implementation 'org.apache.logging.log4j:log4j-core:2.13.3'
 
-    compile "com.google.re2j:re2j:1.4"
+    implementation "com.google.re2j:re2j:1.4"
 
-    compile "org.reflections:reflections:0.9.12"
+    implementation "org.reflections:reflections:0.9.12"
 
-    compile "com.fasterxml.jackson.core:jackson-core:2.11.2"
-    compile "com.fasterxml.jackson.core:jackson-annotations:2.11.2"
-    compile "com.fasterxml.jackson.core:jackson-databind:2.11.2"
-    compile "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.11.2"
-    compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.2"
+    implementation "com.fasterxml.jackson.core:jackson-core:2.11.2"
+    implementation "com.fasterxml.jackson.core:jackson-annotations:2.11.2"
+    implementation "com.fasterxml.jackson.core:jackson-databind:2.11.2"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.11.2"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.2"
 
-    testCompile 'junit:junit:4.13'
-    testCompile 'org.junit.jupiter:junit-jupiter-api:5.6.2'
+    testImplementation 'junit:junit:4.13'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.6.2'
 
@@ -134,7 +134,7 @@ publishing {
                 withXml {
                     def dependenciesNode = asNode().appendNode('dependencies')
 
-                    configurations.compile.allDependencies.each {
+                    configurations.implementation.allDependencies.each {
                         def dependencyNode = dependenciesNode.appendNode('dependency')
                         dependencyNode.appendNode('groupId', it.group)
                         dependencyNode.appendNode('artifactId', it.name)
