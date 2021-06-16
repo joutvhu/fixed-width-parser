@@ -15,7 +15,7 @@ import lombok.Setter;
 @FixedObject
 public class ModelG extends ModelD {
     @FixedRegex(regex = "[a-zA-Z]")
-    @FixedField(label = "FIELD-D", start = 3, length = 1)
+    @FixedField(start = 3, length = 1)
     private Character fieldD;
 
     public ModelG(Long fieldA, @FixedRegex(regex = "[a-zA-Z]") Character fieldD) {
