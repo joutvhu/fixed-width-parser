@@ -18,7 +18,7 @@ public class DemoTests {
     public void demoTest() {
         Food food = (Food) FixedParser
                 .parser()
-                .parse("00001Dragon Food         09/30/2020fruit ", Product.class);
+                .parse("00001Dragon Fruit        09/30/2020fruit ", Product.class);
 
         Medicine medicine = (Medicine) FixedParser
                 .parser()

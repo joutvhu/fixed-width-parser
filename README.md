@@ -92,7 +92,7 @@ public class Medicine extends Product {
 ```java
 Food food = (Food) FixedParser
         .parser()
-        .parse(Product.class, "00001Dragon Food         09/30/2020fruit ");
+        .parse(Product.class, "00001Dragon Fruit        09/30/2020fruit ");
 
 Medicine medicine = (Medicine) FixedParser
         .parser()
