@@ -11,6 +11,8 @@ version '1.1.2'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+def snapshotVersion = version.endsWith('-SNAPSHOT') || version.endsWith('.SNAPSHOT')
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
@@ -147,7 +149,7 @@ publishing {
     repositories {
         maven {
             name = 'sonatype'
-            if (version.endsWith('-SNAPSHOT') || version.endsWith('.SNAPSHOT')) {
+            if (snapshotVersion) {
                 url = 'https://oss.sonatype.org/content/repositories/snapshots'
             } else {
                 url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
@@ -170,4 +172,8 @@ publishing {
 
 signing {
     sign publishing.publications.maven
+}
+
+tasks.publishMavenPublicationToGithubRepository.configure {
+    onlyIf { !snapshotVersion }
 }
