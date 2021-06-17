@@ -42,8 +42,15 @@ jobs:
       - name: Build with Gradle
         run: gradle clean build
 
+      - name: Get Current Release
+        id: get_current_release
+        uses: joutvhu/get-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Publish to Sonatype Packages
         run: gradle publishMavenPublicationToSonatypeRepository
 
-#      - name: Publish to GitHub Packages
-#        run: gradle publishMavenPublicationToGithubRepository
+      - name: Publish to GitHub Packages
+        if: ${{ github.ref == 'refs/heads/main' && steps.get_current_release.outputs.prerelease == false && steps.get_current_release.outputs.draft == false }}
+        run: gradle publishMavenPublicationToGithubRepository
