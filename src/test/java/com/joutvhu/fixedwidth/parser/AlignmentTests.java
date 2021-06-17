@@ -47,7 +47,6 @@ class AlignmentTests {
                 new Sample(new CenterPerson("Bob"), "   Bob    "),
 
                 // FIXME fixed length = 10, "Emma".length = 4, this means 3 chars to the left, and 3 chars to the right
-                // But the padding routine constructs a string of length 11, 4 spaces to the left, 3 spaces to the right
                 new Sample(new CenterPerson("Emma"), "   Emma   ")
         );
     }
