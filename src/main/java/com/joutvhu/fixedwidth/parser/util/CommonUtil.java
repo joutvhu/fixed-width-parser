@@ -141,8 +141,8 @@ public class CommonUtil {
         else if (len < size) {
             int padSize = size - len;
             int halfSize = padSize / 2;
-            return StringUtils.repeat(pad, (padSize & 1) == 0 ? halfSize + 1 : halfSize) +
-                    value + StringUtils.repeat(pad, halfSize);
+            return StringUtils.repeat(pad, halfSize) + value +
+                    StringUtils.repeat(pad, (padSize & 1) == 0 ? halfSize + 1 : halfSize);
         } else return StringUtils.substring(value, 0, size);
     }
 

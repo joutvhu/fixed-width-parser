@@ -150,10 +150,10 @@ public class FixedStringAssembler implements StringAssembler {
 
             switch (alignment) {
                 case LEFT:
-                    value = CommonUtil.leftPadValue(value, length, padding);
+                    value = CommonUtil.rightPadValue(value, length, padding);
                     break;
                 case RIGHT:
-                    value = CommonUtil.rightPadValue(value, length, padding);
+                    value = CommonUtil.leftPadValue(value, length, padding);
                     break;
                 case CENTER:
                     value = CommonUtil.centerPadValue(value, length, padding);
@@ -191,10 +191,10 @@ public class FixedStringAssembler implements StringAssembler {
 
             switch (alignment) {
                 case LEFT:
-                    value = CommonUtil.trimLeftBy(value, padding);
+                    value = CommonUtil.trimRightBy(value, padding);
                     break;
                 case RIGHT:
-                    value = CommonUtil.trimRightBy(value, padding);
+                    value = CommonUtil.trimLeftBy(value, padding);
                     break;
                 case CENTER:
                     value = CommonUtil.trimBy(value, padding);
