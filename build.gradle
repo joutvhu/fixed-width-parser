@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'com.github.joutvhu'
-version '1.1.2'
+version '1.1.2.4-SNAPSHOT'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
