@@ -159,8 +159,8 @@ public class FixedTypeInfo extends TypeInfoSetter {
     public Alignment getDefaultAlignment() {
         if (alignment == null || Alignment.AUTO.equals(alignment)) {
             if (TypeConstants.INTEGER_NUMBER_TYPES.contains(type) || TypeConstants.DECIMAL_NUMBER_TYPES.contains(type))
-                return Alignment.LEFT;
-            return Alignment.RIGHT;
+                return Alignment.RIGHT;
+            return Alignment.LEFT;
         }
         return alignment;
     }
