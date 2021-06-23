@@ -37,16 +37,9 @@ class AlignmentTests {
     static List<Sample> samples() {
         return Arrays.asList(
                 new Sample(new AutoPerson("Bob"), "Bob       "),
-
-                // FIXME "left" alignment means padding to the right to me
                 new Sample(new LeftPerson("Bob"), "Bob       "),
-
-                // FIXME "right" alignment means padding to the left for me
                 new Sample(new RightPerson("Bob"), "       Bob"),
-
                 new Sample(new CenterPerson("Bob"), "   Bob    "),
-
-                // FIXME fixed length = 10, "Emma".length = 4, this means 3 chars to the left, and 3 chars to the right
                 new Sample(new CenterPerson("Emma"), "   Emma   ")
         );
     }
