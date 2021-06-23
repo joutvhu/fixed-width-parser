@@ -48,13 +48,14 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
     @Override
     public Object read(FixedTypeInfo info, StringAssembler assembler) {
         info.detectTypeWith(assembler);
+        String value = assembler.getValue();
         assembler.trim(info);
         if (assembler.isBlank(info)) {
             if (info.require)
                 throw new NullPointerException(info.buildMessage("{title} cannot be blank."));
             return null;
         }
-        validate(info, assembler.getValue(), ValidationType.BEFORE_READ);
+        validate(info, value, ValidationType.BEFORE_READ);
 
         FixedWidthReader<Object> reader = module.createReaderBy(info, this);
         if (reader != null) {
