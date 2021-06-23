@@ -29,7 +29,6 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.12'
 
     implementation 'org.apache.commons:commons-lang3:3.11'
-    implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
     implementation "com.google.re2j:re2j:1.4"
 
