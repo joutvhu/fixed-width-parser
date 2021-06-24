@@ -23,19 +23,37 @@ class OptionTests {
     }
 
     @Test
-    void optionsWithPadding() {
-        Stone stone = new Stone("blue");
+    void optionsWithDropPadding() {
+        DropPaddingStone stone = new DropPaddingStone("blue");
 
         assertEquals("blue ", fixedParser.export(stone));
-        assertEquals("blue", fixedParser.parse(Stone.class, "blue ").color);
+        assertEquals("blue", fixedParser.parse(DropPaddingStone.class, "blue ").color);
+    }
+
+    @Test
+    void optionsWithKeepPadding() {
+        KeepPaddingStone stone = new KeepPaddingStone("blue");
+
+        assertEquals("blue ", fixedParser.export(stone));
+        assertEquals("blue ", fixedParser.parse(KeepPaddingStone.class, "blue ").color);
     }
 
     @FixedObject
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Stone {
+    public static class DropPaddingStone {
         @FixedField(length = 5, keepPadding = KeepPadding.DROP)
+        @FixedOption(options = {"blue ", "white"})
+        private String color;
+    }
+
+    @FixedObject
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class KeepPaddingStone {
+        @FixedField(length = 5, keepPadding = KeepPadding.KEEP)
         @FixedOption(options = {"blue ", "white"})
         private String color;
     }
