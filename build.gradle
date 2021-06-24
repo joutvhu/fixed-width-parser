@@ -39,11 +39,9 @@ dependencies {
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.11.2"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.2"
 
-    testImplementation 'junit:junit:4.13'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.6.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
-    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.6.2'
 
     testCompileOnly 'org.projectlombok:lombok:1.18.12'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
@@ -83,9 +81,7 @@ artifacts {
 }
 
 tasks.withType(Test) {
-    useJUnitPlatform {
-        includeEngines 'junit-jupiter'
-    }
+    useJUnitPlatform()
     filter {
         includeTestsMatching 'com.joutvhu.fixedwidth.parser.*'
     }
