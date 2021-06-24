@@ -1,7 +1,6 @@
 package com.joutvhu.fixedwidth.parser.util;
 
 import lombok.experimental.UtilityClass;
-import lombok.extern.log4j.Log4j2;
 
 /**
  * Ignore exception executor
@@ -9,7 +8,6 @@ import lombok.extern.log4j.Log4j2;
  * @author Giao Ho
  * @since 1.0.0
  */
-@Log4j2
 @UtilityClass
 public class IgnoreError {
     public <E extends Exception> void execute(NoResultCaller<E> caller) {
