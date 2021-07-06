@@ -11,7 +11,7 @@ Fixed Width Parser is a small library that purpose is:
 - If you are using Gradle just add the following dependency to your `build.gradle`.
 
 ```groovy
-compile "com.github.joutvhu:fixed-width-parser:1.1.3"
+compile "com.github.joutvhu:fixed-width-parser:1.1.4"
 ```
 
 - Or add the following dependency to your `pom.xml` if you are using Maven.
@@ -20,7 +20,7 @@ compile "com.github.joutvhu:fixed-width-parser:1.1.3"
 <dependency>
     <groupId>com.github.joutvhu</groupId>
     <artifactId>fixed-width-parser</artifactId>
-    <version>1.1.3</version>
+    <version>1.1.4</version>
 </dependency>
 ```
 
