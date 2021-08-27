@@ -48,8 +48,8 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
     @Override
     public Object read(FixedTypeInfo info, StringAssembler assembler) {
         info.detectTypeWith(assembler);
-        String value = assembler.getValue();
         assembler.trim(info);
+        String value = assembler.getValue();
         if (assembler.isBlank(info)) {
             if (info.require)
                 throw new NullPointerException(info.buildMessage("{title} cannot be blank."));
