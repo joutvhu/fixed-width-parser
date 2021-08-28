@@ -43,7 +43,7 @@ public class NumberValidator extends FixedWidthValidator implements NumberHelper
                 throw new InvalidException(message);
             }
         } else {
-            String regex = isDecimal ? "^[0-9]+(\\.[0-9]+)?$" : "^[0-9]+$";
+            String regex = isDecimal ? "^ *[0-9]+(\\.[0-9]+)? *$" : "^ *[0-9]+ *$";
             if (!Pattern.matches(regex, value)) {
                 String message = "{title} with value \"{value}\" is not " + (isDecimal ? "a" : "an") + " {number_type}.";
                 throw new InvalidException(info.formatMessage(message,
