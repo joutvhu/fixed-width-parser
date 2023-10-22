@@ -1,4 +1,4 @@
-# fixed-width-parser
+# Fixed Width Parser
 
 Fixed Width Parser is a small library that purpose is:
 
