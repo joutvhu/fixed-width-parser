@@ -1,6 +1,6 @@
 package com.joutvhu.fixedwidth.parser;
 
-import com.joutvhu.fixedwidth.parser.exception.InvalidException;
+import com.joutvhu.fixedwidth.parser.exception.FixedValidationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ public class ModelATests {
             fixedParser.parse("040myjY2020-09-19T12:14:2785.36", ModelA.class);
             Assertions.fail();
         } catch (Exception e) {
-            Assertions.assertTrue(e instanceof InvalidException);
+            Assertions.assertTrue(e instanceof FixedValidationException);
         }
     }
 
@@ -44,7 +44,7 @@ public class ModelATests {
             fixedParser.parse("040myjL2020-09-19 12:14:2785.36", ModelA.class);
             Assertions.fail();
         } catch (Exception e) {
-            Assertions.assertTrue(e instanceof InvalidException);
+            Assertions.assertTrue(e instanceof FixedValidationException);
         }
     }
 

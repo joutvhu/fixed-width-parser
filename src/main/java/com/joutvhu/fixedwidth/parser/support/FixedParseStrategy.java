@@ -5,6 +5,7 @@ import com.joutvhu.fixedwidth.parser.convert.FixedWidthValidator;
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthWriter;
 import com.joutvhu.fixedwidth.parser.convert.ValidationType;
 import com.joutvhu.fixedwidth.parser.exception.FixedException;
+import com.joutvhu.fixedwidth.parser.exception.MandatoryValueException;
 import com.joutvhu.fixedwidth.parser.module.FixedModule;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -52,7 +53,7 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
         assembler.trim(info);
         if (assembler.isBlank(info)) {
             if (info.require)
-                throw new NullPointerException(info.buildMessage("{title} cannot be blank."));
+                throw new MandatoryValueException(info.buildMessage("{title} cannot be blank."));
             return null;
         }
         validate(info, value, ValidationType.BEFORE_READ);
@@ -61,7 +62,7 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
         if (reader != null) {
             Object result = reader.read(assembler);
             if (result == null && info.require)
-                throw new NullPointerException(info.buildMessage("{label} cannot be null."));
+                throw new MandatoryValueException(info.buildMessage("{label} cannot be null."));
             return result;
         }
         throw new FixedException("Reader not found.");
@@ -78,7 +79,7 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
     public String write(FixedTypeInfo info, Object value) {
         if (value == null) {
             if (info.require)
-                throw new NullPointerException(info.buildMessage("{label} cannot be null."));
+                throw new MandatoryValueException(info.buildMessage("{label} cannot be null."));
             return FixedStringAssembler.black(info).getValue();
         }
         info.detectTypeWith(value);
@@ -92,7 +93,7 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
 
             if (assembler.isBlank(info)) {
                 if (info.require)
-                    throw new NullPointerException(info.buildMessage("{title} cannot be blank."));
+                    throw new MandatoryValueException(info.buildMessage("{title} cannot be blank."));
             } else validate(info, assembler.getValue(), ValidationType.AFTER_WRITE);
             return assembler.getValue();
         }

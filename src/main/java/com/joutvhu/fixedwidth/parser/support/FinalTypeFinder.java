@@ -3,7 +3,7 @@ package com.joutvhu.fixedwidth.parser.support;
 import com.google.re2j.Pattern;
 import com.joutvhu.fixedwidth.parser.annotation.FixedField;
 import com.joutvhu.fixedwidth.parser.annotation.FixedObject;
-import com.joutvhu.fixedwidth.parser.exception.FindTypeException;
+import com.joutvhu.fixedwidth.parser.exception.FixedParserException;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 
 import java.lang.reflect.Field;
@@ -68,7 +68,7 @@ public interface FinalTypeFinder {
         if (!superClass.isAssignableFrom(subClass)) {
             String message = String.format("%s class is not a subclass of %s class.",
                     subClass.getName(), superClass.getName());
-            throw new FindTypeException(message, superClass);
+            throw new FixedParserException(message);
         }
     }
 
@@ -88,7 +88,7 @@ public interface FinalTypeFinder {
                 message += String.format(" The %s is a interface.", type.getName());
             if (Modifier.isAbstract(modifiers))
                 message += String.format(" The %s is a abstract class.", type.getName());
-            throw new FindTypeException(message, type);
+            throw new FixedParserException(message);
         }
     }
 
@@ -140,6 +140,6 @@ public interface FinalTypeFinder {
                 else throw new UnsupportedOperationException(String.format("%s field is not a fixed field.", prop));
             }
         }
-        throw new NullPointerException(String.format("Cannot found %s field.", prop));
+        throw new FixedParserException(String.format("Cannot found %s field.", prop));
     }
 }

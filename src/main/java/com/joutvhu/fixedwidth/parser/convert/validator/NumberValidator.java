@@ -5,7 +5,7 @@ import com.joutvhu.fixedwidth.parser.constraint.FixedFormat;
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthValidator;
 import com.joutvhu.fixedwidth.parser.convert.ValidationType;
 import com.joutvhu.fixedwidth.parser.convert.general.NumberHelper;
-import com.joutvhu.fixedwidth.parser.exception.InvalidException;
+import com.joutvhu.fixedwidth.parser.exception.FixedValidationException;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 
@@ -40,13 +40,13 @@ public class NumberValidator extends FixedWidthValidator implements NumberHelper
                         "{title} with value \"{value}\" does not match the {format} format.",
                         CommonUtil.putToMap(super.getArguments(value),
                                 "{format}", () -> fixedFormat.format()));
-                throw new InvalidException(message);
+                throw new FixedValidationException(message);
             }
         } else {
             String regex = isDecimal ? "^ *[0-9]+(\\.[0-9]+)? *$" : "^ *[0-9]+ *$";
             if (!Pattern.matches(regex, value)) {
                 String message = "{title} with value \"{value}\" is not " + (isDecimal ? "a" : "an") + " {number_type}.";
-                throw new InvalidException(info.formatMessage(message,
+                throw new FixedValidationException(info.formatMessage(message,
                         CommonUtil.putToMap(super.getArguments(value),
                                 "{number_type}", () -> isDecimal ? "number" : "integer")));
             }

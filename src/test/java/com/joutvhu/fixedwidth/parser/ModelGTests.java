@@ -1,6 +1,6 @@
 package com.joutvhu.fixedwidth.parser;
 
-import com.joutvhu.fixedwidth.parser.exception.InvalidException;
+import com.joutvhu.fixedwidth.parser.exception.FixedValidationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ public class ModelGTests {
             fixedParser.parse("0992", ModelD.class);
             Assertions.fail();
         } catch (Exception e) {
-            Assertions.assertTrue(e instanceof InvalidException);
+            Assertions.assertTrue(e instanceof FixedValidationException);
             Assertions.assertEquals("fieldD field at position 4 and length 1 does not match the /[a-zA-Z]/ regex.", e.getMessage());
         }
     }

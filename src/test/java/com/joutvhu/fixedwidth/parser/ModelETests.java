@@ -1,6 +1,6 @@
 package com.joutvhu.fixedwidth.parser;
 
-import com.joutvhu.fixedwidth.parser.exception.InvalidException;
+import com.joutvhu.fixedwidth.parser.exception.FixedValidationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ public class ModelETests {
             fixedParser.parse("0111,741,123", ModelD.class);
             Assertions.fail();
         } catch (Exception e) {
-            Assertions.assertTrue(e instanceof InvalidException);
+            Assertions.assertTrue(e instanceof FixedValidationException);
         }
     }
 

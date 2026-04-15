@@ -1,7 +1,7 @@
 package com.joutvhu.fixedwidth.parser.convert.reader;
 
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthReader;
-import com.joutvhu.fixedwidth.parser.exception.ParserException;
+import com.joutvhu.fixedwidth.parser.exception.FixedParserException;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.support.ReadStrategy;
 import com.joutvhu.fixedwidth.parser.support.StringAssembler;
@@ -31,7 +31,7 @@ public class CollectionReader extends FixedWidthReader<Collection<?>> {
         Class<?> type = info.getType();
         Class<? extends Collection> selectedType = (Class<? extends Collection>) FixedHelper.selectSubTypeOf(type);
         if (selectedType == null)
-            throw new ParserException(String.format("Not found subclass for %s", info.getLabel()));
+            throw new FixedParserException(String.format("Not found subclass for %s", info.getLabel()));
 
         Collection<Object> objects = FixedHelper.newInstanceOf(selectedType);
         if (length > 0) {

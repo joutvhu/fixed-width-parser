@@ -2,7 +2,7 @@ package com.joutvhu.fixedwidth.parser.convert.validator;
 
 import com.joutvhu.fixedwidth.parser.convert.ValidationType;
 import com.joutvhu.fixedwidth.parser.convert.general.BooleanHelper;
-import com.joutvhu.fixedwidth.parser.exception.InvalidException;
+import com.joutvhu.fixedwidth.parser.exception.FixedValidationException;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import com.joutvhu.fixedwidth.parser.util.TypeConstants;
@@ -37,7 +37,7 @@ public class BooleanValidator extends FormatValidator implements BooleanHelper {
                     fixedFormat.nativeMessage(),
                     "{title} should be equal to one of the following value(s): {format}.",
                     getArguments(value));
-            throw new InvalidException(message);
+            throw new FixedValidationException(message);
         }
     }
 }

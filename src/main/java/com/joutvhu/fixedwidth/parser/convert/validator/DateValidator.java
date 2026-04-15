@@ -1,7 +1,7 @@
 package com.joutvhu.fixedwidth.parser.convert.validator;
 
 import com.joutvhu.fixedwidth.parser.convert.ValidationType;
-import com.joutvhu.fixedwidth.parser.exception.InvalidException;
+import com.joutvhu.fixedwidth.parser.exception.TypeConversionException;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import com.joutvhu.fixedwidth.parser.util.TypeConstants;
@@ -27,7 +27,7 @@ public class DateValidator extends FormatValidator {
                     fixedFormat.nativeMessage(),
                     "{title} does not match the {format} format.",
                     getArguments(value));
-            throw new InvalidException(message);
+            throw new TypeConversionException(message);
         }
     }
 }

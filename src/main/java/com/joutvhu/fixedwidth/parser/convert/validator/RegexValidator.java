@@ -4,7 +4,7 @@ import com.google.re2j.Pattern;
 import com.joutvhu.fixedwidth.parser.constraint.FixedRegex;
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthValidator;
 import com.joutvhu.fixedwidth.parser.convert.ValidationType;
-import com.joutvhu.fixedwidth.parser.exception.InvalidException;
+import com.joutvhu.fixedwidth.parser.exception.RegexMismatchException;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 
@@ -31,7 +31,7 @@ public class RegexValidator extends FixedWidthValidator {
                     "{title} does not match the {regex} regex.",
                     CommonUtil.putToMap(super.getArguments(value),
                             "{regex}", () -> "/" + fixedRegex.regex() + "/"));
-            throw new InvalidException(message);
+            throw new RegexMismatchException(message);
         }
     }
 }
