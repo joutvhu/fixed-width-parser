@@ -14,7 +14,6 @@ import java.util.Collection;
  */
 public class CollectionWriter extends FixedWidthWriter<Collection<?>> {
     protected FixedTypeInfo valueInfo;
-    protected Integer start = 0;
     protected Integer length = 0;
 
     public CollectionWriter(FixedTypeInfo info, WriteStrategy strategy) {
@@ -28,6 +27,7 @@ public class CollectionWriter extends FixedWidthWriter<Collection<?>> {
     @Override
     public String write(Collection<?> value) {
         StringAssembler assembler = FixedStringAssembler.instance();
+        int start = 0;
         for (Object item : value) {
             assembler.set(start, length, write(valueInfo, item));
             start += length;

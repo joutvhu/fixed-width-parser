@@ -29,6 +29,14 @@ public class NumberValidator extends FixedWidthValidator implements NumberHelper
 
     @Override
     public void validate(String value, ValidationType type) {
+        if (CommonUtil.isBlank(value)) {
+            if (info.isRequire()) {
+                String message = "{title} is required.";
+                throw new FixedValidationException(info.formatMessage(message, null));
+            }
+            return;
+        }
+
         FixedFormat fixedFormat = info.getAnnotation(FixedFormat.class);
         DecimalFormat decimalFormat = getDecimalFormat(fixedFormat);
 
@@ -43,8 +51,8 @@ public class NumberValidator extends FixedWidthValidator implements NumberHelper
                 throw new FixedValidationException(message);
             }
         } else {
-            String regex = isDecimal ? "^ *[0-9]+(\\.[0-9]+)? *$" : "^ *[0-9]+ *$";
-            if (!Pattern.matches(regex, value)) {
+            String regex = isDecimal ? "^ *[0-9]*(\\.[0-9]+)? *$" : "^ *[0-9]+ *$";
+            if (!com.google.re2j.Pattern.matches(regex, value) || ".".equals(value.trim())) {
                 String message = "{title} with value \"{value}\" is not " + (isDecimal ? "a" : "an") + " {number_type}.";
                 throw new FixedValidationException(info.formatMessage(message,
                         CommonUtil.putToMap(super.getArguments(value),

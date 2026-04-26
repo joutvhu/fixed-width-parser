@@ -16,8 +16,6 @@ import java.util.Map;
 public class MapReader extends FixedWidthReader<Map<?, ?>> {
     protected FixedTypeInfo keyInfo;
     protected FixedTypeInfo valueInfo;
-
-    protected Integer start = 0;
     protected Integer keyLength = 0;
     protected Integer valueLength = 0;
 
@@ -41,11 +39,19 @@ public class MapReader extends FixedWidthReader<Map<?, ?>> {
         Map<Object, Object> objects = FixedHelper.newInstanceOf(selectedType);
         if (keyLength > 0 && valueLength > 0) {
             int len = assembler.length();
-            while (start < len) {
-                Object key = read(keyInfo, assembler.child(start, keyLength));
-                start += keyLength;
-                Object value = read(valueInfo, assembler.child(start, valueLength));
-                start += valueLength;
+            int cursor = 0;
+            while (cursor < len) {
+                String rawKey = assembler.get(cursor, keyLength);
+                if (rawKey == null || rawKey.isEmpty()) break;
+                
+                StringAssembler keyAssembler = assembler.child(cursor, keyLength);
+                if (keyAssembler.isBlank(keyInfo)) break;
+                Object key = read(keyInfo, keyAssembler);
+                cursor += keyLength;
+                
+                StringAssembler valueAssembler = assembler.child(cursor, valueLength);
+                Object value = read(valueInfo, valueAssembler);
+                cursor += valueLength;
                 objects.put(key, value);
             }
         }

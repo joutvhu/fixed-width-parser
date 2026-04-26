@@ -8,12 +8,14 @@ import com.joutvhu.fixedwidth.parser.exception.FixedException;
 import com.joutvhu.fixedwidth.parser.exception.MandatoryValueException;
 import com.joutvhu.fixedwidth.parser.module.FixedModule;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
+import com.joutvhu.fixedwidth.parser.util.TypeConstants;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
 /**
  * Fixed width string serialization and deserialization
+ * Updated for thread-safety and immutable metadata.
  *
  * @author Giao Ho
  * @since 1.0.0
@@ -25,13 +27,12 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
         this.module = module;
     }
 
-    /**
-     * Validate string value with type information form {@link FixedTypeInfo}
-     *
-     * @param info  {@link FixedTypeInfo}
-     * @param value string
-     * @param type  is {@link ValidationType}, before read or after write.
-     */
+    private boolean isNumber(FixedTypeInfo info) {
+        Class<?> type = info.getType();
+        return TypeConstants.INTEGER_NUMBER_TYPES.contains(type) ||
+                TypeConstants.DECIMAL_NUMBER_TYPES.contains(type);
+    }
+
     private void validate(FixedTypeInfo info, String value, ValidationType type) {
         List<FixedWidthValidator> validators = module.createValidatorsBy(info, this);
         for (FixedWidthValidator validator : validators) {
@@ -39,42 +40,33 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
         }
     }
 
-    /**
-     * Read value from {@link StringAssembler} with type information form {@link FixedTypeInfo}
-     *
-     * @param info      {@link FixedTypeInfo}
-     * @param assembler {@link StringAssembler}
-     * @return object value
-     */
     @Override
     public Object read(FixedTypeInfo info, StringAssembler assembler) {
-        info.detectTypeWith(assembler);
-        String value = assembler.getValue();
-        assembler.trim(info);
-        if (assembler.isBlank(info)) {
-            if (info.require)
-                throw new MandatoryValueException(info.buildMessage("{title} cannot be blank."));
+        FixedTypeInfo actualInfo = info.detectTypeWith(assembler);
+        
+        if (assembler.isBlank(actualInfo) && !isNumber(actualInfo)) {
+            if (actualInfo.require)
+                throw new MandatoryValueException(actualInfo.buildMessage("{title} cannot be blank."));
             return null;
         }
-        validate(info, value, ValidationType.BEFORE_READ);
+        
+        String validationValue = assembler.getValue();
+        // If children list is empty, it's likely a leaf node where trimming matters for validation
+        if (actualInfo.getElementTypeInfo().isEmpty() && !actualInfo.getDefaultKeepPadding()) {
+            validationValue = FixedStringAssembler.of(validationValue).trim(actualInfo).getValue();
+        }
+        validate(actualInfo, validationValue, ValidationType.BEFORE_READ);
 
-        FixedWidthReader<Object> reader = module.createReaderBy(info, this);
+        FixedWidthReader<Object> reader = module.createReaderBy(actualInfo, this);
         if (reader != null) {
             Object result = reader.read(assembler);
-            if (result == null && info.require)
-                throw new MandatoryValueException(info.buildMessage("{label} cannot be null."));
+            if (result == null && actualInfo.require)
+                throw new MandatoryValueException(actualInfo.buildMessage("{label} cannot be null."));
             return result;
         }
         throw new FixedException("Reader not found.");
     }
 
-    /**
-     * Write object value to string with type information form {@link FixedTypeInfo}
-     *
-     * @param info  {@link FixedTypeInfo}
-     * @param value object
-     * @return string value
-     */
     @Override
     public String write(FixedTypeInfo info, Object value) {
         if (value == null) {
@@ -82,19 +74,20 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
                 throw new MandatoryValueException(info.buildMessage("{label} cannot be null."));
             return FixedStringAssembler.black(info).getValue();
         }
-        info.detectTypeWith(value);
-
-        FixedWidthWriter<Object> writer = module.createWriterBy(info, this);
+        
+        FixedTypeInfo actualInfo = info.detectTypeWith(value);
+        FixedWidthWriter<Object> writer = module.createWriterBy(actualInfo, this);
+        
         if (writer != null) {
             String result = writer.write(value);
             StringAssembler assembler = FixedStringAssembler
                     .of(CommonUtil.defaultIfNull(result, StringUtils.EMPTY))
-                    .pad(info);
+                    .pad(actualInfo);
 
-            if (assembler.isBlank(info)) {
-                if (info.require)
-                    throw new MandatoryValueException(info.buildMessage("{title} cannot be blank."));
-            } else validate(info, assembler.getValue(), ValidationType.AFTER_WRITE);
+            if (assembler.isBlank(actualInfo)) {
+                if (actualInfo.require)
+                    throw new MandatoryValueException(actualInfo.buildMessage("{title} cannot be blank."));
+            } else validate(actualInfo, assembler.getValue(), ValidationType.AFTER_WRITE);
             return assembler.getValue();
         }
         throw new FixedException("Writer not found.");

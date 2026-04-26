@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 @UtilityClass
 public class ObjectUtil {
-    public final ObjectMapper MAPPER = new ObjectMapper()
+    private static final ObjectMapper MAPPER = new ObjectMapper()
             .registerModule(new Jdk8Module())
             .registerModule(new SimpleModule())
             .registerModule(new JavaTimeModule());

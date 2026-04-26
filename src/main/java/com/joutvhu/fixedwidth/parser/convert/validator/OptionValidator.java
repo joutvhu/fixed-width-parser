@@ -27,8 +27,14 @@ public class OptionValidator extends FixedWidthValidator {
 
     @Override
     public void validate(String value, ValidationType type) {
+        if (com.joutvhu.fixedwidth.parser.util.CommonUtil.isNotBlank(value) && !info.getDefaultKeepPadding()) {
+            value = com.joutvhu.fixedwidth.parser.support.FixedStringAssembler.of(value).trim(info).getValue();
+        }
         if (CommonUtil.isNotBlank(fixedOption.options())) {
-            List<String> options = CommonUtil.listOf(fixedOption.options());
+            List<String> options = new java.util.ArrayList<>();
+            for (String opt : fixedOption.options()) {
+                options.add(!info.getDefaultKeepPadding() ? com.joutvhu.fixedwidth.parser.support.FixedStringAssembler.of(opt).trim(info).getValue() : opt);
+            }
             if (fixedOption.contains() != options.contains(value)) {
                 String message = fixedOption.contains() ?
                         "{label} at position {position} should be equal to one of the following value(s): {options}." :

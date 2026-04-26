@@ -24,7 +24,8 @@ public class NumberReader extends FixedWidthReader<Object> implements NumberHelp
     @Override
     public Object read(StringAssembler assembler) {
         Class<?> type = info.getType();
-        String value = assembler.getValue();
+        String originalValue = assembler.getValue();
+        String value = assembler.trim(info).getValue().trim();
         FixedFormat fixedFormat = info.getAnnotation(FixedFormat.class);
         Object result = null;
 
@@ -33,6 +34,11 @@ public class NumberReader extends FixedWidthReader<Object> implements NumberHelp
                 result = ObjectUtil.parseNumber(value, type, getDecimalFormat(fixedFormat));
             } catch (Exception e) {
                 throw new TypeConversionException(info.buildMessage("{title} is not a number."));
+            }
+        } else if (CommonUtil.isNotBlank(originalValue)) {
+            try {
+                result = ObjectUtil.parseNumber("0", type, getDecimalFormat(fixedFormat));
+            } catch (Exception ignored) {
             }
         }
         if (result == null && info.isRequire())

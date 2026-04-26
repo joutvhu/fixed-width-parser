@@ -3,6 +3,8 @@ package com.joutvhu.fixedwidth.parser.util;
 import com.joutvhu.fixedwidth.parser.exception.FixedException;
 import lombok.experimental.UtilityClass;
 import org.reflections.Reflections;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -86,8 +88,10 @@ public class FixedHelper {
      * @return list of sub-types
      */
     public <T> List<Class<?>> getNormalTypesOf(Class<T> type, String... firstPrefix) {
-        return new Reflections()
-                .getSubTypesOf(type)
+        // Scope the scan to the URL(s) that contain the given type, avoiding a full classpath scan.
+        Reflections reflections = new Reflections(new ConfigurationBuilder()
+                .setUrls(ClasspathHelper.forClass(type)));
+        return reflections.getSubTypesOf(type)
                 .stream()
                 .filter(c -> {
                     Constructor<?> constructor = IgnoreError.execute(() -> c.getConstructor());

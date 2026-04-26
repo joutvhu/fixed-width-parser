@@ -21,7 +21,7 @@ public class StringReader extends FixedWidthReader<Object> {
 
     @Override
     public Object read(StringAssembler assembler) {
-        String value = assembler.getValue();
+        String value = assembler.trim(info).getValue();
         if (!String.class.equals(info.getType())) {
             if (info.getLength() != 1)
                 throw new FixedParserException(info.buildMessage("Type of {label} is char then its length must be 1."));

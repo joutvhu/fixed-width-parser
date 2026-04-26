@@ -262,6 +262,6 @@ public class FixedStringAssembler implements StringAssembler {
      */
     @Override
     public boolean isBlank(FixedTypeInfo info) {
-        return isBlank(info.getDefaultNullPadding());
+        return isBlank(info.getDefaultPadding());
     }
 }

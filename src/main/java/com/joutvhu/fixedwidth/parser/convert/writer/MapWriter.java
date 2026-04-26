@@ -16,7 +16,6 @@ public class MapWriter extends FixedWidthWriter<Map<?, ?>> {
     protected FixedTypeInfo keyInfo;
     protected FixedTypeInfo valueInfo;
 
-    protected Integer start = 0;
     protected Integer keyLength = 0;
     protected Integer valueLength = 0;
 
@@ -33,6 +32,7 @@ public class MapWriter extends FixedWidthWriter<Map<?, ?>> {
     @Override
     public String write(Map<?, ?> value) {
         StringAssembler assembler = FixedStringAssembler.instance();
+        int start = 0;
         for (Map.Entry<?, ?> entry : value.entrySet()) {
             assembler.set(start, keyLength, write(keyInfo, entry.getKey()));
             start += keyLength;

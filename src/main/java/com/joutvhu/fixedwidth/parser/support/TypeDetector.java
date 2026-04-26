@@ -25,14 +25,14 @@ public abstract class TypeDetector implements FinalTypeFinder {
     @Getter(AccessLevel.NONE)
     private Class<?> rootType;
 
-    protected Field field;
-    protected Class<?> type;
-    protected AnnotatedType annotatedType;
+    protected final Field field;
+    protected final Class<?> type;
+    protected final AnnotatedType annotatedType;
     protected ParameterizedType parameterizedType;
 
-    protected FixedField fixedField;
-    protected FixedParam fixedParam;
-    protected FixedObject fixedObject;
+    protected final FixedField fixedField;
+    protected final FixedParam fixedParam;
+    protected final FixedObject fixedObject;
 
     private boolean finalType = false;
     private SourceType sourceType;
@@ -40,6 +40,8 @@ public abstract class TypeDetector implements FinalTypeFinder {
     protected TypeDetector(Class<?> type) {
         this.beforeInit();
         Assert.notNull(type, "Class Type must not be null!");
+        this.field = null;
+        this.annotatedType = null;
         this.type = type;
         this.rootType = type;
 
@@ -47,19 +49,24 @@ public abstract class TypeDetector implements FinalTypeFinder {
         Assert.notNull(fixedObject, String.format("The %s class must be annotated with FixedObject.", type.getName()));
         Assert.isTrue(fixedObject.length() >= 0, "Length of object cannot less than 0.");
 
+        this.fixedField = null;
+        this.fixedParam = null;
         this.sourceType = SourceType.CLASS_TYPE;
     }
 
     protected TypeDetector(AnnotatedType annotatedType) {
         this.beforeInit();
         Assert.notNull(annotatedType, "AnnotatedType must not be null!");
+        this.field = null;
         this.annotatedType = annotatedType;
 
         Type t = annotatedType.getType();
+        ParameterizedType parameterizedType = null;
         if (t instanceof ParameterizedType) {
-            this.parameterizedType = (ParameterizedType) t;
+            parameterizedType = (ParameterizedType) t;
             t = parameterizedType.getRawType();
         }
+        this.parameterizedType = parameterizedType;
 
         Assert.isTrue(t instanceof Class, String
                 .format("The %s type is not a class.", t.getTypeName()));
@@ -72,6 +79,7 @@ public abstract class TypeDetector implements FinalTypeFinder {
         this.fixedObject = getAnnotation(FixedObject.class);
         Assert.isTrue(fixedObject == null || fixedObject.length() >= 0, "Length of object cannot less than 0.");
 
+        this.fixedField = null;
         this.sourceType = SourceType.PARAM_TYPE;
     }
 
@@ -79,6 +87,7 @@ public abstract class TypeDetector implements FinalTypeFinder {
         this.beforeInit();
         Assert.notNull(field, "Field must not be null!");
         this.field = field;
+        this.annotatedType = null;
         this.type = field.getType();
         this.rootType = type;
 
@@ -86,20 +95,42 @@ public abstract class TypeDetector implements FinalTypeFinder {
         Assert.notNull(fixedField, String.format("The %s field must be annotated with FixedField.", field.getName()));
         this.fixedObject = getAnnotation(FixedObject.class);
 
+        this.fixedParam = null;
         this.sourceType = SourceType.FIELD_TYPE;
     }
 
     protected TypeDetector(Object value) {
         this.beforeInit();
         Assert.notNull(value, "Object must not be null!");
+        this.field = null;
+        this.annotatedType = null;
         this.type = value.getClass();
         this.rootType = type;
 
         this.fixedObject = getAnnotation(FixedObject.class);
         Assert.notNull(fixedObject, String.format("The %s class must be annotated with FixedObject.", type.getName()));
 
+        this.fixedField = null;
+        this.fixedParam = null;
         this.finalType = true;
         this.sourceType = SourceType.OBJECT_TYPE;
+    }
+
+    /**
+     * Internal constructor for subtype creation, preserving context
+     */
+    protected TypeDetector(Class<?> type, Field field, AnnotatedType annotatedType,
+                           FixedField fixedField, FixedParam fixedParam, FixedObject fixedObject,
+                           SourceType sourceType, boolean finalType) {
+        this.type = type;
+        this.rootType = type;
+        this.field = field;
+        this.annotatedType = annotatedType;
+        this.fixedField = fixedField;
+        this.fixedParam = fixedParam;
+        this.fixedObject = fixedObject;
+        this.sourceType = sourceType;
+        this.finalType = finalType;
     }
 
     protected <T extends TypeDetector> T postConstruct() {
@@ -134,17 +165,15 @@ public abstract class TypeDetector implements FinalTypeFinder {
      * @param assembler is {@link StringAssembler} of input string
      * @return final class type
      */
-    public final Class<?> detectTypeWith(StringAssembler assembler) {
+    public Class<?> detectFinalClassWith(StringAssembler assembler) {
         if (!finalType) {
+            Class<?> detectedType = this.type;
             if (!type.isPrimitive() && fixedObject != null) {
-                Class<?> newType = detectFinalType(assembler, rootType);
-                checkFinalClass(newType);
-                if (!type.equals(newType)) {
-                    this.detectedNewType(newType);
-                    this.type = newType;
-                }
+                detectedType = detectFinalType(assembler, rootType);
+                checkFinalClass(detectedType);
             }
             this.afterTypeDetected();
+            return detectedType;
         }
         return this.type;
     }
@@ -155,16 +184,14 @@ public abstract class TypeDetector implements FinalTypeFinder {
      * @param value object
      * @return final class type
      */
-    public final Class<?> detectTypeWith(Object value) {
+    public Class<?> detectFinalClassWith(Object value) {
         if (!finalType) {
+            Class<?> detectedType = this.type;
             if (value != null) {
-                Class<?> newType = value.getClass();
-                if (!type.equals(newType)) {
-                    this.detectedNewType(newType);
-                    this.type = newType;
-                }
+                detectedType = value.getClass();
             }
             this.afterTypeDetected();
+            return detectedType;
         }
         return this.type;
     }

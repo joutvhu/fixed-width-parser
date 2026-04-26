@@ -15,7 +15,6 @@ import java.util.Collection;
  */
 public class CollectionReader extends FixedWidthReader<Collection<?>> {
     protected FixedTypeInfo valueInfo;
-    protected Integer start = 0;
     protected Integer length = 0;
 
     public CollectionReader(FixedTypeInfo info, ReadStrategy strategy) {
@@ -36,10 +35,16 @@ public class CollectionReader extends FixedWidthReader<Collection<?>> {
         Collection<Object> objects = FixedHelper.newInstanceOf(selectedType);
         if (length > 0) {
             int len = assembler.length();
-            while (start < len) {
-                Object item = read(valueInfo, assembler.child(start, length));
+            int cursor = 0;
+            while (cursor < len) {
+                String rawItem = assembler.get(cursor, length);
+                if (rawItem == null || rawItem.isEmpty()) break;
+
+                StringAssembler itemAssembler = assembler.child(cursor, length);
+                if (itemAssembler.isBlank(valueInfo)) break;
+                Object item = read(valueInfo, itemAssembler);
                 objects.add(item);
-                start += length;
+                cursor += length;
             }
         }
         return objects;

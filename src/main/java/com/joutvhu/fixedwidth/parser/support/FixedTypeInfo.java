@@ -12,31 +12,46 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Field;
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
 /**
+ * Immutable metadata info for a fixed-width type.
+ *
  * @author Giao Ho
  * @since 1.0.0
  */
 public class FixedTypeInfo extends TypeInfoSetter {
-    private String title;
+    private final String title;
 
     protected FixedTypeInfo(Class<?> type) {
         super(type);
+        this.title = buildMessage("{label} at position {position} and length {length}");
     }
 
     protected FixedTypeInfo(AnnotatedType annotatedType) {
         super(annotatedType);
+        this.title = buildMessage("{label} at position {position} and length {length}");
     }
 
     protected FixedTypeInfo(Field field) {
         super(field);
+        this.title = buildMessage("{label} at position {position} and length {length}");
     }
 
     protected FixedTypeInfo(Object value) {
-        super(value);
+        super(value.getClass());
+        this.title = buildMessage("{label} at position {position} and length {length}");
+    }
+
+    protected FixedTypeInfo(FixedTypeInfo info, Class<?> type) {
+        super(type, info.name, info.label, info.start, info.length, info.require,
+                info.padding, info.nullPadding, info.keepPadding, info.alignment,
+                info.field, info.annotatedType, info.fixedField, info.fixedParam,
+                info.fixedObject, info.getSourceType(), true);
+        this.title = buildMessage("{label} at position {position} and length {length}");
     }
 
     public static FixedTypeInfo of(Class<?> type) {
@@ -55,13 +70,23 @@ public class FixedTypeInfo extends TypeInfoSetter {
         return new FixedTypeInfo(value).postConstruct();
     }
 
+    public FixedTypeInfo detectTypeWith(StringAssembler assembler) {
+        Class<?> detectedType = super.detectFinalClassWith(assembler);
+        if (this.type.equals(detectedType)) return this;
+        return new FixedTypeInfo(this, detectedType);
+    }
+
+    public FixedTypeInfo detectTypeWith(Object value) {
+        Class<?> detectedType = super.detectFinalClassWith(value);
+        if (this.type.equals(detectedType)) return this;
+        return new FixedTypeInfo(this, detectedType);
+    }
+
     public Integer getPosition() {
         return start + 1;
     }
 
     public String getTitle() {
-        if (this.title == null)
-            this.title = buildMessage("{label} at position {position} and length {length}");
         return this.title;
     }
 
@@ -101,9 +126,9 @@ public class FixedTypeInfo extends TypeInfoSetter {
      */
     public String formatMessage(String template, Map<String, Supplier<String>> arguments) {
         Assert.hasLength(template, "The template message cannot be black.");
-        if (arguments == null) arguments = getDefaultArguments();
-        else arguments.putAll(getDefaultArguments());
-        return CommonUtil.formatMessage(template, arguments);
+        Map<String, Supplier<String>> args = getDefaultArguments();
+        if (arguments != null) args.putAll(arguments);
+        return CommonUtil.formatMessage(template, args);
     }
 
     /**
@@ -143,10 +168,10 @@ public class FixedTypeInfo extends TypeInfoSetter {
      */
     public boolean getDefaultKeepPadding() {
         if (keepPadding == null || KeepPadding.AUTO.equals(keepPadding)) {
-            return TypeConstants.INTEGER_NUMBER_TYPES.contains(type) ||
-                    TypeConstants.DECIMAL_NUMBER_TYPES.contains(type) ||
-                    TypeConstants.STRING_TYPES.contains(type) ||
-                    TypeConstants.NOT_NULL_TYPES.contains(type);
+            if (TypeConstants.INTEGER_NUMBER_TYPES.contains(type) ||
+                    TypeConstants.DECIMAL_NUMBER_TYPES.contains(type))
+                return false;
+            return true;
         }
         return KeepPadding.KEEP.equals(keepPadding);
     }

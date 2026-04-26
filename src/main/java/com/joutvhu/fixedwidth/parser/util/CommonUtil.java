@@ -141,8 +141,9 @@ public class CommonUtil {
         else if (len < size) {
             int padSize = size - len;
             int halfSize = padSize / 2;
+            // Extra char (when padSize is odd) goes to the right side.
             return StringUtils.repeat(pad, halfSize) + value +
-                    StringUtils.repeat(pad, (padSize & 1) == 0 ? halfSize + 1 : halfSize);
+                    StringUtils.repeat(pad, (padSize & 1) == 0 ? halfSize : halfSize + 1);
         } else return StringUtils.substring(value, 0, size);
     }
 
@@ -186,7 +187,7 @@ public class CommonUtil {
             String replacement = replacementSupplier.get();
             if (replacement != null) {
                 String regex = escapeRegular(search);
-                return value.replaceAll(regex, replacement);
+                return value.replaceAll(regex, java.util.regex.Matcher.quoteReplacement(replacement));
             }
         }
         return value;
