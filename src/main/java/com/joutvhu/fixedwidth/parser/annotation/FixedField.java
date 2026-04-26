@@ -39,11 +39,11 @@ public @interface FixedField {
     int length();
 
     /**
-     * The field is nullable
+     * The field is required (non-null)
      *
-     * @return is nullable
+     * @return is required
      */
-    boolean require() default false;
+    boolean required() default false;
 
     /**
      * Sets the padding character of the fixed width field
