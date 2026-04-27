@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * Meta-annotation that links an annotation to its hook class.
  *
  * <p>Any annotation annotated with {@code @FixedHandler} is automatically
- * recognised by the parser. When the annotated annotation is found on a
+ * recognized by the parser. When the annotated annotation is found on a
  * field or class, the declared {@link Hook} is instantiated (per-invocation,
  * no-arg constructor) and invoked at the phases it registers via
  * {@link Hook#phases()}.

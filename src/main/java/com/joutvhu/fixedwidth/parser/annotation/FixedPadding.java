@@ -11,7 +11,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Configures padding behaviour for a field, class, or generic type parameter.
+ * Configures padding behavior for a field, class, or generic type parameter.
  *
  * <p>When placed on a field this annotation takes precedence over the
  * equivalent attributes in {@link FixedField} (which are deprecated).

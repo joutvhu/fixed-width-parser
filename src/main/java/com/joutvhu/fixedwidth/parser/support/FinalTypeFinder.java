@@ -19,7 +19,7 @@ import java.util.List;
  */
 public interface FinalTypeFinder {
     /**
-     * Get all fixed fields of a object type
+     * Get all fixed fields of an object type
      *
      * @param type class
      * @return all fixed width fields
@@ -36,7 +36,7 @@ public interface FinalTypeFinder {
     }
 
     /**
-     * Get final type of a string by supper FixedObject
+     * Get final type of string by supper FixedObject
      *
      * @param assembler is {@link StringAssembler}
      * @param type      of supper {@link FixedObject}
@@ -59,7 +59,7 @@ public interface FinalTypeFinder {
     }
 
     /**
-     * Check the subClass is extends from superClass
+     * Check the subClass is extending from superClass
      *
      * @param superClass is super-class
      * @param subClass   is sub-class

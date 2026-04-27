@@ -36,7 +36,7 @@ public @interface FixedRegex {
 
     /**
      * Customize error message
-     * If message is blank the system with be generate a message.
+     * If message is blank the system with be generated a message.
      *
      * @return error message
      */

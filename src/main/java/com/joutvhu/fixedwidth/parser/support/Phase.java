@@ -3,7 +3,7 @@ package com.joutvhu.fixedwidth.parser.support;
 /**
  * Represents a specific point in the read or write pipeline.
  *
- * <p>READ phases (prefix {@code READ_}) occur during {@link FixedParser#parse}:
+ * <p>READ phases (prefix {@code READ_}) occur during {@link com.joutvhu.fixedwidth.parser.FixedParser#parse}:
  * <ol>
  *   <li>{@link #READ_PRE_CUT} — before slicing the raw string</li>
  *   <li>{@link #READ_AFTER_CUT} — after slicing, raw string available</li>
@@ -13,7 +13,7 @@ package com.joutvhu.fixedwidth.parser.support;
  *   <li>{@link #READ_AFTER_OBJECT} — after all fields of an object are read</li>
  * </ol>
  *
- * <p>WRITE phases (prefix {@code WRITE_}) occur during {@link FixedParser#export}:
+ * <p>WRITE phases (prefix {@code WRITE_}) occur during {@link com.joutvhu.fixedwidth.parser.FixedParser#export}:
  * <ol>
  *   <li>{@link #WRITE_PRE_GET} — before reading the field value from the object</li>
  *   <li>{@link #WRITE_AFTER_GET} — after reading the field value</li>
