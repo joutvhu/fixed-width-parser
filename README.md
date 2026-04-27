@@ -388,13 +388,13 @@ The `@FixedHandler` meta-annotation links any annotation to a hook class. The ho
 
 ```java
 // 1. Define the annotation
-@FixedHandler(UpperCaseHook.class)
+@FixedHandler(UpperCaseHandler.class)
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface UpperCase {}
 
 // 2. Implement the hook
-public class UpperCaseHook implements Hook {
+public class UpperCaseHandler implements Hook {
     @Override
     public Set<Phase> phases() {
         return EnumSet.of(Phase.READ_AFTER_TRANSFORM);
@@ -413,15 +413,15 @@ public class UpperCaseHook implements Hook {
 private String code;
 ```
 
-### Built-in hooks
+### Built-in annotation handlers
 
-| Annotation | Hook | Phases |
+| Annotation | Handler | Phases |
 |-----------|---------|--------|
-| `@FixedRegex` | `RegexHook` | `READ_AFTER_TRANSFORM`, `WRITE_AFTER_TRANSFORM` |
-| `@FixedOption` | `OptionHook` | `READ_AFTER_TRANSFORM`, `WRITE_AFTER_TRANSFORM` |
-| `@FixedFormat` (date/bool/number) | `FormatDispatchHook` | `READ_AFTER_TRANSFORM` |
-| `@FixedConditional` | `ConditionalHook` | `READ_PRE_CUT` |
-| `@FixedEncoding` | `EncodingHook` | `READ_AFTER_CUT`, `WRITE_AFTER_CONVERT` |
+| `@FixedRegex` | `RegexHandler` | `READ_AFTER_TRANSFORM`, `WRITE_AFTER_TRANSFORM` |
+| `@FixedOption` | `OptionHandler` | `READ_AFTER_TRANSFORM`, `WRITE_AFTER_TRANSFORM` |
+| `@FixedFormat` (date/bool/number) | `FormatDispatchHandler` | `READ_AFTER_TRANSFORM`, `WRITE_AFTER_TRANSFORM` |
+| `@FixedConditional` | `ConditionalHandler` | `READ_PRE_CUT`, `WRITE_PRE_GET` |
+| `@FixedEncoding` | `EncodingHandler` | `READ_AFTER_CUT`, `WRITE_AFTER_CONVERT` |
 
 ---
 
