@@ -1,0 +1,53 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.example'
+version = '1.0.0'
+
+application {
+    mainClass = 'com.example.Main'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Depend on the local parser project
+    implementation project(':')
+    annotationProcessor project(':')
+
+    // Add Lombok for the example models
+    compileOnly 'org.projectlombok:lombok:1.18.36'
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+dependencyManagement {
+    dependencies {
+        dependency 'org.apache.commons:commons-lang3:3.18.0'
+        dependency 'com.google.re2j:re2j:1.4'
+        dependency 'org.reflections:reflections:0.9.12'
+        dependency 'com.fasterxml.jackson.core:jackson-core:2.11.2'
+        dependency 'com.fasterxml.jackson.core:jackson-databind:2.11.2'
+        dependency 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.11.2'
+        dependency 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.2'
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    // Since the SPI file is only in the JAR, we explicitly name our processor
+    // and Lombok to ensure they both run.
+    options.compilerArgs.addAll([
+        '-processor', 'lombok.launch.AnnotationProcessorHider$AnnotationProcessor,com.joutvhu.fixedwidth.parser.processor.FixedWidthProcessor'
+    ])
+}
