@@ -158,6 +158,36 @@ class ParseExportTest {
         assertEquals("Y", parser.export(new BoolModel(true)));
     }
 
+    @FixedObject
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CustomBoolModel {
+        @com.joutvhu.fixedwidth.parser.constraint.FixedBoolean(trueValues = {"Có", "YES"}, falseValues = {"Không", "NO"})
+        @FixedField(length = 5)
+        private Boolean flag;
+    }
+
+    @Test
+    void parseCustomBoolean_trueValue_returnsTrue() {
+        assertEquals(true, parser.parse(CustomBoolModel.class, "Có   ").getFlag());
+    }
+
+    @Test
+    void parseCustomBoolean_falseValue_returnsFalse() {
+        assertEquals(false, parser.parse(CustomBoolModel.class, "Không").getFlag());
+    }
+
+    @Test
+    void exportCustomBoolean_true_returnsFirstTrueValue() {
+        assertEquals("Có   ", parser.export(new CustomBoolModel(true)));
+    }
+
+    @Test
+    void exportCustomBoolean_false_returnsFirstFalseValue() {
+        assertEquals("Không", parser.export(new CustomBoolModel(false)));
+    }
+
     // -------------------------------------------------------------------------
     // Date field
     // -------------------------------------------------------------------------
