@@ -63,7 +63,7 @@ public class Benchmark {
         long coldStart = System.nanoTime();
         Product first = parser.parse(Product.class, firstLine);
         long coldEnd = System.nanoTime();
-        System.out.printf("Cold-start latency : %,d µs (first parse including metadata build)%n",
+        System.out.printf("Cold-start latency : %,d ns (first parse including metadata build)%n",
             (coldEnd - coldStart) / 1_000);
         System.out.printf("  First record id  : %d%n%n", first.getId());
 
@@ -104,7 +104,7 @@ public class Benchmark {
         System.out.printf("  Parse errors   : %,d%n", parseErrors);
         System.out.printf("  Elapsed        : %.2f s%n", elapsedSec);
         System.out.printf("  Throughput     : %,.0f rows/sec%n", rowsPerSec);
-        System.out.printf("  Avg per row    : %.2f µs%n", elapsedSec * 1_000_000 / parsed);
+        System.out.printf("  Avg per row    : %.2f ns%n", elapsedSec * 1_000_000 / parsed);
     }
 
     private static void printEnvironmentInfo() {

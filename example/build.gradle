@@ -61,15 +61,86 @@ tasks.withType(JavaCompile).configureEach {
  * Usage:  ./gradlew :example:generateData
  *         ./gradlew :example:generateData --args="500000 data/products.txt"
  */
-tasks.register('generateData', Exec) {
+tasks.register('generateData') {
     group = 'benchmark'
-    description = 'Generate fixed-width Product data using generate-data.py (requires Python 3)'
+    description = 'Generate fixed-width Product data (Groovy implementation)'
 
-    def rows   = project.findProperty('rows')   ?: '1000000'
-    def output = project.findProperty('output') ?: 'data/products.txt'
+    def rowsProp   = project.findProperty('rows')   ?: '3000000'
+    def outputProp = project.findProperty('output') ?: 'data/products.txt'
 
-    commandLine 'python', 'generate-data.py', rows, output
-    workingDir  projectDir
+    doLast {
+        int rows = rowsProp.toString().toInteger()
+        File outputFile = file(outputProp)
+        outputFile.parentFile.mkdirs()
+
+        def categories = ["EL", "CL", "FD", "SP", "HM"]
+        def warehouses = (1..10).collect { String.format("WH%04d", it) }
+        def random = new Random()
+        def baseDate = java.time.LocalDate.of(2020, 1, 1)
+        def dateRange = java.time.temporal.ChronoUnit.DAYS.between(baseDate, java.time.LocalDate.now()).toInteger()
+        def chars = (('A'..'Z') + ('0'..'9')).collect { it.toString() }
+        def charsSize = chars.size()
+
+        println "Generating ${String.format("%,d", rows)} records → ${outputFile} ..."
+
+        outputFile.withWriter('UTF-8') { writer ->
+            StringBuilder sb = new StringBuilder(82)
+            for (int i = 1; i <= rows; i++) {
+                sb.setLength(0)
+                
+                // id (8)
+                String id = i.toString()
+                for (int j = id.length(); j < 8; j++) sb.append('0')
+                sb.append(id)
+                
+                // sku (12)
+                for (int j = 0; j < 8; j++) sb.append(chars[random.nextInt(charsSize)])
+                for (int j = 0; j < 4; j++) sb.append(' ')
+                
+                // name (20)
+                for (int j = 0; j < 16; j++) sb.append(chars[random.nextInt(charsSize)])
+                for (int j = 0; j < 4; j++) sb.append(' ')
+                
+                // price (8)
+                String price = (random.nextInt(99900) + 100).toString()
+                for (int j = price.length(); j < 8; j++) sb.append('0')
+                sb.append(price)
+                
+                // quantity (6)
+                String qty = random.nextInt(10000).toString()
+                for (int j = qty.length(); j < 6; j++) sb.append('0')
+                sb.append(qty)
+                
+                // category (2)
+                sb.append(categories[random.nextInt(5)])
+                
+                // active (1)
+                sb.append(random.nextBoolean() ? 'Y' : 'N')
+                
+                // createdDate (8)
+                sb.append(baseDate.plusDays(random.nextInt(dateRange + 1)).format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")))
+                
+                // warehouseId (6)
+                sb.append(warehouses[random.nextInt(10)])
+                
+                // barcode (9)
+                String barcode = random.nextInt(1000000000).toString()
+                for (int j = barcode.length(); j < 9; j++) sb.append('0')
+                sb.append(barcode)
+
+                if (sb.length() != 80) {
+                    throw new GradleException("Record length ${sb.length()} != 80 at row ${i}: ${sb.toString()}")
+                }
+                
+                writer.write(sb.append('\n').toString())
+                
+                if (i % 100000 == 0) {
+                    println "  ${String.format("%,d", i)} / ${String.format("%,d", rows)}"
+                }
+            }
+        }
+        println "Done. File size: ${String.format("%.1f", outputFile.length() / 1048576.0)} MB"
+    }
 }
 
 /**
