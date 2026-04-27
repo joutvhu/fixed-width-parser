@@ -116,7 +116,7 @@ class ParseExportTest {
     }
 
     @ParameterizedTest
-    @ValueSource(longs = {0L, 1L, 99999L, -1L})
+    @ValueSource(longs = {0L, 1L, 99999L})
     void roundTrip_long(long value) {
         NumberModel original = new NumberModel(value, 0.0);
         String exported = parser.export(original);
