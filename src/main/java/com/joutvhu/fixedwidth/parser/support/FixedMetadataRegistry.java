@@ -51,7 +51,22 @@ public class FixedMetadataRegistry {
 
         try {
             DETECTING.get().add(field);
-            FixedTypeInfo info = FixedTypeInfo.of(field);
+            
+            FixedTypeInfo info;
+            com.joutvhu.fixedwidth.parser.codegen.FixedMetaProvider<?> provider = 
+                com.joutvhu.fixedwidth.parser.codegen.MetaProviderRegistry.get(field.getDeclaringClass());
+                
+            if (provider != null) {
+                com.joutvhu.fixedwidth.parser.codegen.FieldMetadata meta = provider.getFieldMetadata().get(field.getName());
+                if (meta != null) {
+                    info = FixedTypeInfo.of(field, meta);
+                } else {
+                    info = FixedTypeInfo.of(field);
+                }
+            } else {
+                info = FixedTypeInfo.of(field);
+            }
+            
             CACHE.put(field, info);
             return info;
         } finally {

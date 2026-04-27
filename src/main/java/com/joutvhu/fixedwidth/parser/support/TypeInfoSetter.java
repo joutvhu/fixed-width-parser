@@ -134,6 +134,26 @@ public abstract class TypeInfoSetter extends TypeDetector {
     }
 
     /**
+     * Internal constructor for APT-generated metadata pre-computation.
+     * Skips runtime annotation precedence evaluation by using pre-computed values.
+     */
+    protected TypeInfoSetter(Field field, com.joutvhu.fixedwidth.parser.codegen.FieldMetadata meta) {
+        super(field);
+        this.name = meta.getName();
+        this.label = meta.getLabel();
+        this.start = meta.getStart();
+        this.length = meta.getLength();
+        this.require = meta.isRequire();
+        this.padding = meta.getPadding();
+        this.nullPadding = meta.getNullPadding();
+        this.keepPadding = meta.getKeepPadding();
+        this.alignment = meta.getAlignment();
+
+        this.elementTypeInfo = Collections.unmodifiableList(this.detectFields(type));
+        this.genericTypeInfo = Collections.unmodifiableList(this.detectGenericTypes());
+    }
+
+    /**
      * Internal constructor for subtype creation
      */
     protected TypeInfoSetter(Class<?> type, String name, String label, Integer start, Integer length, boolean require,

@@ -65,6 +65,15 @@ public class FixedTypeInfo extends TypeInfoSetter {
         return new FixedTypeInfo(field).postConstruct();
     }
 
+    protected FixedTypeInfo(Field field, com.joutvhu.fixedwidth.parser.codegen.FieldMetadata meta) {
+        super(field, meta);
+        this.title = buildMessage("{label} at position {position} and length {length}");
+    }
+
+    public static FixedTypeInfo of(Field field, com.joutvhu.fixedwidth.parser.codegen.FieldMetadata meta) {
+        return new FixedTypeInfo(field, meta).postConstruct();
+    }
+
     public static FixedTypeInfo of(Object value) {
         return new FixedTypeInfo(value).postConstruct();
     }

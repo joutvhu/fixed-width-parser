@@ -18,15 +18,33 @@ public final class ModelField {
     private final boolean hasGetter;
     private final boolean hasSetter;
 
+    // Phase 2: Metadata pre-computation
+    private final Integer start;
+    private final Integer length;
+    private final boolean require;
+    private final Character padding;
+    private final Character nullPadding;
+    private final String keepPadding;
+    private final String alignment;
+
     public ModelField(String fieldName, TypeMirror fieldType,
                       String getterName, String setterName,
-                      boolean hasGetter, boolean hasSetter) {
+                      boolean hasGetter, boolean hasSetter,
+                      Integer start, Integer length, boolean require,
+                      Character padding, Character nullPadding, String keepPadding, String alignment) {
         this.fieldName = fieldName;
         this.fieldType = fieldType;
         this.getterName = getterName;
         this.setterName = setterName;
         this.hasGetter = hasGetter;
         this.hasSetter = hasSetter;
+        this.start = start;
+        this.length = length;
+        this.require = require;
+        this.padding = padding;
+        this.nullPadding = nullPadding;
+        this.keepPadding = keepPadding;
+        this.alignment = alignment;
     }
 
     public String getFieldName() {
@@ -51,6 +69,34 @@ public final class ModelField {
 
     public boolean hasSetter() {
         return hasSetter;
+    }
+
+    public Integer getStart() {
+        return start;
+    }
+
+    public Integer getLength() {
+        return length;
+    }
+
+    public boolean isRequire() {
+        return require;
+    }
+
+    public Character getPadding() {
+        return padding;
+    }
+
+    public Character getNullPadding() {
+        return nullPadding;
+    }
+
+    public String getKeepPadding() {
+        return keepPadding;
+    }
+
+    public String getAlignment() {
+        return alignment;
     }
 
     /**

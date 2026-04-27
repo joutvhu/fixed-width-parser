@@ -78,9 +78,42 @@ public final class ModelClass {
                 hasGetter = ProcessorUtil.hasMethod(getterName, typeElement, env);
             }
 
+            // Phase 2: Metadata extraction
+            com.joutvhu.fixedwidth.parser.annotation.FixedField fixedField = 
+                fieldElement.getAnnotation(com.joutvhu.fixedwidth.parser.annotation.FixedField.class);
+            
+            Integer start = fixedField != null ? fixedField.start() : 0;
+            Integer length = fixedField != null ? fixedField.length() : 0;
+            
+            boolean require = fieldType.getKind().isPrimitive() || 
+                fieldElement.getAnnotation(com.joutvhu.fixedwidth.parser.annotation.FixedRequired.class) != null;
+            
+            com.joutvhu.fixedwidth.parser.annotation.FixedPadding fieldPadding = 
+                fieldElement.getAnnotation(com.joutvhu.fixedwidth.parser.annotation.FixedPadding.class);
+            com.joutvhu.fixedwidth.parser.annotation.FixedPadding classPadding = 
+                typeElement.getAnnotation(com.joutvhu.fixedwidth.parser.annotation.FixedPadding.class);
+            
+            Character padding = null;
+            Character nullPadding = null;
+            String keepPadding = null;
+            String alignment = null;
+            
+            if (fieldPadding != null) {
+                padding = fieldPadding.value();
+                nullPadding = fieldPadding.nullValue();
+                keepPadding = fieldPadding.keep().name();
+                alignment = fieldPadding.alignment().name();
+            } else if (classPadding != null) {
+                padding = classPadding.value();
+                nullPadding = classPadding.nullValue();
+                keepPadding = classPadding.keep().name();
+                alignment = classPadding.alignment().name();
+            }
+
             modelFields.add(new ModelField(
                 fieldName, fieldType, getterName, setterName,
-                hasGetter, hasSetter));
+                hasGetter, hasSetter,
+                start, length, require, padding, nullPadding, keepPadding, alignment));
         }
 
         return new ModelClass(typeElement, packageName, simpleName,
