@@ -81,6 +81,11 @@ public class FixedTypeInfo extends TypeInfoSetter {
         return new FixedTypeInfo(this, detectedType);
     }
 
+    public FixedTypeInfo ofType(Class<?> newType) {
+        if (this.type.equals(newType)) return this;
+        return new FixedTypeInfo(this, newType);
+    }
+
     public Integer getPosition() {
         return start + 1;
     }
@@ -169,6 +174,13 @@ public class FixedTypeInfo extends TypeInfoSetter {
         if (keepPadding == null || KeepPadding.AUTO.equals(keepPadding)) {
             if (TypeConstants.INTEGER_NUMBER_TYPES.contains(type) ||
                 TypeConstants.DECIMAL_NUMBER_TYPES.contains(type))
+                return false;
+            if (type.isEnum() ||
+                java.util.UUID.class.equals(type) ||
+                java.time.Year.class.equals(type) ||
+                java.time.YearMonth.class.equals(type) ||
+                Boolean.class.equals(type) ||
+                boolean.class.equals(type))
                 return false;
             // When a custom padding char is explicitly set (not AUTO), default to DROP
             // so that the custom padding is stripped on parse.

@@ -90,6 +90,8 @@ public abstract class TypeDetector implements FinalTypeFinder {
         this.annotatedType = null;
         this.type = field.getType();
         this.rootType = type;
+        if (field.getGenericType() instanceof ParameterizedType)
+            this.parameterizedType = (ParameterizedType) field.getGenericType();
 
         this.fixedField = getAnnotation(FixedField.class);
         Assert.notNull(fixedField, String.format("The %s field must be annotated with FixedField.", field.getName()));

@@ -8,8 +8,11 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.Year;
+import java.time.YearMonth;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -28,7 +31,10 @@ public class TypeConstants {
         .listOf(Boolean.class, boolean.class);
 
     public final List<Class<?>> DATE_TYPES = CommonUtil
-        .listOf(Date.class, LocalDate.class, LocalTime.class, LocalDateTime.class, Instant.class, java.sql.Date.class, java.sql.Time.class, java.sql.Timestamp.class);
+        .listOf(Date.class, LocalDate.class, LocalTime.class, LocalDateTime.class, Year.class, YearMonth.class, Instant.class, java.sql.Date.class, java.sql.Time.class, java.sql.Timestamp.class);
+
+    public final List<Class<?>> UUID_TYPES = CommonUtil
+        .listOf(UUID.class);
 
     public final List<Class<?>> INTEGER_NUMBER_TYPES = CommonUtil
         .listOf(Byte.class, Short.class, Integer.class, Long.class, AtomicInteger.class, AtomicLong.class, BigInteger.class, byte.class, short.class, int.class, long.class);

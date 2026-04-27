@@ -3,17 +3,23 @@ package com.joutvhu.fixedwidth.parser.module;
 import com.joutvhu.fixedwidth.parser.convert.reader.BooleanReader;
 import com.joutvhu.fixedwidth.parser.convert.reader.CollectionReader;
 import com.joutvhu.fixedwidth.parser.convert.reader.DateReader;
+import com.joutvhu.fixedwidth.parser.convert.reader.EnumReader;
 import com.joutvhu.fixedwidth.parser.convert.reader.MapReader;
 import com.joutvhu.fixedwidth.parser.convert.reader.NumberReader;
 import com.joutvhu.fixedwidth.parser.convert.reader.ObjectReader;
+import com.joutvhu.fixedwidth.parser.convert.reader.OptionalReader;
 import com.joutvhu.fixedwidth.parser.convert.reader.StringReader;
+import com.joutvhu.fixedwidth.parser.convert.reader.UUIDReader;
 import com.joutvhu.fixedwidth.parser.convert.writer.BooleanWriter;
 import com.joutvhu.fixedwidth.parser.convert.writer.CollectionWriter;
 import com.joutvhu.fixedwidth.parser.convert.writer.DateWriter;
+import com.joutvhu.fixedwidth.parser.convert.writer.EnumWriter;
 import com.joutvhu.fixedwidth.parser.convert.writer.MapWriter;
 import com.joutvhu.fixedwidth.parser.convert.writer.NumberWriter;
 import com.joutvhu.fixedwidth.parser.convert.writer.ObjectWriter;
+import com.joutvhu.fixedwidth.parser.convert.writer.OptionalWriter;
 import com.joutvhu.fixedwidth.parser.convert.writer.StringWriter;
+import com.joutvhu.fixedwidth.parser.convert.writer.UUIDWriter;
 
 /**
  * Default module.
@@ -37,6 +43,9 @@ public class DefaultModule extends FixedModule {
             BooleanReader.class,
             NumberReader.class,
             DateReader.class,
+            EnumReader.class,
+            UUIDReader.class,
+            OptionalReader.class,
             CollectionReader.class,
             MapReader.class,
             ObjectReader.class,
@@ -46,6 +55,9 @@ public class DefaultModule extends FixedModule {
             BooleanWriter.class,
             NumberWriter.class,
             DateWriter.class,
+            EnumWriter.class,
+            UUIDWriter.class,
+            OptionalWriter.class,
             CollectionWriter.class,
             MapWriter.class,
             ObjectWriter.class

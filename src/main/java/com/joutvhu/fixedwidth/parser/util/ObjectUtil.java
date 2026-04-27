@@ -15,6 +15,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.Year;
+import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -70,6 +72,10 @@ public class ObjectUtil {
                 return formatter.format(((java.sql.Timestamp) value).toLocalDateTime());
             else if (Instant.class.equals(type))
                 return formatter.format((Instant) value);
+            else if (Year.class.equals(type))
+                return formatter.format((Year) value);
+            else if (YearMonth.class.equals(type))
+                return formatter.format((YearMonth) value);
             else if (Date.class.equals(type))
                 return formatter.format(((Date) value).toInstant());
         }
@@ -97,6 +103,10 @@ public class ObjectUtil {
             } else if (Date.class.equals(type)) {
                 formatter = formatter.withZone(ZoneId.systemDefault());
                 return Date.from(Instant.from(formatter.parse(value)));
+            } else if (Year.class.equals(type)) {
+                return Year.parse(value, formatter);
+            } else if (YearMonth.class.equals(type)) {
+                return YearMonth.parse(value, formatter);
             }
         }
         return readValue(value, type);
