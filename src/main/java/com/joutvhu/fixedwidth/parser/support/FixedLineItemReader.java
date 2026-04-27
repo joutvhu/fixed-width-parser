@@ -35,6 +35,7 @@ public class FixedLineItemReader implements ItemReader<Object> {
         if (hasNext()) {
             StringAssembler stringAssembler = FixedStringAssembler.of(line);
             this.line = null;
+            strategy.createReadContext(java.util.Collections.emptyMap());
             return strategy.read(fixedTypeInfo, stringAssembler);
         }
         return null;

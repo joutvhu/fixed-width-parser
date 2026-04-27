@@ -1,7 +1,7 @@
 package com.joutvhu.fixedwidth.parser.convert.handler;
 
 import com.joutvhu.fixedwidth.parser.constraint.FixedFormat;
-import com.joutvhu.fixedwidth.parser.convert.AnnotationHandler;
+import com.joutvhu.fixedwidth.parser.convert.Hook;
 import com.joutvhu.fixedwidth.parser.convert.general.NumberHelper;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.support.ParseContext;
@@ -23,30 +23,30 @@ import java.util.Set;
  * @author Giao Ho
  * @since 2.0.0
  */
-public class FormatDispatchHandler implements AnnotationHandler<FixedFormat>, NumberHelper {
+public class FormatDispatchHandler implements Hook, NumberHelper {
 
     private boolean isDecimal;
 
     @Override
-    public Set<Phase> getPhases(FixedFormat annotation) {
+    public Set<Phase> getSupportedPhases() {
         return new HashSet<>(Arrays.asList(
             Phase.READ_AFTER_TRANSFORM,
             Phase.WRITE_AFTER_TRANSFORM));
     }
 
     @Override
-    public void handle(FixedFormat annotation, FixedTypeInfo info, ParseContext ctx) {
+    public void handle(FixedTypeInfo info, ParseContext ctx) {
         if (TypeConstants.DATE_TYPES.contains(info.getType())) {
-            new DateHandler().handle(annotation, info, ctx);
+            new DateHandler().handle(info, ctx);
         } else if (TypeConstants.BOOLEAN_TYPES.contains(info.getType())) {
             // BooleanHandler only runs on READ
             if (ctx.getPhase().isRead()) {
-                new BooleanHandler().handle(annotation, info, ctx);
+                new BooleanHandler().handle(info, ctx);
             }
         } else if (isNumeric(info)) {
             // NumberHandler only runs on READ
             if (ctx.getPhase().isRead()) {
-                new NumberHandler().handle(annotation, info, ctx);
+                new NumberHandler().handle(info, ctx);
             }
         }
     }

@@ -1,7 +1,7 @@
 package com.joutvhu.fixedwidth.parser.convert.handler;
 
 import com.joutvhu.fixedwidth.parser.constraint.FixedFormat;
-import com.joutvhu.fixedwidth.parser.convert.AnnotationHandler;
+import com.joutvhu.fixedwidth.parser.convert.Hook;
 import com.joutvhu.fixedwidth.parser.convert.general.NumberHelper;
 import com.joutvhu.fixedwidth.parser.exception.FixedValidationException;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
@@ -21,17 +21,20 @@ import java.util.Set;
  * @author Giao Ho
  * @since 2.0.0
  */
-public class NumberHandler implements AnnotationHandler<FixedFormat>, NumberHelper {
+public class NumberHandler implements Hook, NumberHelper {
 
     private boolean isDecimal;
 
     @Override
-    public Set<Phase> getPhases(FixedFormat annotation) {
+    public Set<Phase> getSupportedPhases() {
         return Collections.singleton(Phase.READ_AFTER_TRANSFORM);
     }
 
     @Override
-    public void handle(FixedFormat annotation, FixedTypeInfo info, ParseContext ctx) {
+    public void handle(FixedTypeInfo info, ParseContext ctx) {
+        FixedFormat annotation = info.getAnnotation(FixedFormat.class);
+        if (annotation == null) return;
+
         // Only applies to numeric types
         if (!isNumeric(info)) return;
 

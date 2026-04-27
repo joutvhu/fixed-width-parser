@@ -1,7 +1,7 @@
 package com.joutvhu.fixedwidth.parser.convert.handler;
 
 import com.joutvhu.fixedwidth.parser.constraint.FixedFormat;
-import com.joutvhu.fixedwidth.parser.convert.AnnotationHandler;
+import com.joutvhu.fixedwidth.parser.convert.Hook;
 import com.joutvhu.fixedwidth.parser.exception.TypeConversionException;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.support.ParseContext;
@@ -19,15 +19,18 @@ import java.util.Set;
  * @author Giao Ho
  * @since 2.0.0
  */
-public class DateHandler implements AnnotationHandler<FixedFormat> {
+public class DateHandler implements Hook {
 
     @Override
-    public Set<Phase> getPhases(FixedFormat annotation) {
+    public Set<Phase> getSupportedPhases() {
         return Collections.singleton(Phase.READ_AFTER_TRANSFORM);
     }
 
     @Override
-    public void handle(FixedFormat annotation, FixedTypeInfo info, ParseContext ctx) {
+    public void handle(FixedTypeInfo info, ParseContext ctx) {
+        FixedFormat annotation = info.getAnnotation(FixedFormat.class);
+        if (annotation == null) return;
+
         // Only applies to date types
         if (!TypeConstants.DATE_TYPES.contains(info.getType())) return;
 

@@ -4,7 +4,7 @@ import com.joutvhu.fixedwidth.parser.FixedParser;
 import com.joutvhu.fixedwidth.parser.annotation.FixedField;
 import com.joutvhu.fixedwidth.parser.annotation.FixedHandler;
 import com.joutvhu.fixedwidth.parser.annotation.FixedObject;
-import com.joutvhu.fixedwidth.parser.convert.AnnotationHandler;
+import com.joutvhu.fixedwidth.parser.convert.Hook;
 import com.joutvhu.fixedwidth.parser.support.BuiltPart;
 import com.joutvhu.fixedwidth.parser.support.FixedStringBuilder;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
@@ -39,19 +39,21 @@ class FixedStringBuilderTest {
     // Checksum handler — dùng builder để tính checksum từ các field đã write
     // -------------------------------------------------------------------------
 
-    public static class ChecksumHandler implements AnnotationHandler<FixedChecksum> {
+    public static class ChecksumHandler implements Hook {
         @Override
-        public Set<Phase> getPhases(FixedChecksum annotation) {
+        public Set<Phase> getSupportedPhases() {
             return Set.of(Phase.WRITE_PRE_GET);
         }
 
         @Override
-        public Set<String> getDependencies(FixedChecksum annotation, FixedTypeInfo info) {
+        public Set<String> getDependencies(FixedTypeInfo info) {
+            FixedChecksum annotation = info.getAnnotation(FixedChecksum.class);
             return Set.of(annotation.includeFields());
         }
 
         @Override
-        public void handle(FixedChecksum ann, FixedTypeInfo info, ParseContext ctx) {
+        public void handle(FixedTypeInfo info, ParseContext ctx) {
+            FixedChecksum ann = info.getAnnotation(FixedChecksum.class);
             FixedStringBuilder builder = ctx.parentFrame().getBuilder();
             int checksum = 0;
             for (String fieldName : ann.includeFields()) {

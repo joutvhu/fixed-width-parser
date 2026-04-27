@@ -1,7 +1,7 @@
 package com.joutvhu.fixedwidth.parser.convert.handler;
 
 import com.joutvhu.fixedwidth.parser.annotation.FixedEncoding;
-import com.joutvhu.fixedwidth.parser.convert.AnnotationHandler;
+import com.joutvhu.fixedwidth.parser.convert.Hook;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.support.ParseContext;
 import com.joutvhu.fixedwidth.parser.support.Phase;
@@ -28,17 +28,20 @@ import java.util.Set;
  * @author Giao Ho
  * @since 2.0.0
  */
-public class EncodingHandler implements AnnotationHandler<FixedEncoding> {
+public class EncodingHandler implements Hook {
 
     @Override
-    public Set<Phase> getPhases(FixedEncoding annotation) {
+    public Set<Phase> getSupportedPhases() {
         return new HashSet<>(Arrays.asList(
             Phase.READ_AFTER_CUT,
             Phase.WRITE_AFTER_CONVERT));
     }
 
     @Override
-    public void handle(FixedEncoding annotation, FixedTypeInfo info, ParseContext ctx) {
+    public void handle(FixedTypeInfo info, ParseContext ctx) {
+        FixedEncoding annotation = info.getAnnotation(FixedEncoding.class);
+        if (annotation == null) return;
+
         Charset charset = resolveCharset(annotation.value(), info);
         if (charset == null) return;
 

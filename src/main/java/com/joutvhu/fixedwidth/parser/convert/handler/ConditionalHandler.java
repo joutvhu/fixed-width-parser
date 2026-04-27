@@ -1,7 +1,7 @@
 package com.joutvhu.fixedwidth.parser.convert.handler;
 
 import com.joutvhu.fixedwidth.parser.annotation.FixedConditional;
-import com.joutvhu.fixedwidth.parser.convert.AnnotationHandler;
+import com.joutvhu.fixedwidth.parser.convert.Hook;
 import com.joutvhu.fixedwidth.parser.support.ContextFrame;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.support.ParseContext;
@@ -30,20 +30,25 @@ import java.util.Set;
  * @author Giao Ho
  * @since 2.0.0
  */
-public class ConditionalHandler implements AnnotationHandler<FixedConditional> {
+public class ConditionalHandler implements Hook {
 
     @Override
-    public Set<Phase> getPhases(FixedConditional annotation) {
+    public Set<Phase> getSupportedPhases() {
         return new HashSet<>(Arrays.asList(Phase.READ_PRE_CUT, Phase.WRITE_PRE_GET));
     }
 
     @Override
-    public Set<String> getDependencies(FixedConditional annotation, FixedTypeInfo info) {
+    public Set<String> getDependencies(FixedTypeInfo info) {
+        FixedConditional annotation = info.getAnnotation(FixedConditional.class);
+        if (annotation == null) return Collections.emptySet();
         return Collections.singleton(annotation.dependsOnField());
     }
 
     @Override
-    public void handle(FixedConditional annotation, FixedTypeInfo info, ParseContext ctx) {
+    public void handle(FixedTypeInfo info, ParseContext ctx) {
+        FixedConditional annotation = info.getAnnotation(FixedConditional.class);
+        if (annotation == null) return;
+
         String dependsOn = annotation.dependsOnField();
         String whenValue = annotation.whenValue();
 

@@ -104,6 +104,13 @@ public interface ParseContext {
      */
     void skipCurrentField();
 
+    /**
+     * Returns {@code true} if {@link #skipCurrentField()} has been called for
+     * the current field.  Used by {@code FixedModule.invokeHooks()} to stop
+     * dispatching further hooks once a field is marked for skipping.
+     */
+    boolean isSkipField();
+
     // ── Properties ───────────────────────────────────────────────────────────
 
     /**

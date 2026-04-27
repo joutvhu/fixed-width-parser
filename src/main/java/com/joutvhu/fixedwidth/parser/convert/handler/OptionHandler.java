@@ -1,7 +1,7 @@
 package com.joutvhu.fixedwidth.parser.convert.handler;
 
 import com.joutvhu.fixedwidth.parser.constraint.FixedOption;
-import com.joutvhu.fixedwidth.parser.convert.AnnotationHandler;
+import com.joutvhu.fixedwidth.parser.convert.Hook;
 import com.joutvhu.fixedwidth.parser.exception.FixedValidationException;
 import com.joutvhu.fixedwidth.parser.support.FixedStringAssembler;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
@@ -23,17 +23,20 @@ import java.util.Set;
  * @author Giao Ho
  * @since 2.0.0
  */
-public class OptionHandler implements AnnotationHandler<FixedOption> {
+public class OptionHandler implements Hook {
 
     @Override
-    public Set<Phase> getPhases(FixedOption annotation) {
+    public Set<Phase> getSupportedPhases() {
         return new HashSet<>(Arrays.asList(
             Phase.READ_AFTER_TRANSFORM,
             Phase.WRITE_AFTER_TRANSFORM));
     }
 
     @Override
-    public void handle(FixedOption annotation, FixedTypeInfo info, ParseContext ctx) {
+    public void handle(FixedTypeInfo info, ParseContext ctx) {
+        FixedOption annotation = info.getAnnotation(FixedOption.class);
+        if (annotation == null) return;
+
         String value = ctx.getPhase().isRead()
             ? ctx.getProcessedString()
             : (String) ctx.getCurrentValue();

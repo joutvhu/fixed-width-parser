@@ -2,7 +2,7 @@ package com.joutvhu.fixedwidth.parser.convert.handler;
 
 import com.google.re2j.Pattern;
 import com.joutvhu.fixedwidth.parser.constraint.FixedRegex;
-import com.joutvhu.fixedwidth.parser.convert.AnnotationHandler;
+import com.joutvhu.fixedwidth.parser.convert.Hook;
 import com.joutvhu.fixedwidth.parser.exception.RegexMismatchException;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.support.ParseContext;
@@ -20,17 +20,20 @@ import java.util.Set;
  * @author Giao Ho
  * @since 2.0.0
  */
-public class RegexHandler implements AnnotationHandler<FixedRegex> {
+public class RegexHandler implements Hook {
 
     @Override
-    public Set<Phase> getPhases(FixedRegex annotation) {
+    public Set<Phase> getSupportedPhases() {
         return new HashSet<>(Arrays.asList(
             Phase.READ_AFTER_TRANSFORM,
             Phase.WRITE_AFTER_TRANSFORM));
     }
 
     @Override
-    public void handle(FixedRegex annotation, FixedTypeInfo info, ParseContext ctx) {
+    public void handle(FixedTypeInfo info, ParseContext ctx) {
+        FixedRegex annotation = info.getAnnotation(FixedRegex.class);
+        if (annotation == null) return;
+
         String value = ctx.getPhase().isRead()
             ? ctx.getProcessedString()
             : (String) ctx.getCurrentValue();

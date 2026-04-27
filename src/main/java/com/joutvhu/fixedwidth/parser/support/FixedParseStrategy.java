@@ -2,9 +2,7 @@ package com.joutvhu.fixedwidth.parser.support;
 
 import com.joutvhu.fixedwidth.parser.DefaultParseError;
 import com.joutvhu.fixedwidth.parser.ParseError;
-import com.joutvhu.fixedwidth.parser.convert.FixedWidthReader;
-import com.joutvhu.fixedwidth.parser.convert.FixedWidthWriter;
-import com.joutvhu.fixedwidth.parser.exception.FixedException;
+import com.joutvhu.fixedwidth.parser.convert.hook.OptionalHook;
 import com.joutvhu.fixedwidth.parser.exception.MandatoryValueException;
 import com.joutvhu.fixedwidth.parser.module.FixedModule;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
@@ -19,13 +17,19 @@ import java.util.function.Consumer;
 /**
  * Fixed width string serialization and deserialization.
  *
- * <p>Phase 1: {@link ParseContext} creation and propagation via ThreadLocal.
- * <p>Phase 2: {@link FixedModule#invokeAnnotationHandlers} called at each phase.
+ * <p>Phase 3 (unified-hook-system): all dispatch goes through
+ * {@link FixedModule#invokeHooks(FixedTypeInfo, ParseContext)}.
+ * The old {@code createReaderBy}/{@code createWriterBy}/{@code invokeAnnotationHandlers}
+ * methods have been removed from {@link FixedModule}.
+ *
+ * <p>The strategy stores itself in the context under the key
+ * {@link OptionalHook#STRATEGY_KEY} so that hooks that need recursive dispatch
+ * (Optional, Collection, Map, Object) can call back into the strategy.
  *
  * @author Giao Ho
- * @since 1.0.0
+ * @since 3.0.0
  */
-public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
+public class FixedParseStrategy {
 
     private FixedModule module;
     private Map<String, Object> parserConfig = Collections.emptyMap();
@@ -58,6 +62,8 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
     public DefaultParseContext createReadContext(Map<String, Object> sessionProps) {
         DefaultParseContext ctx = new DefaultParseContext(
             Phase.READ_PRE_CUT, parserConfig, sessionProps);
+        // Store strategy reference so hooks can call back into read/write
+        ctx.put(OptionalHook.STRATEGY_KEY, this);
         activeContext.set(ctx);
         if (contextCreatedHook != null) contextCreatedHook.accept(ctx);
         return ctx;
@@ -66,6 +72,8 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
     public DefaultParseContext createWriteContext(Map<String, Object> sessionProps) {
         DefaultParseContext ctx = new DefaultParseContext(
             Phase.WRITE_PRE_GET, parserConfig, sessionProps);
+        // Store strategy reference so hooks can call back into read/write
+        ctx.put(OptionalHook.STRATEGY_KEY, this);
         activeContext.set(ctx);
         if (contextCreatedHook != null) contextCreatedHook.accept(ctx);
         return ctx;
@@ -95,20 +103,21 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
             TypeConstants.DECIMAL_NUMBER_TYPES.contains(type);
     }
 
-    // ── ReadStrategy ──────────────────────────────────────────────────────────
+    // ── Read ──────────────────────────────────────────────────────────────────
 
-    @Override
     public Object read(FixedTypeInfo info, StringAssembler assembler) {
         FixedTypeInfo actualInfo = info.detectTypeWith(assembler);
 
-        // Only push a FIELD frame for leaf nodes.
-        // Object types get their frame pushed by ObjectReader.
+        // Object types (those with @FixedObject and fields) manage their own OBJECT frame
+        // via ObjectHook. Leaf fields get a FIELD frame here.
         boolean isObjectType = !actualInfo.getElementTypeInfo().isEmpty()
             || actualInfo.getFixedObject() != null;
 
         DefaultParseContext ctx = activeContext.get();
+        String rawString = assembler.getValue();
+
         if (ctx != null && !isObjectType) {
-            String rawString = assembler.getValue();
+            // Leaf fields: push a FIELD frame
             int depth = ctx.frameStack().size();
             DefaultContextFrame frame = new DefaultContextFrame(
                 actualInfo, FrameType.FIELD, depth, -1,
@@ -116,59 +125,51 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
             ctx.pushFrame(frame);
             ctx.setCurrentValue(null);
             firePhaseHook(Phase.READ_AFTER_CUT);
-            module.invokeAnnotationHandlers(actualInfo, ctx);
+            invokeHooksSafe(actualInfo, ctx, rawString);
+        } else if (ctx != null && isObjectType) {
+            // Object types: store assembler in context so ObjectHook can access it
+            ctx.put("__assembler__", assembler);
+            ctx.setCurrentValue(null);
         }
 
-        // effectiveAssembler may be replaced if a handler modifies processedString
         StringAssembler effectiveAssembler = assembler;
 
         try {
-            // For collection types, don't short-circuit on blank — let the reader
-            // handle it (e.g. return empty list when count=0)
+            // For collection types, don't short-circuit on blank
             boolean isCollectionType = Collection.class.isAssignableFrom(actualInfo.getType());
-            if (effectiveAssembler.isBlank(actualInfo) && !isNumber(actualInfo) && !isCollectionType) {
+            if (effectiveAssembler.isBlank(actualInfo) && !isNumber(actualInfo) && !isCollectionType
+                && !isObjectType) {
                 if (actualInfo.require)
                     throw new MandatoryValueException(
                         actualInfo.buildMessage("{title} cannot be blank."));
                 return null;
             }
 
-            // ── READ_AFTER_TRANSFORM ──────────────────────────────────────────
-            String validationValue = effectiveAssembler.getValue();
-            if (actualInfo.getElementTypeInfo().isEmpty() && !actualInfo.getDefaultKeepPadding()) {
-                validationValue = FixedStringAssembler.of(validationValue).trim(actualInfo).getValue();
-            }
             if (ctx != null && !isObjectType) {
+                String validationValue = effectiveAssembler.getValue();
+                if (actualInfo.getElementTypeInfo().isEmpty() && !actualInfo.getDefaultKeepPadding()) {
+                    validationValue = FixedStringAssembler.of(validationValue).trim(actualInfo).getValue();
+                }
                 ctx.currentFrame().setProcessedString(validationValue);
                 firePhaseHook(Phase.READ_AFTER_TRANSFORM);
-                // Invoke handlers — in collect mode, catch and record errors
-                invokeHandlersSafe(actualInfo, ctx, validationValue);
-                // Handler may have modified processedString — propagate to assembler
+                invokeHooksSafe(actualInfo, ctx, validationValue);
+
+                // Hook may have modified processedString
                 String processed = ctx.getProcessedString();
                 if (processed != null && !processed.equals(validationValue)) {
-                    validationValue = processed;
                     effectiveAssembler = FixedStringAssembler.of(processed);
                 }
-            }
 
-            // ── Reader ────────────────────────────────────────────────────────
-            FixedWidthReader<Object> reader = module.createReaderBy(actualInfo, this);
-            if (reader != null) {
-                Object result;
-                try {
-                    result = reader.read(effectiveAssembler);
-                } catch (Exception e) {
-                    if (ctx != null && ctx.isCollectErrors()) {
-                        recordError(ctx, actualInfo, e, assembler.getValue());
-                        return null;
-                    }
-                    throw e;
+                Object result = ctx.getCurrentValue();
+
+                if (ctx.isSkipField()) {
+                    return null;
                 }
 
-                if (ctx != null && !isObjectType) {
-                    ctx.setCurrentValue(result);
+                if (result != null) {
+                    // READ_AFTER_CONVERT
                     firePhaseHook(Phase.READ_AFTER_CONVERT);
-                    module.invokeAnnotationHandlers(actualInfo, ctx);
+                    invokeHooksSafe(actualInfo, ctx, null);
                     result = ctx.getCurrentValue();
                 }
 
@@ -177,7 +178,23 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
                         actualInfo.buildMessage("{label} cannot be null."));
                 return result;
             }
-            throw new FixedException("Reader not found.");
+
+            // Object types: invoke hooks at READ_AFTER_TRANSFORM — ObjectHook handles the rest
+            if (isObjectType && ctx != null) {
+                // Return null when the entire input is blank (no meaningful data)
+                if (effectiveAssembler.isBlank(actualInfo)) {
+                    return null;
+                }
+                firePhaseHook(Phase.READ_AFTER_TRANSFORM);
+                invokeHooksSafe(actualInfo, ctx, rawString);
+                Object result = ctx.getCurrentValue();
+                if (result == null && actualInfo.require)
+                    throw new MandatoryValueException(
+                        actualInfo.buildMessage("{label} cannot be null."));
+                return result;
+            }
+
+            return null;
 
         } finally {
             if (ctx != null && !isObjectType) ctx.popFrame();
@@ -185,35 +202,26 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
     }
 
     /**
-     * Invokes annotation handlers; in collect-all mode, catches exceptions and
-     * records them as errors instead of propagating.
+     * Invokes hooks; in collect-all mode, catches exceptions and records them.
      */
-    private void invokeHandlersSafe(FixedTypeInfo info, DefaultParseContext ctx,
-                                    String rawValue) {
+    private void invokeHooksSafe(FixedTypeInfo info, DefaultParseContext ctx, String rawValue) {
         if (ctx.isCollectErrors()) {
             try {
-                module.invokeAnnotationHandlers(info, ctx);
+                module.invokeHooks(info, ctx);
             } catch (Exception e) {
                 recordError(ctx, info, e, rawValue);
             }
         } else {
-            module.invokeAnnotationHandlers(info, ctx);
+            module.invokeHooks(info, ctx);
         }
     }
 
-    /**
-     * Builds a field path string like {@code "ClassName.fieldName"} from the
-     * current context frame stack.
-     */
     private String buildFieldPath(FixedTypeInfo info, DefaultParseContext ctx) {
         if (info.getField() == null) return info.getName();
         String className = info.getField().getDeclaringClass().getSimpleName();
         return className + "." + info.getField().getName();
     }
 
-    /**
-     * Records an error into the context's error list.
-     */
     private void recordError(DefaultParseContext ctx, FixedTypeInfo info,
                              Exception e, String rawValue) {
         String fieldPath = buildFieldPath(info, ctx);
@@ -223,9 +231,8 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
         ctx.addError(error);
     }
 
-    // ── WriteStrategy ─────────────────────────────────────────────────────────
+    // ── Write ─────────────────────────────────────────────────────────────────
 
-    @Override
     public String write(FixedTypeInfo info, Object value) {
         if (value == null) {
             if (info.require)
@@ -239,40 +246,42 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
             || actualInfo.getFixedObject() != null;
 
         DefaultParseContext ctx = activeContext.get();
-        Object effectiveValue = value;
         if (ctx != null && !isObjectType) {
             int depth = ctx.frameStack().size();
             DefaultContextFrame frame = new DefaultContextFrame(
                 actualInfo, FrameType.FIELD, depth, -1,
                 null, null, null, null);
             ctx.pushFrame(frame);
-            ctx.setCurrentValue(effectiveValue);
+            ctx.setCurrentValue(value);
             firePhaseHook(Phase.WRITE_AFTER_GET);
-            module.invokeAnnotationHandlers(actualInfo, ctx);
-            effectiveValue = ctx.getCurrentValue();
-        }
+            // Hooks at WRITE_AFTER_GET perform the actual conversion and
+            // set ctx.setCurrentValue() with the serialized string
+            module.invokeHooks(actualInfo, ctx);
+            Object converted = ctx.getCurrentValue();
 
-        try {
-            FixedWidthWriter<Object> writer = module.createWriterBy(actualInfo, this);
-            if (writer != null) {
-                String result = writer.write(effectiveValue);
+            if (ctx.isSkipField()) {
+                ctx.popFrame();
+                return FixedStringAssembler.black(actualInfo).getValue();
+            }
 
-                if (ctx != null && !isObjectType) {
-                    ctx.setCurrentValue(result);
-                    firePhaseHook(Phase.WRITE_AFTER_CONVERT);
-                    module.invokeAnnotationHandlers(actualInfo, ctx);
-                    result = (String) ctx.getCurrentValue();
-                }
+            try {
+                String result = converted instanceof String
+                    ? (String) converted
+                    : (converted != null ? converted.toString() : StringUtils.EMPTY);
+
+                // WRITE_AFTER_CONVERT
+                ctx.setCurrentValue(result);
+                firePhaseHook(Phase.WRITE_AFTER_CONVERT);
+                module.invokeHooks(actualInfo, ctx);
+                result = (String) ctx.getCurrentValue();
 
                 StringAssembler padded = FixedStringAssembler
                     .of(CommonUtil.defaultIfNull(result, StringUtils.EMPTY))
                     .pad(actualInfo);
 
-                if (ctx != null && !isObjectType) {
-                    ctx.setCurrentValue(padded.getValue());
-                    firePhaseHook(Phase.WRITE_AFTER_TRANSFORM);
-                    module.invokeAnnotationHandlers(actualInfo, ctx);
-                }
+                ctx.setCurrentValue(padded.getValue());
+                firePhaseHook(Phase.WRITE_AFTER_TRANSFORM);
+                module.invokeHooks(actualInfo, ctx);
 
                 if (padded.isBlank(actualInfo)) {
                     if (actualInfo.require)
@@ -280,11 +289,23 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
                             actualInfo.buildMessage("{title} cannot be blank."));
                 }
                 return padded.getValue();
-            }
-            throw new FixedException("Writer not found.");
 
-        } finally {
-            if (ctx != null && !isObjectType) ctx.popFrame();
+            } finally {
+                ctx.popFrame();
+            }
         }
+
+        // Object types: invoke hooks at WRITE_AFTER_GET — ObjectHook handles the rest
+        // Don't fire the user phase hook here; ObjectHook pushes the OBJECT frame first,
+        // then strategy.write() fires WRITE_AFTER_GET for each leaf field with the frame on stack.
+        if (isObjectType && ctx != null) {
+            ctx.setCurrentValue(value);
+            ctx.setPhase(Phase.WRITE_AFTER_GET);
+            module.invokeHooks(actualInfo, ctx);
+            Object result = ctx.getCurrentValue();
+            return result instanceof String ? (String) result : StringUtils.EMPTY;
+        }
+
+        return StringUtils.EMPTY;
     }
 }
