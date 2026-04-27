@@ -19,8 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests the {@link FixedWidthProcessor} to ensure it correctly generates
- * the $FixedAccessor and $FixedMeta classes and rejects invalid models at
- * compile time.
+ * the $FixedWidth companion class and rejects invalid models at compile time.
  */
 public class FixedWidthProcessorTest {
 
@@ -76,7 +75,7 @@ public class FixedWidthProcessorTest {
     // ── Valid model ───────────────────────────────────────────────────────────
 
     @Test
-    void validModel_compilesSuccessfully_andGeneratesAccessor() throws Exception {
+    void validModel_compilesSuccessfully_andGeneratesCompanion() throws Exception {
         String source = "package com.example;\n"
             + "import com.joutvhu.fixedwidth.parser.annotation.FixedObject;\n"
             + "import com.joutvhu.fixedwidth.parser.annotation.FixedField;\n"
@@ -91,12 +90,12 @@ public class FixedWidthProcessorTest {
         CompileResult r = compile("DummyModel.java", source);
 
         assertTrue(r.success, "Compilation should succeed");
-        assertTrue(r.classExists("com/example/DummyModel$FixedAccessor.class"),
-            "Accessor class should be generated");
+        assertTrue(r.classExists("com/example/DummyModel$FixedWidth.class"),
+            "Companion class should be generated");
     }
 
     @Test
-    void validModel_compilesSuccessfully_andGeneratesMeta() throws Exception {
+    void validModel_companionImplementsBothInterfaces() throws Exception {
         String source = "package com.example;\n"
             + "import com.joutvhu.fixedwidth.parser.annotation.FixedObject;\n"
             + "import com.joutvhu.fixedwidth.parser.annotation.FixedField;\n"
@@ -111,8 +110,9 @@ public class FixedWidthProcessorTest {
         CompileResult r = compile("MetaModel.java", source);
 
         assertTrue(r.success, "Compilation should succeed");
-        assertTrue(r.classExists("com/example/MetaModel$FixedMeta.class"),
-            "Meta class should be generated");
+        // Single $FixedWidth class replaces both $FixedAccessor and $FixedMeta
+        assertTrue(r.classExists("com/example/MetaModel$FixedWidth.class"),
+            "Companion class should be generated");
     }
 
     @Test
@@ -183,8 +183,8 @@ public class FixedWidthProcessorTest {
 
         assertFalse(r.success, "Compilation should fail due to overlapping fields");
         assertTrue(r.hasError("overlap"), "Error should mention 'overlap'");
-        assertFalse(r.classExists("com/example/OverlapModel$FixedAccessor.class"),
-            "Accessor should NOT be generated for invalid models");
+        assertFalse(r.classExists("com/example/OverlapModel$FixedWidth.class"),
+            "Companion should NOT be generated for invalid models");
     }
 
     @Test

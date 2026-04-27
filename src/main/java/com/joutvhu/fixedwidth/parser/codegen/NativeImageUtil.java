@@ -59,7 +59,7 @@ public final class NativeImageUtil {
         if (IN_NATIVE_IMAGE) {
             throw new UnsupportedOperationException(
                 "fixed-width-parser: Reflection-based field access is not supported in GraalVM Native Image. "
-                    + "Add the annotation processor to your build so that a $FixedAccessor is generated "
+                    + "Add the annotation processor to your build so that a $FixedWidth companion is generated "
                     + "for '" + modelClass.getName() + "' — then no reflect-config.json entry is needed.\n"
                     + "  Gradle:  annotationProcessor 'com.github.joutvhu:fixed-width-parser:<version>'\n"
                     + "  Maven:   <annotationProcessorPaths> with the same artifact");

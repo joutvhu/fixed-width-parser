@@ -155,9 +155,9 @@ public final class ModelClass {
     }
 
     /**
-     * The simple name of the generated accessor class.
+     * The simple name of the generated companion class.
      */
-    public String getAccessorSimpleName() {
-        return simpleClassName + "$FixedAccessor";
+    public String getCompanionSimpleName() {
+        return simpleClassName + "$FixedWidth";
     }
 }

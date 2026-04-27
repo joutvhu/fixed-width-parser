@@ -1,8 +1,7 @@
 package com.example;
 
 import com.joutvhu.fixedwidth.parser.FixedParser;
-import com.joutvhu.fixedwidth.parser.codegen.AccessorRegistry;
-import com.joutvhu.fixedwidth.parser.codegen.MetaProviderRegistry;
+import com.joutvhu.fixedwidth.parser.codegen.FixedCompanionRegistry;
 import com.joutvhu.fixedwidth.parser.codegen.NativeImageUtil;
 
 import java.io.BufferedReader;
@@ -116,14 +115,15 @@ public class Benchmark {
             System.getProperty("java.version"));
         System.out.printf("Native Image   : %s%n", NativeImageUtil.isNativeImage());
 
-        boolean hasAccessor = AccessorRegistry.get(Product.class) != null;
-        boolean hasMeta     = MetaProviderRegistry.get(Product.class) != null;
-        System.out.printf("$FixedAccessor : %s%n", hasAccessor ? "present (fast path)" : "absent (Reflection fallback)");
-        System.out.printf("$FixedMeta     : %s%n", hasMeta     ? "present (fast path)" : "absent (Reflection fallback)");
+        boolean hasAccessor = FixedCompanionRegistry.getAccessor(Product.class) != null;
+        boolean hasMeta     = FixedCompanionRegistry.getMetaProvider(Product.class) != null;
+        System.out.printf("$FixedWidth companion : %s%n", hasAccessor ? "present (fast path)" : "absent (Reflection fallback)");
+        System.out.printf("  - accessor     : %s%n", hasAccessor ? "yes" : "no");
+        System.out.printf("  - meta         : %s%n", hasMeta     ? "yes" : "no");
 
         if (!hasAccessor) {
             System.out.println();
-            System.out.println("WARNING: No $FixedAccessor found for Product.");
+            System.out.println("WARNING: No $FixedWidth companion found for Product.");
             System.out.println("  Add 'annotationProcessor project(\":\")' to example/build.gradle");
             System.out.println("  and rebuild to enable the fast path.");
         }

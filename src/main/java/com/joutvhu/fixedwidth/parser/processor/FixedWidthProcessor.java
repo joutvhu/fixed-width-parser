@@ -1,7 +1,6 @@
 package com.joutvhu.fixedwidth.parser.processor;
 
-import com.joutvhu.fixedwidth.parser.processor.generator.AccessorGenerator;
-import com.joutvhu.fixedwidth.parser.processor.generator.MetaGenerator;
+import com.joutvhu.fixedwidth.parser.processor.generator.FixedCompanionGenerator;
 import com.joutvhu.fixedwidth.parser.processor.model.ModelClass;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -18,10 +17,11 @@ import java.util.Set;
 
 /**
  * JSR-269 annotation processor that scans for {@code @FixedObject}-annotated
- * classes and generates {@code $FixedAccessor} companion classes.
+ * classes and generates a single {@code $FixedWidth} companion class per model.
  *
- * <p>The generated classes eliminate Reflection-based field get/set calls
- * on the parse/export hot path. If this processor is not on the annotation
+ * <p>The companion implements both {@link com.joutvhu.fixedwidth.parser.codegen.FixedFieldAccessor}
+ * (zero-Reflection field get/set) and {@link com.joutvhu.fixedwidth.parser.codegen.FixedMetaProvider}
+ * (pre-computed field metadata). If this processor is not on the annotation
  * processor classpath, the library falls back to Reflection transparently.
  *
  * @author Giao Ho
@@ -49,28 +49,28 @@ public class FixedWidthProcessor extends AbstractProcessor {
                 try {
                     ModelClass model = ModelClass.from(typeElement, processingEnv);
 
-                    // Phase 3: Compile-time validation
-                    boolean isValid = com.joutvhu.fixedwidth.parser.processor.validation.ProcessorSchemaCheck.validate(model, processingEnv);
+                    // Compile-time schema validation
+                    boolean isValid = com.joutvhu.fixedwidth.parser.processor.validation.ProcessorSchemaCheck
+                        .validate(model, processingEnv);
 
                     if (isValid) {
                         processingEnv.getMessager().printMessage(
                             Diagnostic.Kind.NOTE,
-                            "fixed-width-parser: generating accessor for " + qualifiedName,
+                            "fixed-width-parser: generating companion for " + qualifiedName,
                             typeElement);
 
-                        new AccessorGenerator(processingEnv).generate(model);
-                        new MetaGenerator(processingEnv).generate(model);
+                        new FixedCompanionGenerator(processingEnv).generate(model);
                     }
                 } catch (Exception e) {
                     processingEnv.getMessager().printMessage(
                         Diagnostic.Kind.WARNING,
-                        "fixed-width-parser: failed to generate accessor for "
+                        "fixed-width-parser: failed to generate companion for "
                             + qualifiedName + ": " + e.getMessage(),
                         typeElement);
                 }
             }
         }
-        // Return false so that other processors can also process @FixedObject if needed
+        // Return false so other processors can also handle @FixedObject if needed
         return false;
     }
 }

@@ -1,7 +1,7 @@
 package com.joutvhu.fixedwidth.parser.convert.hook;
 
 import com.joutvhu.fixedwidth.parser.annotation.FixedCount;
-import com.joutvhu.fixedwidth.parser.codegen.AccessorRegistry;
+import com.joutvhu.fixedwidth.parser.codegen.FixedCompanionRegistry;
 import com.joutvhu.fixedwidth.parser.codegen.FixedFieldAccessor;
 import com.joutvhu.fixedwidth.parser.codegen.NativeImageUtil;
 import com.joutvhu.fixedwidth.parser.convert.ModuleHook;
@@ -129,7 +129,7 @@ public class ObjectHook implements ModuleHook {
                 Object v = strategy.read(fieldInfo, childAssembler);
 
                 // Fast path: use generated accessor if available
-                FixedFieldAccessor<Object> accessor = AccessorRegistry.get(
+                FixedFieldAccessor<Object> accessor = FixedCompanionRegistry.getAccessor(
                     (Class<Object>) info.getType());
                 if (accessor != null) {
                     accessor.set(result, field.getName(), v);
@@ -211,7 +211,7 @@ public class ObjectHook implements ModuleHook {
 
                 // Fast path: use generated accessor if available
                 Object item;
-                FixedFieldAccessor<Object> writeAccessor = AccessorRegistry.get(
+                FixedFieldAccessor<Object> writeAccessor = FixedCompanionRegistry.getAccessor(
                     (Class<Object>) info.getType());
                 if (writeAccessor != null) {
                     item = writeAccessor.get(value, fieldInfo.getField().getName());
@@ -237,7 +237,7 @@ public class ObjectHook implements ModuleHook {
 
                 // Fast path: use generated accessor for count-field re-write
                 Object currentVal;
-                FixedFieldAccessor<Object> countAccessor = AccessorRegistry.get(
+                FixedFieldAccessor<Object> countAccessor = FixedCompanionRegistry.getAccessor(
                     (Class<Object>) info.getType());
                 if (countAccessor != null) {
                     currentVal = countAccessor.get(value, fieldInfo.getField().getName());

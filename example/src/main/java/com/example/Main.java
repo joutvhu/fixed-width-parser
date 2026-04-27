@@ -14,12 +14,12 @@ public class Main {
         System.out.println("Username: " + user.getUsername());
         System.out.println("Email: " + user.getEmail());
 
-        // Check if the generated accessor class exists
+        // Check if the generated companion class exists
         try {
-            Class<?> accessorClass = Class.forName("com.example.User$FixedAccessor");
-            System.out.println("\nSUCCESS: Found generated accessor: " + accessorClass.getName());
+            Class<?> companionClass = Class.forName("com.example.User$FixedWidth");
+            System.out.println("\nSUCCESS: Found generated companion: " + companionClass.getName());
         } catch (ClassNotFoundException e) {
-            System.out.println("\nFAILURE: Generated accessor com.example.User$FixedAccessor not found!");
+            System.out.println("\nFAILURE: Generated companion com.example.User$FixedWidth not found!");
         }
         
         // Export back to string
