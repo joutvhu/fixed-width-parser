@@ -11,7 +11,9 @@ import com.joutvhu.fixedwidth.parser.support.Phase;
  */
 public interface ParseError {
 
-    /** Human-readable description of the error. */
+    /**
+     * Human-readable description of the error.
+     */
     String getMessage();
 
     /**
@@ -32,6 +34,8 @@ public interface ParseError {
      */
     String getRawValue();
 
-    /** The underlying exception that triggered this error. */
+    /**
+     * The underlying exception that triggered this error.
+     */
     Throwable getCause();
 }

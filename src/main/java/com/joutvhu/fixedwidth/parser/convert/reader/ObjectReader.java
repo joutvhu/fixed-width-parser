@@ -46,9 +46,9 @@ public class ObjectReader extends FixedWidthReader<Object> {
         DefaultContextFrame objectFrame = null;
         if (ctx != null) {
             objectFrame = new DefaultContextFrame(
-                    info, FrameType.OBJECT,
-                    ctx.frameStack().size(), -1,
-                    assembler, assembler.getValue(), result, null);
+                info, FrameType.OBJECT,
+                ctx.frameStack().size(), -1,
+                assembler, assembler.getValue(), result, null);
             ctx.pushFrame(objectFrame);
         }
 
@@ -66,9 +66,9 @@ public class ObjectReader extends FixedWidthReader<Object> {
                     ctx.resetSkipField();
                     // Push a temporary frame so handlers can access parentFrame()
                     DefaultContextFrame preFrame = new DefaultContextFrame(
-                            fieldInfo, FrameType.FIELD,
-                            ctx.frameStack().size(), -1,
-                            assembler, null, null, null);
+                        fieldInfo, FrameType.FIELD,
+                        ctx.frameStack().size(), -1,
+                        assembler, null, null, null);
                     ctx.pushFrame(preFrame);
                     ctx.setCurrentValue(null);
                     firePhase(Phase.READ_PRE_CUT);
@@ -119,7 +119,9 @@ public class ObjectReader extends FixedWidthReader<Object> {
         }
     }
 
-    /** Returns the active context if the strategy supports it, otherwise null. */
+    /**
+     * Returns the active context if the strategy supports it, otherwise null.
+     */
     private DefaultParseContext getActiveContext() {
         if (strategy instanceof FixedParseStrategy) {
             return ((FixedParseStrategy) strategy).getActiveContext();

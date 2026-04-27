@@ -33,8 +33,8 @@ public class EncodingHandler implements AnnotationHandler<FixedEncoding> {
     @Override
     public Set<Phase> getPhases(FixedEncoding annotation) {
         return new HashSet<>(Arrays.asList(
-                Phase.READ_AFTER_CUT,
-                Phase.WRITE_AFTER_CONVERT));
+            Phase.READ_AFTER_CUT,
+            Phase.WRITE_AFTER_CONVERT));
     }
 
     @Override
@@ -95,7 +95,7 @@ public class EncodingHandler implements AnnotationHandler<FixedEncoding> {
             return declared;
         } catch (UnsupportedCharsetException e) {
             throw new com.joutvhu.fixedwidth.parser.exception.FixedParserException(
-                    "Unknown charset '" + charsetName + "' declared on field: " + info.getName(), e);
+                "Unknown charset '" + charsetName + "' declared on field: " + info.getName(), e);
         }
     }
 }

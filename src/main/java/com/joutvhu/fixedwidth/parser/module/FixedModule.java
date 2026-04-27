@@ -64,8 +64,8 @@ public abstract class FixedModule {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private <T extends ParsingApprover> List<T> createHandlersBy(
-            boolean takeOne, Set<Class<? extends T>> handlers, FixedTypeInfo info,
-            FixedParseStrategy strategy, Class<?> strategyType) {
+        boolean takeOne, Set<Class<? extends T>> handlers, FixedTypeInfo info,
+        FixedParseStrategy strategy, Class<?> strategyType) {
         List<T> result = new ArrayList<>();
         for (Class<? extends T> handlerClass : handlers) {
             T handler = IgnoreError.execute(() -> {
@@ -87,8 +87,8 @@ public abstract class FixedModule {
     }
 
     private <T extends ParsingApprover> T createHandlerBy(
-            Set<Class<? extends T>> handlers, FixedTypeInfo info,
-            FixedParseStrategy strategy, Class<?> strategyType) {
+        Set<Class<? extends T>> handlers, FixedTypeInfo info,
+        FixedParseStrategy strategy, Class<?> strategyType) {
         List<T> result = createHandlersBy(true, handlers, info, strategy, strategyType);
         return result.isEmpty() ? null : result.get(0);
     }
@@ -116,7 +116,7 @@ public abstract class FixedModule {
 
         for (Annotation annotation : collectAnnotations(info)) {
             FixedHandler fixedHandler = annotation.annotationType()
-                    .getAnnotation(FixedHandler.class);
+                .getAnnotation(FixedHandler.class);
             if (fixedHandler == null) continue;
 
             Class<? extends AnnotationHandler<?>> handlerClass = fixedHandler.value();

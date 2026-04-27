@@ -67,7 +67,7 @@ public interface FinalTypeFinder {
     default void checkAssignableFrom(Class<?> superClass, Class<?> subClass) {
         if (!superClass.isAssignableFrom(subClass)) {
             String message = String.format("%s class is not a subclass of %s class.",
-                    subClass.getName(), superClass.getName());
+                subClass.getName(), superClass.getName());
             throw new FixedParserException(message);
         }
     }

@@ -3,7 +3,16 @@ package com.joutvhu.fixedwidth.parser.util;
 import lombok.experimental.UtilityClass;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.*;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.AnnotatedParameterizedType;
+import java.lang.reflect.AnnotatedType;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.UndeclaredThrowableException;
 
 /**
  * @author Giao Ho
@@ -54,14 +63,14 @@ public class ReflectionUtil {
 
     public void makeAccessible(Field field) {
         if ((!Modifier.isPublic(field.getModifiers()) ||
-                !Modifier.isPublic(field.getDeclaringClass().getModifiers()) ||
-                Modifier.isFinal(field.getModifiers())) && !field.isAccessible())
+            !Modifier.isPublic(field.getDeclaringClass().getModifiers()) ||
+            Modifier.isFinal(field.getModifiers())) && !field.isAccessible())
             field.setAccessible(true);
     }
 
     public static void makeAccessible(Method method) {
         if ((!Modifier.isPublic(method.getModifiers()) ||
-                !Modifier.isPublic(method.getDeclaringClass().getModifiers())) && !method.isAccessible()) {
+            !Modifier.isPublic(method.getDeclaringClass().getModifiers())) && !method.isAccessible()) {
             method.setAccessible(true);
         }
     }

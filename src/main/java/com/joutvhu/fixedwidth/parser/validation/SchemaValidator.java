@@ -3,8 +3,6 @@ package com.joutvhu.fixedwidth.parser.validation;
 import com.joutvhu.fixedwidth.parser.annotation.FixedConditional;
 import com.joutvhu.fixedwidth.parser.annotation.FixedCount;
 import com.joutvhu.fixedwidth.parser.annotation.FixedObject;
-import com.joutvhu.fixedwidth.parser.exception.CircularDependencyException;
-import com.joutvhu.fixedwidth.parser.exception.FieldOverlapException;
 import com.joutvhu.fixedwidth.parser.exception.FixedParserException;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 
@@ -38,7 +36,8 @@ public class SchemaValidator {
 
     private final List<String> errors = new ArrayList<>();
 
-    private SchemaValidator() {}
+    private SchemaValidator() {
+    }
 
     /**
      * Validates the given class and returns a {@link SchemaValidator} whose
@@ -52,12 +51,16 @@ public class SchemaValidator {
 
     // ── Public result API ─────────────────────────────────────────────────────
 
-    /** Returns {@code true} if no schema errors were found. */
+    /**
+     * Returns {@code true} if no schema errors were found.
+     */
     public boolean isValid() {
         return errors.isEmpty();
     }
 
-    /** Returns all error messages found during validation. */
+    /**
+     * Returns all error messages found during validation.
+     */
     public List<String> getErrors() {
         return new ArrayList<>(errors);
     }
@@ -70,7 +73,7 @@ public class SchemaValidator {
     public SchemaValidator throwIfInvalid() {
         if (!errors.isEmpty()) {
             throw new FixedParserException(
-                    "Schema validation failed for fixed-width class:\n  - " +
+                "Schema validation failed for fixed-width class:\n  - " +
                     String.join("\n  - ", errors));
         }
         return this;
@@ -121,10 +124,10 @@ public class SchemaValidator {
                 // Overlap when ranges intersect: a.start < bEnd && b.start < aEnd
                 if (a.getStart() < bEnd && b.getStart() < aEnd) {
                     errors.add(String.format(
-                            "[%s] Fields '%s' (start=%d, length=%d) and '%s' (start=%d, length=%d) overlap.",
-                            type.getSimpleName(),
-                            a.getName(), a.getStart(), a.getLength(),
-                            b.getName(), b.getStart(), b.getLength()));
+                        "[%s] Fields '%s' (start=%d, length=%d) and '%s' (start=%d, length=%d) overlap.",
+                        type.getSimpleName(),
+                        a.getName(), a.getStart(), a.getLength(),
+                        b.getName(), b.getStart(), b.getLength()));
                 }
             }
         }
@@ -147,9 +150,9 @@ public class SchemaValidator {
             if (cond != null && !cond.dependsOnField().isEmpty()) {
                 if (!fieldNames.contains(cond.dependsOnField())) {
                     errors.add(String.format(
-                            "[%s] Field '%s' has @FixedConditional(dependsOnField=\"%s\") " +
+                        "[%s] Field '%s' has @FixedConditional(dependsOnField=\"%s\") " +
                             "but no such field exists.",
-                            type.getSimpleName(), f.getName(), cond.dependsOnField()));
+                        type.getSimpleName(), f.getName(), cond.dependsOnField()));
                 }
             }
 
@@ -157,9 +160,9 @@ public class SchemaValidator {
             if (count != null && !count.field().isEmpty()) {
                 if (!fieldNames.contains(count.field())) {
                     errors.add(String.format(
-                            "[%s] Field '%s' has @FixedCount(field=\"%s\") " +
+                        "[%s] Field '%s' has @FixedCount(field=\"%s\") " +
                             "but no such field exists.",
-                            type.getSimpleName(), f.getName(), count.field()));
+                        type.getSimpleName(), f.getName(), count.field()));
                 }
             }
         }
@@ -179,15 +182,15 @@ public class SchemaValidator {
 
             if (!type.isAssignableFrom(subType)) {
                 errors.add(String.format(
-                        "[%s] Subtype '%s' is not a subclass of '%s'.",
-                        type.getSimpleName(), subType.getSimpleName(), type.getSimpleName()));
+                    "[%s] Subtype '%s' is not a subclass of '%s'.",
+                    type.getSimpleName(), subType.getSimpleName(), type.getSimpleName()));
             }
 
             // Detect circular subtype reference
             if (visiting.contains(subType)) {
                 errors.add(String.format(
-                        "[%s] Circular subtype reference: '%s' is already being validated.",
-                        type.getSimpleName(), subType.getSimpleName()));
+                    "[%s] Circular subtype reference: '%s' is already being validated.",
+                    type.getSimpleName(), subType.getSimpleName()));
             }
         }
     }

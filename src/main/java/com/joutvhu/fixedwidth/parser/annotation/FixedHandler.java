@@ -2,7 +2,11 @@ package com.joutvhu.fixedwidth.parser.annotation;
 
 import com.joutvhu.fixedwidth.parser.convert.AnnotationHandler;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Meta-annotation that links an annotation to its handler class.

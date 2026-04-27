@@ -1,6 +1,10 @@
 package com.joutvhu.fixedwidth.parser.annotation;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Stops reading collection elements when a terminator character/string is
@@ -17,6 +21,8 @@ import java.lang.annotation.*;
 @Documented
 public @interface FixedTerminator {
 
-    /** The terminator string that signals the end of the collection. */
+    /**
+     * The terminator string that signals the end of the collection.
+     */
     String value();
 }

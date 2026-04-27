@@ -15,11 +15,13 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Phase 5 — Collection enhancements
- *
+ * <p>
  * Kiểm tra @FixedCount, @FixedDelimiter, @FixedTerminator.
  * Tất cả test này sẽ FAIL cho đến khi Phase 5 được implement.
  */
@@ -29,7 +31,9 @@ class CollectionEnhancementTest {
     // Models
     // -------------------------------------------------------------------------
 
-    /** Fixed count: luôn đúng 3 element */
+    /**
+     * Fixed count: luôn đúng 3 element
+     */
     @FixedObject
     @Data
     @NoArgsConstructor
@@ -40,7 +44,9 @@ class CollectionEnhancementTest {
         private List<@FixedParam(length = 5) String> items;
     }
 
-    /** Count từ field khác */
+    /**
+     * Count từ field khác
+     */
     @FixedObject
     @Data
     @NoArgsConstructor
@@ -54,7 +60,9 @@ class CollectionEnhancementTest {
         private List<@FixedParam(length = 3) String> items;
     }
 
-    /** Delimiter: tách bằng "," */
+    /**
+     * Delimiter: tách bằng ","
+     */
     @FixedObject
     @Data
     @NoArgsConstructor
@@ -65,7 +73,9 @@ class CollectionEnhancementTest {
         private List<String> items;
     }
 
-    /** Terminator: đọc đến "|" */
+    /**
+     * Terminator: đọc đến "|"
+     */
     @FixedObject
     @Data
     @NoArgsConstructor
@@ -83,7 +93,7 @@ class CollectionEnhancementTest {
     @Test
     void fixedCount_parsesExactNumberOfElements() {
         FixedCountModel model = FixedParser.parser()
-                .parse(FixedCountModel.class, "AAAAABBBBBCCCCC");
+            .parse(FixedCountModel.class, "AAAAABBBBBCCCCC");
 
         assertEquals(3, model.getItems().size());
         assertEquals("AAAAA", model.getItems().get(0));
@@ -95,7 +105,7 @@ class CollectionEnhancementTest {
     void fixedCount_doesNotReadBeyondCount() {
         // Input có 4 element nhưng count=3 → chỉ đọc 3
         FixedCountModel model = FixedParser.parser()
-                .parse(FixedCountModel.class, "AAAAABBBBBCCCCCDDDD");
+            .parse(FixedCountModel.class, "AAAAABBBBBCCCCCDDDD");
 
         assertEquals(3, model.getItems().size());
     }
@@ -116,7 +126,7 @@ class CollectionEnhancementTest {
     void countField_parsesCorrectNumberOfElements() {
         // "03" = 3 items, rồi 3 items × 3 chars
         CountFieldModel model = FixedParser.parser()
-                .parse(CountFieldModel.class, "03AAABBBCCC");
+            .parse(CountFieldModel.class, "03AAABBBCCC");
 
         assertEquals(3, model.getItemCount());
         assertEquals(3, model.getItems().size());
@@ -128,7 +138,7 @@ class CollectionEnhancementTest {
     @Test
     void countField_zeroCount_emptyList() {
         CountFieldModel model = FixedParser.parser()
-                .parse(CountFieldModel.class, "00");
+            .parse(CountFieldModel.class, "00");
 
         assertEquals(0, model.getItemCount());
         assertTrue(model.getItems().isEmpty());
@@ -151,7 +161,7 @@ class CollectionEnhancementTest {
     @Test
     void delimiter_parsesElementsSeparatedByDelimiter() {
         DelimiterModel model = FixedParser.parser()
-                .parse(DelimiterModel.class, "AA,BBB,CC,DDDD      ");
+            .parse(DelimiterModel.class, "AA,BBB,CC,DDDD      ");
 
         assertEquals(4, model.getItems().size());
         assertEquals("AA", model.getItems().get(0));
@@ -183,7 +193,7 @@ class CollectionEnhancementTest {
     @Test
     void terminator_stopsAtTerminatorChar() {
         TerminatorModel model = FixedParser.parser()
-                .parse(TerminatorModel.class, "AAABBBCCC|          ");
+            .parse(TerminatorModel.class, "AAABBBCCC|          ");
 
         assertEquals(3, model.getItems().size());
         assertEquals("AAA", model.getItems().get(0));
@@ -194,7 +204,7 @@ class CollectionEnhancementTest {
     @Test
     void terminator_noTerminatorFound_readsToEndOfField() {
         TerminatorModel model = FixedParser.parser()
-                .parse(TerminatorModel.class, "AAABBBCCCDDDEEEFFFG");
+            .parse(TerminatorModel.class, "AAABBBCCCDDDEEEFFFG");
 
         // Đọc đến hết field length (20 chars / 3 = 6 items, nhưng 19 chars → 6 items + 1 partial)
         assertFalse(model.getItems().isEmpty());

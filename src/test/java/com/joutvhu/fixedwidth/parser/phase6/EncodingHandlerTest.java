@@ -9,7 +9,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Phase 6 — @FixedEncoding per-field encoding
@@ -54,7 +57,7 @@ class EncodingHandlerTest {
     void utf8Encoding_sameAsPlatformDefault_parseSucceeds() {
         // UTF-8 is typically the platform default — handler is a no-op
         EncodedModel result = FixedParser.parser()
-                .parse(EncodedModel.class, "hello     00042");
+            .parse(EncodedModel.class, "hello     00042");
 
         assertNotNull(result);
         assertEquals(42, result.getAmount());
@@ -74,8 +77,8 @@ class EncodingHandlerTest {
     @Test
     void invalidCharset_throwsFixedParserException() {
         assertThrows(FixedParserException.class,
-                () -> FixedParser.parser()
-                        .parse(InvalidEncodingModel.class, "hello"));
+            () -> FixedParser.parser()
+                .parse(InvalidEncodingModel.class, "hello"));
     }
 
     // ── No encoding annotation — baseline ────────────────────────────────────
@@ -83,7 +86,7 @@ class EncodingHandlerTest {
     @Test
     void noEncoding_parseSucceeds() {
         NoEncodingModel result = FixedParser.parser()
-                .parse(NoEncodingModel.class, "hello     00042");
+            .parse(NoEncodingModel.class, "hello     00042");
 
         assertNotNull(result);
         assertEquals(42, result.getAmount());

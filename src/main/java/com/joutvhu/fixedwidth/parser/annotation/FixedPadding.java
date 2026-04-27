@@ -4,7 +4,11 @@ import com.joutvhu.fixedwidth.parser.domain.Alignment;
 import com.joutvhu.fixedwidth.parser.domain.KeepPadding;
 import com.joutvhu.fixedwidth.parser.domain.Padding;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Configures padding behaviour for a field, class, or generic type parameter.
@@ -22,15 +26,23 @@ import java.lang.annotation.*;
 @Documented
 public @interface FixedPadding {
 
-    /** Padding character used when the value is shorter than the field length. */
+    /**
+     * Padding character used when the value is shorter than the field length.
+     */
     char value() default Padding.AUTO;
 
-    /** Padding character used when the value is {@code null}. */
+    /**
+     * Padding character used when the value is {@code null}.
+     */
     char nullValue() default Padding.AUTO;
 
-    /** Whether to retain or strip the padding character when parsing. */
+    /**
+     * Whether to retain or strip the padding character when parsing.
+     */
     KeepPadding keep() default KeepPadding.AUTO;
 
-    /** Alignment direction for padding. */
+    /**
+     * Alignment direction for padding.
+     */
     Alignment alignment() default Alignment.AUTO;
 }

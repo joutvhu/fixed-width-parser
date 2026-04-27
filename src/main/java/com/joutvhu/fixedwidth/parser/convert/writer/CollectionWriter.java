@@ -39,7 +39,7 @@ public class CollectionWriter extends FixedWidthWriter<Collection<?>> {
         super(info, strategy);
         // For delimiter mode, @FixedParam is not required
         boolean hasDelimiter = info.getField() != null
-                && info.getField().getAnnotation(FixedDelimiter.class) != null;
+            && info.getField().getAnnotation(FixedDelimiter.class) != null;
         if (!Collection.class.isAssignableFrom(info.getType()))
             this.reject();
         if (!hasDelimiter && info.getGenericTypeInfo().size() != 1)
@@ -52,21 +52,21 @@ public class CollectionWriter extends FixedWidthWriter<Collection<?>> {
     public String write(Collection<?> value) {
         // ── @FixedDelimiter ───────────────────────────────────────────────────
         FixedDelimiter delimiter = info.getField() != null
-                ? info.getField().getAnnotation(FixedDelimiter.class) : null;
+            ? info.getField().getAnnotation(FixedDelimiter.class) : null;
         if (delimiter != null) {
             return writeDelimited(value, delimiter);
         }
 
         // ── @FixedTerminator ──────────────────────────────────────────────────
         FixedTerminator terminator = info.getField() != null
-                ? info.getField().getAnnotation(FixedTerminator.class) : null;
+            ? info.getField().getAnnotation(FixedTerminator.class) : null;
         if (terminator != null) {
             return writeTerminated(value, terminator);
         }
 
         // ── @FixedCount(field) — update count field on parent object ──────────
         FixedCount fixedCount = info.getField() != null
-                ? info.getField().getAnnotation(FixedCount.class) : null;
+            ? info.getField().getAnnotation(FixedCount.class) : null;
         if (fixedCount != null && !fixedCount.field().isEmpty()) {
             updateCountField(fixedCount.field(), value.size());
         }
@@ -103,7 +103,9 @@ public class CollectionWriter extends FixedWidthWriter<Collection<?>> {
         return sb.toString();
     }
 
-    /** Updates the count field on the parent object to reflect the actual collection size. */
+    /**
+     * Updates the count field on the parent object to reflect the actual collection size.
+     */
     private void updateCountField(String fieldName, int count) {
         Object parentObj = getParentObject();
         if (parentObj == null) return;

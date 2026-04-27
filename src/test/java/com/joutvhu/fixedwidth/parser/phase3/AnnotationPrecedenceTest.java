@@ -6,18 +6,19 @@ import com.joutvhu.fixedwidth.parser.annotation.FixedObject;
 import com.joutvhu.fixedwidth.parser.annotation.FixedPadding;
 import com.joutvhu.fixedwidth.parser.annotation.FixedRequired;
 import com.joutvhu.fixedwidth.parser.domain.Alignment;
-import com.joutvhu.fixedwidth.parser.domain.KeepPadding;
 import com.joutvhu.fixedwidth.parser.exception.MandatoryValueException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Phase 3 — Annotation precedence
- *
+ * <p>
  * Kiểm tra thứ tự ưu tiên: field annotation > class annotation > default.
  * Tất cả test này sẽ FAIL cho đến khi Phase 3 được implement.
  */
@@ -105,7 +106,7 @@ class AnnotationPrecedenceTest {
     @Test
     void classLevelPadding_strippedOnParse() {
         ClassLevelPaddingModel model = FixedParser.parser()
-                .parse(ClassLevelPaddingModel.class, "hello***world***");
+            .parse(ClassLevelPaddingModel.class, "hello***world***");
 
         assertEquals("hello", model.getFieldA());
         assertEquals("world", model.getFieldB());
@@ -138,7 +139,7 @@ class AnnotationPrecedenceTest {
     @Test
     void fixedPaddingAttribute_parsedCorrectly() {
         LegacyPaddingModel model = FixedParser.parser()
-                .parse(LegacyPaddingModel.class, "hi######");
+            .parse(LegacyPaddingModel.class, "hi######");
         assertEquals("hi", model.getValue());
     }
 
@@ -149,13 +150,13 @@ class AnnotationPrecedenceTest {
     @Test
     void fixedRequired_nullExport_throws() {
         assertThrows(MandatoryValueException.class,
-                () -> FixedParser.parser().export(new RequiredAnnotationModel(null)));
+            () -> FixedParser.parser().export(new RequiredAnnotationModel(null)));
     }
 
     @Test
     void fixedRequired_validValue_passes() {
         assertDoesNotThrow(
-                () -> FixedParser.parser().export(new RequiredAnnotationModel("hello")));
+            () -> FixedParser.parser().export(new RequiredAnnotationModel("hello")));
     }
 
     // -------------------------------------------------------------------------
@@ -165,7 +166,7 @@ class AnnotationPrecedenceTest {
     @Test
     void fixedRequired_nullExport_throws_v2() {
         assertThrows(MandatoryValueException.class,
-                () -> FixedParser.parser().export(new LegacyRequiredModel(null)));
+            () -> FixedParser.parser().export(new LegacyRequiredModel(null)));
     }
 
     // -------------------------------------------------------------------------
@@ -176,7 +177,7 @@ class AnnotationPrecedenceTest {
     void fieldAnnotationHasHigherPrecedenceThanClassAnnotation() {
         // fieldB dùng '-' (field-level) thay vì '*' (class-level)
         FieldOverrideModel model = FixedParser.parser()
-                .parse(FieldOverrideModel.class, "hello***---world");
+            .parse(FieldOverrideModel.class, "hello***---world");
 
         assertEquals("hello", model.getFieldA()); // stripped '*'
         assertEquals("world", model.getFieldB()); // stripped '-'

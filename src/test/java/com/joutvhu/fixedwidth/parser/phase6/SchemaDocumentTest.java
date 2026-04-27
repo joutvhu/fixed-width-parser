@@ -10,7 +10,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Phase 6 — Schema documentation generation
@@ -77,9 +79,9 @@ class SchemaDocumentTest {
     void toMarkdown_containsStartAndLength() {
         String md = SchemaDocument.of(ProductModel.class).toMarkdown();
         assertTrue(md.contains("| 0 |") || md.contains("| 0|"),
-                "Should contain start=0");
+            "Should contain start=0");
         assertTrue(md.contains("| 5 |") || md.contains("| 5|"),
-                "Should contain length=5");
+            "Should contain length=5");
     }
 
     // ── JSON ──────────────────────────────────────────────────────────────────
@@ -128,7 +130,7 @@ class SchemaDocumentTest {
         String csv = SchemaDocument.of(ProductModel.class).toCsv();
         String dataRow = csv.split("\n")[1];
         assertTrue(dataRow.startsWith("id,0,5,Long,"),
-                "First data row should start with id,0,5,Long, but was: " + dataRow);
+            "First data row should start with id,0,5,Long, but was: " + dataRow);
     }
 
     // ── FixedParser integration ───────────────────────────────────────────────

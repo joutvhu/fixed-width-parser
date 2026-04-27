@@ -9,11 +9,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Phase 4 — Field dependency resolution
- *
+ * <p>
  * Kiểm tra field phụ thuộc nhau được parse đúng thứ tự,
  * circular dependency được phát hiện, và @FixedConditional hoạt động.
  * Tất cả test này sẽ FAIL cho đến khi Phase 4 được implement.
@@ -24,7 +26,9 @@ class FieldDependencyTest {
     // Models
     // -------------------------------------------------------------------------
 
-    /** B phụ thuộc A — B phải parse sau A dù B đứng trước trong class */
+    /**
+     * B phụ thuộc A — B phải parse sau A dù B đứng trước trong class
+     */
     @FixedObject
     @Data
     @NoArgsConstructor
@@ -38,7 +42,9 @@ class FieldDependencyTest {
         private String typeCode; // A — không có dependency
     }
 
-    /** Circular dependency — phải throw tại build time */
+    /**
+     * Circular dependency — phải throw tại build time
+     */
     @FixedObject
     @Data
     @NoArgsConstructor
@@ -52,7 +58,9 @@ class FieldDependencyTest {
         private String fieldB; // B phụ thuộc A → circular!
     }
 
-    /** Conditional field — bị skip khi điều kiện không thỏa */
+    /**
+     * Conditional field — bị skip khi điều kiện không thỏa
+     */
     @FixedObject
     @Data
     @NoArgsConstructor
@@ -69,7 +77,9 @@ class FieldDependencyTest {
         private String dataB; // chỉ parse khi type = "B"
     }
 
-    /** Nhiều tầng dependency: C → B → A */
+    /**
+     * Nhiều tầng dependency: C → B → A
+     */
     @FixedObject
     @Data
     @NoArgsConstructor
@@ -94,7 +104,7 @@ class FieldDependencyTest {
     void dependentField_parsedAfterDependency() {
         // typeCode = "X" → dataX được parse
         DependencyModel model = FixedParser.parser()
-                .parse(DependencyModel.class, "Xhello");
+            .parse(DependencyModel.class, "Xhello");
 
         assertEquals("X", model.getTypeCode());
         assertEquals("hell", model.getDataX());
@@ -104,7 +114,7 @@ class FieldDependencyTest {
     void dependentField_skippedWhenConditionNotMet() {
         // typeCode = "Y" → dataX bị skip (null)
         DependencyModel model = FixedParser.parser()
-                .parse(DependencyModel.class, "Yhello");
+            .parse(DependencyModel.class, "Yhello");
 
         assertEquals("Y", model.getTypeCode());
         assertNull(model.getDataX());
@@ -117,7 +127,7 @@ class FieldDependencyTest {
     @Test
     void conditionalField_typeA_parsesDataA() {
         ConditionalModel model = FixedParser.parser()
-                .parse(ConditionalModel.class, "Ahello");
+            .parse(ConditionalModel.class, "Ahello");
 
         assertEquals("A", model.getType());
         assertEquals("hello", model.getDataA());
@@ -127,7 +137,7 @@ class FieldDependencyTest {
     @Test
     void conditionalField_typeB_parsesDataB() {
         ConditionalModel model = FixedParser.parser()
-                .parse(ConditionalModel.class, "Bworld");
+            .parse(ConditionalModel.class, "Bworld");
 
         assertEquals("B", model.getType());
         assertNull(model.getDataA()); // dataA bị skip
@@ -137,7 +147,7 @@ class FieldDependencyTest {
     @Test
     void conditionalField_unknownType_bothSkipped() {
         ConditionalModel model = FixedParser.parser()
-                .parse(ConditionalModel.class, "Cxxxxx");
+            .parse(ConditionalModel.class, "Cxxxxx");
 
         assertEquals("C", model.getType());
         assertNull(model.getDataA());
@@ -151,7 +161,7 @@ class FieldDependencyTest {
     @Test
     void chainDependency_allConditionsMet_allFieldsParsed() {
         ChainDependencyModel model = FixedParser.parser()
-                .parse(ChainDependencyModel.class, "OKGOUP");
+            .parse(ChainDependencyModel.class, "OKGOUP");
 
         assertEquals("OK", model.getFieldA());
         assertEquals("GO", model.getFieldB());
@@ -161,7 +171,7 @@ class FieldDependencyTest {
     @Test
     void chainDependency_firstConditionFails_restSkipped() {
         ChainDependencyModel model = FixedParser.parser()
-                .parse(ChainDependencyModel.class, "NOGO  ");
+            .parse(ChainDependencyModel.class, "NOGO  ");
 
         assertEquals("NO", model.getFieldA());
         assertNull(model.getFieldB()); // B skip vì A != "OK"
@@ -177,7 +187,7 @@ class FieldDependencyTest {
         // CircularDependencyException phải throw khi build FixedTypeInfo
         // (tại lần đầu tiên parse, không phải lúc runtime)
         assertThrows(CircularDependencyException.class,
-                () -> FixedParser.parser().parse(CircularModel.class, "AB"));
+            () -> FixedParser.parser().parse(CircularModel.class, "AB"));
     }
 
     // -------------------------------------------------------------------------

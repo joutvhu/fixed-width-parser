@@ -30,8 +30,8 @@ public class FormatDispatchHandler implements AnnotationHandler<FixedFormat>, Nu
     @Override
     public Set<Phase> getPhases(FixedFormat annotation) {
         return new HashSet<>(Arrays.asList(
-                Phase.READ_AFTER_TRANSFORM,
-                Phase.WRITE_AFTER_TRANSFORM));
+            Phase.READ_AFTER_TRANSFORM,
+            Phase.WRITE_AFTER_TRANSFORM));
     }
 
     @Override

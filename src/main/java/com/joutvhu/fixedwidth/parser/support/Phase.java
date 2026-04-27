@@ -30,7 +30,9 @@ public enum Phase {
 
     // ── READ pipeline ────────────────────────────────────────────────────────
 
-    /** Before slicing the input string. Context has assembler but no raw string yet. */
+    /**
+     * Before slicing the input string. Context has assembler but no raw string yet.
+     */
     READ_PRE_CUT,
 
     /**
@@ -45,41 +47,63 @@ public enum Phase {
      */
     READ_AFTER_TRANSFORM,
 
-    /** After the processed string has been converted to a Java value. */
+    /**
+     * After the processed string has been converted to a Java value.
+     */
     READ_AFTER_CONVERT,
 
-    /** After the Java value has been set on the parent object. */
+    /**
+     * After the Java value has been set on the parent object.
+     */
     READ_AFTER_SET,
 
-    /** After all fields of an object have been read. Object-level handlers run here. */
+    /**
+     * After all fields of an object have been read. Object-level handlers run here.
+     */
     READ_AFTER_OBJECT,
 
     // ── WRITE pipeline ───────────────────────────────────────────────────────
 
-    /** Before reading the field value from the object. Handlers may inject a computed value. */
+    /**
+     * Before reading the field value from the object. Handlers may inject a computed value.
+     */
     WRITE_PRE_GET,
 
-    /** After reading the field value from the object. Handlers may transform it (e.g. encrypt). */
+    /**
+     * After reading the field value from the object. Handlers may transform it (e.g. encrypt).
+     */
     WRITE_AFTER_GET,
 
-    /** After the Java value has been converted to a string. */
+    /**
+     * After the Java value has been converted to a string.
+     */
     WRITE_AFTER_CONVERT,
 
-    /** After padding/alignment has been applied. Final string form before output. */
+    /**
+     * After padding/alignment has been applied. Final string form before output.
+     */
     WRITE_AFTER_TRANSFORM,
 
-    /** After the padded string has been placed into the output assembler/builder. */
+    /**
+     * After the padded string has been placed into the output assembler/builder.
+     */
     WRITE_AFTER_PUT,
 
-    /** After all fields of an object have been written. Object-level handlers run here. */
+    /**
+     * After all fields of an object have been written. Object-level handlers run here.
+     */
     WRITE_AFTER_OBJECT;
 
-    /** Returns {@code true} if this phase belongs to the read pipeline. */
+    /**
+     * Returns {@code true} if this phase belongs to the read pipeline.
+     */
     public boolean isRead() {
         return name().startsWith("READ_");
     }
 
-    /** Returns {@code true} if this phase belongs to the write pipeline. */
+    /**
+     * Returns {@code true} if this phase belongs to the write pipeline.
+     */
     public boolean isWrite() {
         return name().startsWith("WRITE_");
     }

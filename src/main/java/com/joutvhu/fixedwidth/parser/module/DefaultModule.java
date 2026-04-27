@@ -1,7 +1,19 @@
 package com.joutvhu.fixedwidth.parser.module;
 
-import com.joutvhu.fixedwidth.parser.convert.reader.*;
-import com.joutvhu.fixedwidth.parser.convert.writer.*;
+import com.joutvhu.fixedwidth.parser.convert.reader.BooleanReader;
+import com.joutvhu.fixedwidth.parser.convert.reader.CollectionReader;
+import com.joutvhu.fixedwidth.parser.convert.reader.DateReader;
+import com.joutvhu.fixedwidth.parser.convert.reader.MapReader;
+import com.joutvhu.fixedwidth.parser.convert.reader.NumberReader;
+import com.joutvhu.fixedwidth.parser.convert.reader.ObjectReader;
+import com.joutvhu.fixedwidth.parser.convert.reader.StringReader;
+import com.joutvhu.fixedwidth.parser.convert.writer.BooleanWriter;
+import com.joutvhu.fixedwidth.parser.convert.writer.CollectionWriter;
+import com.joutvhu.fixedwidth.parser.convert.writer.DateWriter;
+import com.joutvhu.fixedwidth.parser.convert.writer.MapWriter;
+import com.joutvhu.fixedwidth.parser.convert.writer.NumberWriter;
+import com.joutvhu.fixedwidth.parser.convert.writer.ObjectWriter;
+import com.joutvhu.fixedwidth.parser.convert.writer.StringWriter;
 
 /**
  * Default module.
@@ -20,28 +32,28 @@ import com.joutvhu.fixedwidth.parser.convert.writer.*;
 public class DefaultModule extends FixedModule {
     public DefaultModule() {
         super(
-                // Readers
-                StringReader.class,
-                BooleanReader.class,
-                NumberReader.class,
-                DateReader.class,
-                CollectionReader.class,
-                MapReader.class,
-                ObjectReader.class,
+            // Readers
+            StringReader.class,
+            BooleanReader.class,
+            NumberReader.class,
+            DateReader.class,
+            CollectionReader.class,
+            MapReader.class,
+            ObjectReader.class,
 
-                // Writers
-                StringWriter.class,
-                BooleanWriter.class,
-                NumberWriter.class,
-                DateWriter.class,
-                CollectionWriter.class,
-                MapWriter.class,
-                ObjectWriter.class
+            // Writers
+            StringWriter.class,
+            BooleanWriter.class,
+            NumberWriter.class,
+            DateWriter.class,
+            CollectionWriter.class,
+            MapWriter.class,
+            ObjectWriter.class
 
-                // Validators: RegexValidator and OptionValidator removed —
-                // replaced by @FixedHandler on @FixedRegex and @FixedOption.
-                // NumberValidator, DateValidator, BooleanValidator removed —
-                // replaced by FormatDispatchHandler on @FixedFormat.
+            // Validators: RegexValidator and OptionValidator removed —
+            // replaced by @FixedHandler on @FixedRegex and @FixedOption.
+            // NumberValidator, DateValidator, BooleanValidator removed —
+            // replaced by FormatDispatchHandler on @FixedFormat.
         );
     }
 }

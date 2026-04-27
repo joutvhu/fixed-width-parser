@@ -105,7 +105,7 @@ public class Assert {
      */
     public static void doesNotContain(String textToSearch, String substring, String message) {
         if (CommonUtil.isNotBlank(textToSearch) && CommonUtil.isNotBlank(substring) &&
-                textToSearch.contains(substring))
+            textToSearch.contains(substring))
             throw new IllegalArgumentException(message);
     }
 

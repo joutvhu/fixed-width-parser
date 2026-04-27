@@ -4,7 +4,16 @@ import com.joutvhu.fixedwidth.parser.debug.DebugLogger;
 import com.joutvhu.fixedwidth.parser.doc.SchemaDocument;
 import com.joutvhu.fixedwidth.parser.module.DefaultModule;
 import com.joutvhu.fixedwidth.parser.module.FixedModule;
-import com.joutvhu.fixedwidth.parser.support.*;
+import com.joutvhu.fixedwidth.parser.support.DefaultParseContext;
+import com.joutvhu.fixedwidth.parser.support.FixedLineItemReader;
+import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
+import com.joutvhu.fixedwidth.parser.support.FixedStringAssembler;
+import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
+import com.joutvhu.fixedwidth.parser.support.ItemReader;
+import com.joutvhu.fixedwidth.parser.support.ParseContext;
+import com.joutvhu.fixedwidth.parser.support.Phase;
+import com.joutvhu.fixedwidth.parser.support.StringAssembler;
+import com.joutvhu.fixedwidth.parser.support.StringLineReader;
 import com.joutvhu.fixedwidth.parser.util.Assert;
 import com.joutvhu.fixedwidth.parser.validation.SchemaValidator;
 
@@ -48,7 +57,9 @@ public class FixedParser {
 
     // ── Module composition ────────────────────────────────────────────────────
 
-    /** Replaces the current module entirely. */
+    /**
+     * Replaces the current module entirely.
+     */
     public FixedParser use(FixedModule module) {
         this.module = module;
         this.strategy = new FixedParseStrategy(module);
@@ -56,7 +67,9 @@ public class FixedParser {
         return this;
     }
 
-    /** Merges an additional module (new module takes priority). */
+    /**
+     * Merges an additional module (new module takes priority).
+     */
     public FixedParser with(FixedModule module) {
         this.module = module.merge(this.module);
         this.strategy = new FixedParseStrategy(this.module);
@@ -112,7 +125,9 @@ public class FixedParser {
 
     // ── Parse ─────────────────────────────────────────────────────────────────
 
-    /** Parses a fixed-width string into an object of the given type. */
+    /**
+     * Parses a fixed-width string into an object of the given type.
+     */
     public <T> T parse(Class<T> type, String line) {
         return parse(type, line, null);
     }
@@ -127,7 +142,7 @@ public class FixedParser {
         Assert.notNull(line, "The line must not be null!");
 
         Map<String, Object> session = sessionProps != null
-                ? sessionProps.asMap() : Collections.emptyMap();
+            ? sessionProps.asMap() : Collections.emptyMap();
         strategy.createReadContext(session);
         try {
             StringAssembler stringAssembler = FixedStringAssembler.of(line);
@@ -140,7 +155,9 @@ public class FixedParser {
         }
     }
 
-    /** Parses a stream of fixed-width strings. */
+    /**
+     * Parses a stream of fixed-width strings.
+     */
     public <T> Stream<T> parse(Class<T> type, Stream<String> stream) {
         Assert.notNull(type, "The class type must not be null!");
         Assert.notNull(stream, "The stream must not be null!");
@@ -153,12 +170,16 @@ public class FixedParser {
         });
     }
 
-    /** Parses a fixed-width file line by line from an {@link InputStream}. */
+    /**
+     * Parses a fixed-width file line by line from an {@link InputStream}.
+     */
     public <T> ItemReader<T> parse(Class<T> type, InputStream input) {
         return this.parse(type, input, null);
     }
 
-    /** Parses a fixed-width file line by line with explicit encoding. */
+    /**
+     * Parses a fixed-width file line by line with explicit encoding.
+     */
     public <T> ItemReader<T> parse(Class<T> type, InputStream input, String encoding) {
         Assert.notNull(type, "The class type must not be null!");
         Assert.notNull(input, "The input stream must not be null!");
@@ -170,7 +191,9 @@ public class FixedParser {
 
     // ── Export ────────────────────────────────────────────────────────────────
 
-    /** Exports an object to a fixed-width string. */
+    /**
+     * Exports an object to a fixed-width string.
+     */
     public <T> String export(T object) {
         Assert.notNull(object, "The object must not be null!");
 
@@ -179,7 +202,9 @@ public class FixedParser {
         return this.strategy.write(fixedTypeInfo, object);
     }
 
-    /** Exports a stream of objects to a stream of fixed-width strings. */
+    /**
+     * Exports a stream of objects to a stream of fixed-width strings.
+     */
     public <T> Stream<String> export(Stream<? extends T> objects) {
         Assert.notNull(objects, "The stream must not be null!");
 
@@ -193,7 +218,9 @@ public class FixedParser {
         });
     }
 
-    /** Exports a stream of objects using a declared type hint. */
+    /**
+     * Exports a stream of objects using a declared type hint.
+     */
     public <T> Stream<String> export(Class<T> type, Stream<? extends T> objects) {
         Assert.notNull(type, "The class type must not be null!");
         Assert.notNull(objects, "The stream must not be null!");
@@ -300,7 +327,9 @@ public class FixedParser {
         }
     }
 
-    /** Full ParseResult implementation. */
+    /**
+     * Full ParseResult implementation.
+     */
     private static final class DefaultParseResult<T> implements ParseResult<T> {
         private final T value;
         private final java.util.List<ParseError> errors;
@@ -308,11 +337,22 @@ public class FixedParser {
         DefaultParseResult(T value, java.util.List<ParseError> errors) {
             this.value = value;
             this.errors = java.util.Collections.unmodifiableList(
-                    new java.util.ArrayList<>(errors));
+                new java.util.ArrayList<>(errors));
         }
 
-        @Override public T getValue() { return value; }
-        @Override public boolean hasErrors() { return !errors.isEmpty(); }
-        @Override public java.util.List<ParseError> getErrors() { return errors; }
+        @Override
+        public T getValue() {
+            return value;
+        }
+
+        @Override
+        public boolean hasErrors() {
+            return !errors.isEmpty();
+        }
+
+        @Override
+        public java.util.List<ParseError> getErrors() {
+            return errors;
+        }
     }
 }

@@ -140,7 +140,7 @@ Annotations are split into three groups by responsibility:
 |-----------|--------|---------|
 | `@FixedObject` | class | Marks a class as parseable; declares subtypes |
 | `@FixedField` | field | Declares `start` and `length` |
-| `@FixedParam` | type-use | Annotates generic parameters (`List<@FixedParam(length=5) String>`) |
+| `@FixedParam` | type-use | Annotates generic parameters (`List<@FixedParam(length=5) String>`); use `@FixedPadding` alongside for padding config |
 
 ### Format / control annotations (how to process the slice)
 

@@ -6,7 +6,14 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 
 /**
@@ -143,7 +150,7 @@ public class CommonUtil {
             int halfSize = padSize / 2;
             // Extra char (when padSize is odd) goes to the right side.
             return StringUtils.repeat(pad, halfSize) + value +
-                    StringUtils.repeat(pad, (padSize & 1) == 0 ? halfSize : halfSize + 1);
+                StringUtils.repeat(pad, (padSize & 1) == 0 ? halfSize : halfSize + 1);
         } else return StringUtils.substring(value, 0, size);
     }
 

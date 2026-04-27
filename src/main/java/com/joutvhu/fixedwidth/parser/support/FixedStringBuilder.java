@@ -16,7 +16,9 @@ import java.util.List;
  */
 public interface FixedStringBuilder {
 
-    /** Creates a new, empty builder. */
+    /**
+     * Creates a new, empty builder.
+     */
     static FixedStringBuilder create() {
         return new DefaultFixedStringBuilder();
     }
@@ -41,16 +43,24 @@ public interface FixedStringBuilder {
 
     // ── Querying ─────────────────────────────────────────────────────────────
 
-    /** Returns the value of the named part, or {@code null} if not yet added. */
+    /**
+     * Returns the value of the named part, or {@code null} if not yet added.
+     */
     String getPart(String fieldName);
 
-    /** Returns {@code true} if a part with the given name has been added. */
+    /**
+     * Returns {@code true} if a part with the given name has been added.
+     */
     boolean hasPart(String fieldName);
 
-    /** All parts in the order they were added. */
+    /**
+     * All parts in the order they were added.
+     */
     List<BuiltPart> getAllParts();
 
-    /** Same as {@link #getAllParts()} — provided for semantic clarity in handlers. */
+    /**
+     * Same as {@link #getAllParts()} — provided for semantic clarity in handlers.
+     */
     List<BuiltPart> getCompletedParts();
 
     // ── Building ─────────────────────────────────────────────────────────────

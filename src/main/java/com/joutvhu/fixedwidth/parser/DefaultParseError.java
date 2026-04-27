@@ -25,9 +25,28 @@ public class DefaultParseError implements ParseError {
         this.cause = cause;
     }
 
-    @Override public String getMessage()   { return message; }
-    @Override public Phase getPhase()      { return phase; }
-    @Override public String getFieldPath() { return fieldPath; }
-    @Override public String getRawValue()  { return rawValue; }
-    @Override public Throwable getCause()  { return cause; }
+    @Override
+    public String getMessage() {
+        return message;
+    }
+
+    @Override
+    public Phase getPhase() {
+        return phase;
+    }
+
+    @Override
+    public String getFieldPath() {
+        return fieldPath;
+    }
+
+    @Override
+    public String getRawValue() {
+        return rawValue;
+    }
+
+    @Override
+    public Throwable getCause() {
+        return cause;
+    }
 }

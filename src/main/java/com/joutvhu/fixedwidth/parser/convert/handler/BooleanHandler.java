@@ -12,7 +12,6 @@ import com.joutvhu.fixedwidth.parser.util.TypeConstants;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -46,10 +45,10 @@ public class BooleanHandler implements AnnotationHandler<FixedFormat>, BooleanHe
 
         if (splitOptions(annotation.format()) && !Arrays.asList(options).contains(value)) {
             String message = info.formatMessage(
-                    "{title} should be equal to one of the following value(s): {format}.",
-                    CommonUtil.mapOfEntries(
-                            CommonUtil.mapEntryOf("{value}", () -> value),
-                            CommonUtil.mapEntryOf("{format}", annotation::format)));
+                "{title} should be equal to one of the following value(s): {format}.",
+                CommonUtil.mapOfEntries(
+                    CommonUtil.mapEntryOf("{value}", () -> value),
+                    CommonUtil.mapEntryOf("{format}", annotation::format)));
             throw new FixedValidationException(message);
         }
     }

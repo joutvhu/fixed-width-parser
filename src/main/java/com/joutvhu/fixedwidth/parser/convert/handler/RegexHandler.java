@@ -25,20 +25,20 @@ public class RegexHandler implements AnnotationHandler<FixedRegex> {
     @Override
     public Set<Phase> getPhases(FixedRegex annotation) {
         return new HashSet<>(Arrays.asList(
-                Phase.READ_AFTER_TRANSFORM,
-                Phase.WRITE_AFTER_TRANSFORM));
+            Phase.READ_AFTER_TRANSFORM,
+            Phase.WRITE_AFTER_TRANSFORM));
     }
 
     @Override
     public void handle(FixedRegex annotation, FixedTypeInfo info, ParseContext ctx) {
         String value = ctx.getPhase().isRead()
-                ? ctx.getProcessedString()
-                : (String) ctx.getCurrentValue();
+            ? ctx.getProcessedString()
+            : (String) ctx.getCurrentValue();
 
         if (CommonUtil.isBlank(value)) return; // blank is handled elsewhere
 
         if (CommonUtil.isNotBlank(annotation.regex()) &&
-                !Pattern.compile(annotation.regex(), annotation.flags()).matches(value)) {
+            !Pattern.compile(annotation.regex(), annotation.flags()).matches(value)) {
             String message = buildMessage(annotation, info, value);
             throw new RegexMismatchException(message);
         }
@@ -47,15 +47,15 @@ public class RegexHandler implements AnnotationHandler<FixedRegex> {
     private String buildMessage(FixedRegex annotation, FixedTypeInfo info, String value) {
         if (CommonUtil.isNotBlank(annotation.message())) {
             return annotation.nativeMessage()
-                    ? annotation.message()
-                    : info.formatMessage(annotation.message(),
-                            CommonUtil.mapOfEntries(
-                                    CommonUtil.mapEntryOf("{value}", () -> value),
-                                    CommonUtil.mapEntryOf("{regex}", () -> "/" + annotation.regex() + "/")));
+                ? annotation.message()
+                : info.formatMessage(annotation.message(),
+                CommonUtil.mapOfEntries(
+                    CommonUtil.mapEntryOf("{value}", () -> value),
+                    CommonUtil.mapEntryOf("{regex}", () -> "/" + annotation.regex() + "/")));
         }
         return info.formatMessage("{title} does not match the {regex} regex.",
-                CommonUtil.mapOfEntries(
-                        CommonUtil.mapEntryOf("{value}", () -> value),
-                        CommonUtil.mapEntryOf("{regex}", () -> "/" + annotation.regex() + "/")));
+            CommonUtil.mapOfEntries(
+                CommonUtil.mapEntryOf("{value}", () -> value),
+                CommonUtil.mapEntryOf("{regex}", () -> "/" + annotation.regex() + "/")));
     }
 }

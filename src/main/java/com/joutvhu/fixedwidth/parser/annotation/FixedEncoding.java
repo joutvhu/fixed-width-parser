@@ -2,7 +2,11 @@ package com.joutvhu.fixedwidth.parser.annotation;
 
 import com.joutvhu.fixedwidth.parser.convert.handler.EncodingHandler;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Specifies the character encoding used to read or write a fixed-width field.

@@ -48,10 +48,20 @@ public abstract class TypeInfoSetter extends TypeDetector {
         this.start = 0;
         this.length = fixedObject.length();
         this.require = TypeConstants.NOT_NULL_TYPES.contains(type);
-        this.padding = fixedObject.padding();
-        this.nullPadding = fixedObject.nullPadding();
-        this.keepPadding = fixedObject.keepPadding();
-        this.alignment = fixedObject.alignment();
+
+        // @FixedPadding on the class is the padding config for the object itself
+        FixedPadding classPadding = type.getAnnotation(FixedPadding.class);
+        if (classPadding != null) {
+            this.padding = classPadding.value();
+            this.nullPadding = classPadding.nullValue();
+            this.keepPadding = classPadding.keep();
+            this.alignment = classPadding.alignment();
+        } else {
+            this.padding = null;
+            this.nullPadding = null;
+            this.keepPadding = null;
+            this.alignment = null;
+        }
 
         this.elementTypeInfo = Collections.unmodifiableList(this.detectFields(type));
         this.genericTypeInfo = Collections.unmodifiableList(this.detectGenericTypes());
@@ -60,15 +70,25 @@ public abstract class TypeInfoSetter extends TypeDetector {
     protected TypeInfoSetter(AnnotatedType annotatedType) {
         super(annotatedType);
         this.name = CommonUtil.isNotBlank(fixedParam.label()) ?
-                fixedParam.label() : annotatedType.getType().getTypeName();
+            fixedParam.label() : annotatedType.getType().getTypeName();
         this.label = name + " param";
         this.start = 0;
         this.length = fixedParam.length() >= 0 ? fixedParam.length() : 0;
         this.require = TypeConstants.NOT_NULL_TYPES.contains(type);
-        this.padding = fixedParam.padding();
-        this.nullPadding = fixedParam.nullPadding();
-        this.keepPadding = fixedParam.keepPadding();
-        this.alignment = fixedParam.alignment();
+
+        // @FixedPadding as a type-use annotation on the same parameter
+        FixedPadding paramPadding = annotatedType.getAnnotation(FixedPadding.class);
+        if (paramPadding != null) {
+            this.padding = paramPadding.value();
+            this.nullPadding = paramPadding.nullValue();
+            this.keepPadding = paramPadding.keep();
+            this.alignment = paramPadding.alignment();
+        } else {
+            this.padding = null;
+            this.nullPadding = null;
+            this.keepPadding = null;
+            this.alignment = null;
+        }
 
         this.elementTypeInfo = Collections.unmodifiableList(this.detectFields(type));
         this.genericTypeInfo = Collections.unmodifiableList(this.detectGenericTypes());
@@ -77,7 +97,7 @@ public abstract class TypeInfoSetter extends TypeDetector {
     protected TypeInfoSetter(Field field) {
         super(field);
         this.name = CommonUtil.isNotBlank(fixedField.label()) ?
-                fixedField.label() : field.getName();
+            fixedField.label() : field.getName();
         this.label = name + " field";
         this.start = fixedField.start();
         this.length = fixedField.length();
@@ -117,9 +137,9 @@ public abstract class TypeInfoSetter extends TypeDetector {
      * Internal constructor for subtype creation
      */
     protected TypeInfoSetter(Class<?> type, String name, String label, Integer start, Integer length, boolean require,
-                           Character padding, Character nullPadding, KeepPadding keepPadding, Alignment alignment,
-                           Field field, AnnotatedType annotatedType, FixedField fixedField, FixedParam fixedParam,
-                           FixedObject fixedObject, SourceType sourceType, boolean finalType) {
+                             Character padding, Character nullPadding, KeepPadding keepPadding, Alignment alignment,
+                             Field field, AnnotatedType annotatedType, FixedField fixedField, FixedParam fixedParam,
+                             FixedObject fixedObject, SourceType sourceType, boolean finalType) {
         super(type, field, annotatedType, fixedField, fixedParam, fixedObject, sourceType, finalType);
         this.name = name;
         this.label = label;
@@ -138,10 +158,10 @@ public abstract class TypeInfoSetter extends TypeDetector {
     protected List<FixedTypeInfo> detectFields(Class<?> type) {
         List<FixedTypeInfo> fields = new ArrayList<>();
         this.getFixedFields(type)
-                .stream()
-                .map(FixedMetadataRegistry::get)
-                .filter(info -> info != null)
-                .forEach(fields::add);
+            .stream()
+            .map(FixedMetadataRegistry::get)
+            .filter(info -> info != null)
+            .forEach(fields::add);
         return fields;
     }
 
@@ -157,7 +177,7 @@ public abstract class TypeInfoSetter extends TypeDetector {
 
         if (annotatedType != null && annotatedType instanceof AnnotatedParameterizedType) {
             AnnotatedType[] annotatedTypesArray = ReflectionUtil
-                    .getAnnotatedActualTypeArguments((AnnotatedParameterizedType) annotatedType);
+                .getAnnotatedActualTypeArguments((AnnotatedParameterizedType) annotatedType);
             if (CommonUtil.isNotBlank(annotatedTypesArray))
                 Collections.addAll(annotatedTypes, annotatedTypesArray);
         }

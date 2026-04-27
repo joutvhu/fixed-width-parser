@@ -39,7 +39,7 @@ public class StringLineReader {
 
     private void afterInit() {
         InputStreamReader inputStreamReader = new InputStreamReader(input, this.encoding == null ?
-                Charset.defaultCharset() : Charset.forName(this.encoding));
+            Charset.defaultCharset() : Charset.forName(this.encoding));
         this.reader = new BufferedReader(inputStreamReader);
     }
 

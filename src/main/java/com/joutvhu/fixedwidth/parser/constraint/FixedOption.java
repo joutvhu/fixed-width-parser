@@ -3,7 +3,11 @@ package com.joutvhu.fixedwidth.parser.constraint;
 import com.joutvhu.fixedwidth.parser.annotation.FixedHandler;
 import com.joutvhu.fixedwidth.parser.convert.handler.OptionHandler;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Setups constraint for value by options

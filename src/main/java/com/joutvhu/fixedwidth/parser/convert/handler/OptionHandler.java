@@ -28,27 +28,27 @@ public class OptionHandler implements AnnotationHandler<FixedOption> {
     @Override
     public Set<Phase> getPhases(FixedOption annotation) {
         return new HashSet<>(Arrays.asList(
-                Phase.READ_AFTER_TRANSFORM,
-                Phase.WRITE_AFTER_TRANSFORM));
+            Phase.READ_AFTER_TRANSFORM,
+            Phase.WRITE_AFTER_TRANSFORM));
     }
 
     @Override
     public void handle(FixedOption annotation, FixedTypeInfo info, ParseContext ctx) {
         String value = ctx.getPhase().isRead()
-                ? ctx.getProcessedString()
-                : (String) ctx.getCurrentValue();
+            ? ctx.getProcessedString()
+            : (String) ctx.getCurrentValue();
 
         if (CommonUtil.isBlank(value)) return;
 
         // Normalise value and options according to keepPadding setting
         boolean keepPadding = info.getDefaultKeepPadding();
         String normValue = keepPadding ? value
-                : FixedStringAssembler.of(value).trim(info).getValue();
+            : FixedStringAssembler.of(value).trim(info).getValue();
 
         List<String> options = new ArrayList<>();
         for (String opt : annotation.options()) {
             options.add(keepPadding ? opt
-                    : FixedStringAssembler.of(opt).trim(info).getValue());
+                : FixedStringAssembler.of(opt).trim(info).getValue());
         }
 
         boolean inList = options.contains(normValue);
@@ -62,18 +62,18 @@ public class OptionHandler implements AnnotationHandler<FixedOption> {
                                 String value, List<String> options) {
         if (CommonUtil.isNotBlank(annotation.message())) {
             return annotation.nativeMessage()
-                    ? annotation.message()
-                    : info.formatMessage(annotation.message(),
-                            CommonUtil.mapOfEntries(
-                                    CommonUtil.mapEntryOf("{value}", () -> value),
-                                    CommonUtil.mapEntryOf("{options}", () -> "\"" + StringUtils.join(options, "\", \"") + "\"")));
+                ? annotation.message()
+                : info.formatMessage(annotation.message(),
+                CommonUtil.mapOfEntries(
+                    CommonUtil.mapEntryOf("{value}", () -> value),
+                    CommonUtil.mapEntryOf("{options}", () -> "\"" + StringUtils.join(options, "\", \"") + "\"")));
         }
         String template = annotation.contains()
-                ? "{label} at position {position} should be equal to one of the following value(s): {options}."
-                : "{label} at position {position} cannot be one of the following value(s): {options}.";
+            ? "{label} at position {position} should be equal to one of the following value(s): {options}."
+            : "{label} at position {position} cannot be one of the following value(s): {options}.";
         return info.formatMessage(template,
-                CommonUtil.mapOfEntries(
-                        CommonUtil.mapEntryOf("{value}", () -> value),
-                        CommonUtil.mapEntryOf("{options}", () -> "\"" + StringUtils.join(options, "\", \"") + "\"")));
+            CommonUtil.mapOfEntries(
+                CommonUtil.mapEntryOf("{value}", () -> value),
+                CommonUtil.mapEntryOf("{options}", () -> "\"" + StringUtils.join(options, "\", \"") + "\"")));
     }
 }

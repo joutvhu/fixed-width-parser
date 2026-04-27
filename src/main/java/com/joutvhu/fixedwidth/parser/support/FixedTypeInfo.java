@@ -12,7 +12,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Field;
 import java.text.MessageFormat;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -48,9 +47,9 @@ public class FixedTypeInfo extends TypeInfoSetter {
 
     protected FixedTypeInfo(FixedTypeInfo info, Class<?> type) {
         super(type, info.name, info.label, info.start, info.length, info.require,
-                info.padding, info.nullPadding, info.keepPadding, info.alignment,
-                info.field, info.annotatedType, info.fixedField, info.fixedParam,
-                info.fixedObject, info.getSourceType(), true);
+            info.padding, info.nullPadding, info.keepPadding, info.alignment,
+            info.field, info.annotatedType, info.fixedField, info.fixedParam,
+            info.fixedObject, info.getSourceType(), true);
         this.title = buildMessage("{label} at position {position} and length {length}");
     }
 
@@ -97,11 +96,11 @@ public class FixedTypeInfo extends TypeInfoSetter {
      */
     private Map<String, Supplier<String>> getDefaultArguments() {
         return CommonUtil.mapOfEntries(
-                CommonUtil.mapEntryOf("{label}", () -> label),
-                CommonUtil.mapEntryOf("{start}", start::toString),
-                CommonUtil.mapEntryOf("{position}", () -> getPosition().toString()),
-                CommonUtil.mapEntryOf("{length}", length::toString),
-                CommonUtil.mapEntryOf("{title}", this::getTitle)
+            CommonUtil.mapEntryOf("{label}", () -> label),
+            CommonUtil.mapEntryOf("{start}", start::toString),
+            CommonUtil.mapEntryOf("{position}", () -> getPosition().toString()),
+            CommonUtil.mapEntryOf("{length}", length::toString),
+            CommonUtil.mapEntryOf("{title}", this::getTitle)
         );
     }
 
@@ -139,8 +138,8 @@ public class FixedTypeInfo extends TypeInfoSetter {
     public char getDefaultPadding() {
         if (padding == null || padding == Padding.AUTO) {
             if ((TypeConstants.INTEGER_NUMBER_TYPES.contains(type) ||
-                    TypeConstants.DECIMAL_NUMBER_TYPES.contains(type)) &&
-                    (alignment == null || Alignment.AUTO == alignment || Alignment.LEFT == alignment))
+                TypeConstants.DECIMAL_NUMBER_TYPES.contains(type)) &&
+                (alignment == null || Alignment.AUTO == alignment || Alignment.LEFT == alignment))
                 return '0';
             return ' ';
         }
@@ -169,7 +168,7 @@ public class FixedTypeInfo extends TypeInfoSetter {
     public boolean getDefaultKeepPadding() {
         if (keepPadding == null || KeepPadding.AUTO.equals(keepPadding)) {
             if (TypeConstants.INTEGER_NUMBER_TYPES.contains(type) ||
-                    TypeConstants.DECIMAL_NUMBER_TYPES.contains(type))
+                TypeConstants.DECIMAL_NUMBER_TYPES.contains(type))
                 return false;
             // When a custom padding char is explicitly set (not AUTO), default to DROP
             // so that the custom padding is stripped on parse.

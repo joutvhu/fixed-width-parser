@@ -39,7 +39,7 @@ public interface NumberHelper {
 
     default DecimalFormatSymbols getFormatSymbols(FixedFormatSymbols formatSymbols) {
         DecimalFormatSymbols decimalFormatSymbols = DecimalFormatSymbols
-                .getInstance(Locale.getDefault(Locale.Category.FORMAT));
+            .getInstance(Locale.getDefault(Locale.Category.FORMAT));
 
         if (CommonUtil.isNotBlank(formatSymbols.decimalSeparator()))
             decimalFormatSymbols.setDecimalSeparator(formatSymbols.decimalSeparator().charAt(0));

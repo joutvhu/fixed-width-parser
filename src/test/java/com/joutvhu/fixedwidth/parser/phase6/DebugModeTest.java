@@ -9,7 +9,10 @@ import org.junit.jupiter.api.Test;
 
 import java.util.logging.Logger;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Phase 6 — Debug mode
@@ -35,9 +38,9 @@ class DebugModeTest {
     void debug_doesNotThrow_duringParse() {
         Logger logger = Logger.getLogger(DebugModeTest.class.getName());
         assertDoesNotThrow(() ->
-                FixedParser.parser()
-                        .debug(logger)
-                        .parse(SimpleModel.class, "ABC  00042"));
+            FixedParser.parser()
+                .debug(logger)
+                .parse(SimpleModel.class, "ABC  00042"));
     }
 
     @Test
@@ -48,9 +51,9 @@ class DebugModeTest {
         model.setAmount(42);
 
         assertDoesNotThrow(() ->
-                FixedParser.parser()
-                        .debug(logger)
-                        .export(model));
+            FixedParser.parser()
+                .debug(logger)
+                .export(model));
     }
 
     @Test
@@ -58,8 +61,8 @@ class DebugModeTest {
         // Debug mode should not affect parse result
         Logger logger = Logger.getLogger(DebugModeTest.class.getName());
         SimpleModel result = FixedParser.parser()
-                .debug(logger)
-                .parse(SimpleModel.class, "ABC  00042");
+            .debug(logger)
+            .parse(SimpleModel.class, "ABC  00042");
 
         assertNotNull(result);
         assertEquals("ABC  ", result.getCode()); // keepPadding=AUTO for String → KEEP
@@ -75,8 +78,8 @@ class DebugModeTest {
         model.setAmount(42);
 
         String result = FixedParser.parser()
-                .debug(logger)
-                .export(model);
+            .debug(logger)
+            .export(model);
 
         assertNotNull(result);
         assertEquals(10, result.length());
@@ -88,17 +91,17 @@ class DebugModeTest {
         Logger logger = Logger.getLogger(DebugModeTest.class.getName());
         // debug() should be chainable with withProperty() etc.
         assertDoesNotThrow(() ->
-                FixedParser.parser()
-                        .withProperty("test.key", "value")
-                        .debug(logger)
-                        .parse(SimpleModel.class, "ABC  00042"));
+            FixedParser.parser()
+                .withProperty("test.key", "value")
+                .debug(logger)
+                .parse(SimpleModel.class, "ABC  00042"));
     }
 
     @Test
     void noDebug_parseResult_isCorrect() {
         // Baseline: without debug, parse works normally
         SimpleModel result = FixedParser.parser()
-                .parse(SimpleModel.class, "ABC  00042");
+            .parse(SimpleModel.class, "ABC  00042");
 
         assertNotNull(result);
         assertEquals(42, result.getAmount());

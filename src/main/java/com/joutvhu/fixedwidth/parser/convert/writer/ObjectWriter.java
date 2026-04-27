@@ -49,9 +49,9 @@ public class ObjectWriter extends FixedWidthWriter<Object> {
 
         if (ctx != null) {
             objectFrame = new DefaultContextFrame(
-                    info, FrameType.OBJECT,
-                    ctx.frameStack().size(), -1,
-                    null, null, value, builder);
+                info, FrameType.OBJECT,
+                ctx.frameStack().size(), -1,
+                null, null, value, builder);
             ctx.pushFrame(objectFrame);
         }
 
@@ -60,7 +60,7 @@ public class ObjectWriter extends FixedWidthWriter<Object> {
 
             // Phase 4: sort fields in dependency order (detects circular deps)
             List<FixedTypeInfo> children = FieldDependencyResolver.sort(
-                    CommonUtil.defaultIfNull(info.getElementTypeInfo(), new ArrayList<>()));
+                CommonUtil.defaultIfNull(info.getElementTypeInfo(), new ArrayList<>()));
 
             for (FixedTypeInfo fieldInfo : children) {
                 if (fieldInfo.getField() == null) continue;
@@ -71,9 +71,9 @@ public class ObjectWriter extends FixedWidthWriter<Object> {
                     ctx.resetSkipField();
                     // Push a temporary frame so handlers can access parentFrame()
                     DefaultContextFrame preFrame = new DefaultContextFrame(
-                            fieldInfo, FrameType.FIELD,
-                            ctx.frameStack().size(), -1,
-                            null, null, null, null);
+                        fieldInfo, FrameType.FIELD,
+                        ctx.frameStack().size(), -1,
+                        null, null, null, null);
                     ctx.pushFrame(preFrame);
                     ctx.setCurrentValue(null);
                     firePhase(Phase.WRITE_PRE_GET);
@@ -118,7 +118,7 @@ public class ObjectWriter extends FixedWidthWriter<Object> {
                 boolean isCountTarget = children.stream().anyMatch(f -> {
                     if (f.getField() == null) return false;
                     com.joutvhu.fixedwidth.parser.annotation.FixedCount fc =
-                            f.getField().getAnnotation(com.joutvhu.fixedwidth.parser.annotation.FixedCount.class);
+                        f.getField().getAnnotation(com.joutvhu.fixedwidth.parser.annotation.FixedCount.class);
                     return fc != null && fieldInfo.getName().equals(fc.field());
                 });
                 if (!isCountTarget) continue;
@@ -156,7 +156,9 @@ public class ObjectWriter extends FixedWidthWriter<Object> {
         }
     }
 
-    /** Returns the active context if the strategy supports it, otherwise null. */
+    /**
+     * Returns the active context if the strategy supports it, otherwise null.
+     */
     private DefaultParseContext getActiveContext() {
         if (strategy instanceof FixedParseStrategy) {
             return ((FixedParseStrategy) strategy).getActiveContext();

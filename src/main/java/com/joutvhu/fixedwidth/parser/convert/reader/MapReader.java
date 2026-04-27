@@ -43,12 +43,12 @@ public class MapReader extends FixedWidthReader<Map<?, ?>> {
             while (cursor < len) {
                 String rawKey = assembler.get(cursor, keyLength);
                 if (rawKey == null || rawKey.isEmpty()) break;
-                
+
                 StringAssembler keyAssembler = assembler.child(cursor, keyLength);
                 if (keyAssembler.isBlank(keyInfo)) break;
                 Object key = read(keyInfo, keyAssembler);
                 cursor += keyLength;
-                
+
                 StringAssembler valueAssembler = assembler.child(cursor, valueLength);
                 Object value = read(valueInfo, valueAssembler);
                 cursor += valueLength;

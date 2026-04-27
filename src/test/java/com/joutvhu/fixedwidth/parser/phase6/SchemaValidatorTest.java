@@ -13,7 +13,11 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Phase 6 — Schema validation
@@ -104,7 +108,7 @@ class SchemaValidatorTest {
     @Test
     void validModel_throwIfInvalid_doesNotThrow() {
         assertDoesNotThrow(() ->
-                SchemaValidator.validate(ValidModel.class).throwIfInvalid());
+            SchemaValidator.validate(ValidModel.class).throwIfInvalid());
     }
 
     @Test
@@ -134,13 +138,13 @@ class SchemaValidatorTest {
         assertFalse(errors.isEmpty());
         String error = errors.get(0);
         assertTrue(error.contains("fieldA") || error.contains("fieldB"),
-                "Error should mention field names: " + error);
+            "Error should mention field names: " + error);
     }
 
     @Test
     void overlappingFields_throwIfInvalid_throws() {
         assertThrows(FixedParserException.class,
-                () -> SchemaValidator.validate(OverlapModel.class).throwIfInvalid());
+            () -> SchemaValidator.validate(OverlapModel.class).throwIfInvalid());
     }
 
     // ── Missing dependency field ──────────────────────────────────────────────
@@ -183,6 +187,6 @@ class SchemaValidatorTest {
     @Test
     void fixedParser_validate_invalidModel_throws() {
         assertThrows(FixedParserException.class,
-                () -> FixedParser.parser().validate(OverlapModel.class).throwIfInvalid());
+            () -> FixedParser.parser().validate(OverlapModel.class).throwIfInvalid());
     }
 }

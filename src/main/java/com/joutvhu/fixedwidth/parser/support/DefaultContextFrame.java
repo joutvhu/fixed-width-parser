@@ -20,14 +20,14 @@ public class DefaultContextFrame implements ContextFrame {
     private Object partialResult;
 
     public DefaultContextFrame(
-            FixedTypeInfo typeInfo,
-            FrameType frameType,
-            int depth,
-            int index,
-            StringAssembler assembler,
-            String rawString,
-            Object partialResult,
-            FixedStringBuilder builder) {
+        FixedTypeInfo typeInfo,
+        FrameType frameType,
+        int depth,
+        int index,
+        StringAssembler assembler,
+        String rawString,
+        Object partialResult,
+        FixedStringBuilder builder) {
         this.typeInfo = typeInfo;
         this.frameType = frameType;
         this.depth = depth;
@@ -39,22 +39,57 @@ public class DefaultContextFrame implements ContextFrame {
         this.builder = builder;
     }
 
-    @Override public FixedTypeInfo getTypeInfo()       { return typeInfo; }
-    @Override public FrameType getFrameType()          { return frameType; }
-    @Override public int getDepth()                    { return depth; }
-    @Override public int getIndex()                    { return index; }
-    @Override public StringAssembler getAssembler()    { return assembler; }
-    @Override public String getRawString()             { return rawString; }
-    @Override public FixedStringBuilder getBuilder()   { return builder; }
+    @Override
+    public FixedTypeInfo getTypeInfo() {
+        return typeInfo;
+    }
 
     @Override
-    public String getProcessedString() { return processedString; }
+    public FrameType getFrameType() {
+        return frameType;
+    }
 
     @Override
-    public void setProcessedString(String value) { this.processedString = value; }
+    public int getDepth() {
+        return depth;
+    }
 
     @Override
-    public Object getPartialResult() { return partialResult; }
+    public int getIndex() {
+        return index;
+    }
 
-    public void setPartialResult(Object partialResult) { this.partialResult = partialResult; }
+    @Override
+    public StringAssembler getAssembler() {
+        return assembler;
+    }
+
+    @Override
+    public String getRawString() {
+        return rawString;
+    }
+
+    @Override
+    public FixedStringBuilder getBuilder() {
+        return builder;
+    }
+
+    @Override
+    public String getProcessedString() {
+        return processedString;
+    }
+
+    @Override
+    public void setProcessedString(String value) {
+        this.processedString = value;
+    }
+
+    @Override
+    public Object getPartialResult() {
+        return partialResult;
+    }
+
+    public void setPartialResult(Object partialResult) {
+        this.partialResult = partialResult;
+    }
 }

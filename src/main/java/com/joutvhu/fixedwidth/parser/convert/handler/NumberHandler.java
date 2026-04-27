@@ -44,10 +44,10 @@ public class NumberHandler implements AnnotationHandler<FixedFormat>, NumberHelp
                 decimalFormat.parse(value);
             } catch (ParseException e) {
                 String message = info.formatMessage(
-                        "{title} with value \"{value}\" does not match the {format} format.",
-                        CommonUtil.mapOfEntries(
-                                CommonUtil.mapEntryOf("{value}", () -> value),
-                                CommonUtil.mapEntryOf("{format}", annotation::format)));
+                    "{title} with value \"{value}\" does not match the {format} format.",
+                    CommonUtil.mapOfEntries(
+                        CommonUtil.mapEntryOf("{value}", () -> value),
+                        CommonUtil.mapEntryOf("{format}", annotation::format)));
                 throw new FixedValidationException(message);
             }
         } else {
@@ -56,10 +56,10 @@ public class NumberHandler implements AnnotationHandler<FixedFormat>, NumberHelp
                 String numType = isDecimal ? "number" : "integer";
                 String article = isDecimal ? "a" : "an";
                 String message = info.formatMessage(
-                        "{title} with value \"{value}\" is not " + article + " {number_type}.",
-                        CommonUtil.mapOfEntries(
-                                CommonUtil.mapEntryOf("{value}", () -> value),
-                                CommonUtil.mapEntryOf("{number_type}", () -> numType)));
+                    "{title} with value \"{value}\" is not " + article + " {number_type}.",
+                    CommonUtil.mapOfEntries(
+                        CommonUtil.mapEntryOf("{value}", () -> value),
+                        CommonUtil.mapEntryOf("{number_type}", () -> numType)));
                 throw new FixedValidationException(message);
             }
         }

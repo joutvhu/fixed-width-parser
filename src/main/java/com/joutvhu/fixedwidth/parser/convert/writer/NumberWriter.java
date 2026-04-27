@@ -31,7 +31,7 @@ public class NumberWriter extends FixedWidthWriter<Object> implements NumberHelp
 
         if (decimalFormat == null)
             return CommonUtil.listOf(BigDecimal.class, BigInteger.class).contains(type) ?
-                    value.toString() : value + StringUtils.EMPTY;
+                value.toString() : value + StringUtils.EMPTY;
         else {
             return decimalFormat.format(value);
         }

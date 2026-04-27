@@ -24,7 +24,8 @@ import java.util.Set;
  */
 public class FieldDependencyResolver {
 
-    private FieldDependencyResolver() {}
+    private FieldDependencyResolver() {
+    }
 
     /**
      * Returns the fields in dependency-safe processing order.
@@ -59,7 +60,7 @@ public class FieldDependencyResolver {
         for (FixedTypeInfo f : fields) {
             String name = f.getName();
             FixedConditional cond = f.getField() != null
-                    ? f.getField().getAnnotation(FixedConditional.class) : null;
+                ? f.getField().getAnnotation(FixedConditional.class) : null;
             if (cond != null) {
                 String dep = cond.dependsOnField();
                 if (byName.containsKey(dep)) {
@@ -70,7 +71,7 @@ public class FieldDependencyResolver {
 
             // @FixedCount(field) also declares a dependency
             com.joutvhu.fixedwidth.parser.annotation.FixedCount fixedCount = f.getField() != null
-                    ? f.getField().getAnnotation(com.joutvhu.fixedwidth.parser.annotation.FixedCount.class) : null;
+                ? f.getField().getAnnotation(com.joutvhu.fixedwidth.parser.annotation.FixedCount.class) : null;
             if (fixedCount != null && !fixedCount.field().isEmpty()) {
                 String dep = fixedCount.field();
                 if (byName.containsKey(dep)) {
@@ -120,7 +121,7 @@ public class FieldDependencyResolver {
                 if (!sorted.contains(f)) cycleFields.add(f.getName());
             }
             throw new CircularDependencyException(
-                    "Circular field dependency detected among: " + cycleFields);
+                "Circular field dependency detected among: " + cycleFields);
         }
 
         return sorted;

@@ -30,19 +30,25 @@ public final class ParseProperties {
 
     // ── Factory methods ───────────────────────────────────────────────────────
 
-    /** Creates an empty {@code ParseProperties}. */
+    /**
+     * Creates an empty {@code ParseProperties}.
+     */
     public static ParseProperties empty() {
         return new ParseProperties(Collections.emptyMap());
     }
 
-    /** Creates a {@code ParseProperties} with a single entry. */
+    /**
+     * Creates a {@code ParseProperties} with a single entry.
+     */
     public static ParseProperties of(String k1, Object v1) {
         Map<String, Object> m = new HashMap<>();
         m.put(k1, v1);
         return new ParseProperties(m);
     }
 
-    /** Creates a {@code ParseProperties} with two entries. */
+    /**
+     * Creates a {@code ParseProperties} with two entries.
+     */
     public static ParseProperties of(String k1, Object v1, String k2, Object v2) {
         Map<String, Object> m = new HashMap<>();
         m.put(k1, v1);
@@ -50,12 +56,16 @@ public final class ParseProperties {
         return new ParseProperties(m);
     }
 
-    /** Creates a {@code ParseProperties} from an existing map. */
+    /**
+     * Creates a {@code ParseProperties} from an existing map.
+     */
     public static ParseProperties of(Map<String, Object> map) {
         return new ParseProperties(map);
     }
 
-    /** Returns a new {@link Builder}. */
+    /**
+     * Returns a new {@link Builder}.
+     */
     public static Builder builder() {
         return new Builder();
     }
@@ -71,7 +81,9 @@ public final class ParseProperties {
         return map.containsKey(key);
     }
 
-    /** Returns an unmodifiable view of the underlying map. */
+    /**
+     * Returns an unmodifiable view of the underlying map.
+     */
     public Map<String, Object> asMap() {
         return map;
     }

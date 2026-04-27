@@ -15,7 +15,6 @@ import com.joutvhu.fixedwidth.parser.util.FixedHelper;
 import com.joutvhu.fixedwidth.parser.util.ReflectionUtil;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -40,7 +39,7 @@ public class CollectionReader extends FixedWidthReader<Collection<?>> {
         super(info, strategy);
         // For delimiter mode, @FixedParam is not required (elements are variable-length)
         boolean hasDelimiter = info.getField() != null
-                && info.getField().getAnnotation(FixedDelimiter.class) != null;
+            && info.getField().getAnnotation(FixedDelimiter.class) != null;
         if (!Collection.class.isAssignableFrom(info.getType()))
             this.reject();
         if (!hasDelimiter && info.getGenericTypeInfo().size() != 1)
@@ -60,14 +59,14 @@ public class CollectionReader extends FixedWidthReader<Collection<?>> {
 
         // ── @FixedDelimiter ───────────────────────────────────────────────────
         FixedDelimiter delimiter = info.getField() != null
-                ? info.getField().getAnnotation(FixedDelimiter.class) : null;
+            ? info.getField().getAnnotation(FixedDelimiter.class) : null;
         if (delimiter != null) {
             return readDelimited(assembler, objects, delimiter);
         }
 
         // ── @FixedTerminator ──────────────────────────────────────────────────
         FixedTerminator terminator = info.getField() != null
-                ? info.getField().getAnnotation(FixedTerminator.class) : null;
+            ? info.getField().getAnnotation(FixedTerminator.class) : null;
         if (terminator != null) {
             return readTerminated(assembler, objects, terminator);
         }
@@ -77,9 +76,11 @@ public class CollectionReader extends FixedWidthReader<Collection<?>> {
         return readFixedCount(assembler, objects, count);
     }
 
-    /** Read exactly {@code count} elements (or all if count < 0). */
+    /**
+     * Read exactly {@code count} elements (or all if count < 0).
+     */
     private Collection<Object> readFixedCount(StringAssembler assembler,
-                                               Collection<Object> objects, int count) {
+                                              Collection<Object> objects, int count) {
         if (length <= 0) return objects;
         int len = assembler.length();
         int cursor = 0;
@@ -95,10 +96,12 @@ public class CollectionReader extends FixedWidthReader<Collection<?>> {
         return objects;
     }
 
-    /** Read elements separated by a delimiter. */
+    /**
+     * Read elements separated by a delimiter.
+     */
     private Collection<Object> readDelimited(StringAssembler assembler,
-                                              Collection<Object> objects,
-                                              FixedDelimiter delimiter) {
+                                             Collection<Object> objects,
+                                             FixedDelimiter delimiter) {
         String raw = assembler.getValue();
         // Trim trailing spaces from the full field value
         raw = raw.replaceAll("\\s+$", "");
@@ -112,10 +115,12 @@ public class CollectionReader extends FixedWidthReader<Collection<?>> {
         return objects;
     }
 
-    /** Read elements until a terminator string is encountered. */
+    /**
+     * Read elements until a terminator string is encountered.
+     */
     private Collection<Object> readTerminated(StringAssembler assembler,
-                                               Collection<Object> objects,
-                                               FixedTerminator terminator) {
+                                              Collection<Object> objects,
+                                              FixedTerminator terminator) {
         if (length <= 0) return objects;
         String raw = assembler.getValue();
         String term = terminator.value();
@@ -158,7 +163,9 @@ public class CollectionReader extends FixedWidthReader<Collection<?>> {
         return readIntField(parentObj, fieldName);
     }
 
-    /** Gets the parent object from the context frame stack. */
+    /**
+     * Gets the parent object from the context frame stack.
+     */
     private Object getParentObject() {
         if (!(strategy instanceof FixedParseStrategy)) return null;
         DefaultParseContext ctx = ((FixedParseStrategy) strategy).getActiveContext();

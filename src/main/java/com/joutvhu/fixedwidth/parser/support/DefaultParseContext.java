@@ -47,9 +47,9 @@ public class DefaultParseContext implements ParseContext {
     private final Map<String, Object> sessionProps;
 
     public DefaultParseContext(
-            Phase initialPhase,
-            Map<String, Object> parserConfig,
-            Map<String, Object> sessionProps) {
+        Phase initialPhase,
+        Map<String, Object> parserConfig,
+        Map<String, Object> sessionProps) {
         this.currentPhase = initialPhase;
         this.parserConfig = parserConfig != null ? parserConfig : Collections.emptyMap();
         this.sessionProps = sessionProps != null ? sessionProps : Collections.emptyMap();
@@ -58,9 +58,13 @@ public class DefaultParseContext implements ParseContext {
     // ── Phase ────────────────────────────────────────────────────────────────
 
     @Override
-    public Phase getPhase() { return currentPhase; }
+    public Phase getPhase() {
+        return currentPhase;
+    }
 
-    public void setPhase(Phase phase) { this.currentPhase = phase; }
+    public void setPhase(Phase phase) {
+        this.currentPhase = phase;
+    }
 
     // ── Frame stack ──────────────────────────────────────────────────────────
 
@@ -77,7 +81,9 @@ public class DefaultParseContext implements ParseContext {
         return stack.isEmpty() ? null : stack.pop();
     }
 
-    /** Fires the phase hook registered on the owning strategy, if any. */
+    /**
+     * Fires the phase hook registered on the owning strategy, if any.
+     */
     public void firePhaseHook(Phase phase) {
         // Delegated to strategy — set phase on context first
         this.currentPhase = phase;
@@ -105,17 +111,27 @@ public class DefaultParseContext implements ParseContext {
     // ── Current value ────────────────────────────────────────────────────────
 
     @Override
-    public Object getCurrentValue() { return currentValue; }
+    public Object getCurrentValue() {
+        return currentValue;
+    }
 
     @Override
-    public void setCurrentValue(Object value) { this.currentValue = value; }
+    public void setCurrentValue(Object value) {
+        this.currentValue = value;
+    }
 
     @Override
-    public void skipCurrentField() { this.skipField = true; }
+    public void skipCurrentField() {
+        this.skipField = true;
+    }
 
-    public boolean isSkipField() { return skipField; }
+    public boolean isSkipField() {
+        return skipField;
+    }
 
-    public void resetSkipField() { this.skipField = false; }
+    public void resetSkipField() {
+        this.skipField = false;
+    }
 
     // ── Collect-all error mode (Phase 5) ─────────────────────────────────────
 
@@ -123,9 +139,13 @@ public class DefaultParseContext implements ParseContext {
         this.collectErrors = collectErrors;
     }
 
-    public boolean isCollectErrors() { return collectErrors; }
+    public boolean isCollectErrors() {
+        return collectErrors;
+    }
 
-    public void addError(ParseError error) { collectedErrors.add(error); }
+    public void addError(ParseError error) {
+        collectedErrors.add(error);
+    }
 
     public List<ParseError> getCollectedErrors() {
         return Collections.unmodifiableList(collectedErrors);
@@ -134,10 +154,14 @@ public class DefaultParseContext implements ParseContext {
     // ── Properties ───────────────────────────────────────────────────────────
 
     @Override
-    public void put(String key, Object value) { putGlobal(key, value); }
+    public void put(String key, Object value) {
+        putGlobal(key, value);
+    }
 
     @Override
-    public void putGlobal(String key, Object value) { globalProps.put(key, value); }
+    public void putGlobal(String key, Object value) {
+        globalProps.put(key, value);
+    }
 
     @Override
     public void putScoped(String key, Object value) {
@@ -155,10 +179,14 @@ public class DefaultParseContext implements ParseContext {
     }
 
     @Override
-    public boolean has(String key) { return globalProps.containsKey(key); }
+    public boolean has(String key) {
+        return globalProps.containsKey(key);
+    }
 
     @Override
-    public void remove(String key) { globalProps.remove(key); }
+    public void remove(String key) {
+        globalProps.remove(key);
+    }
 
     // ── Parser / session properties ──────────────────────────────────────────
 
@@ -176,7 +204,7 @@ public class DefaultParseContext implements ParseContext {
         T value = getProperty(key, type, null);
         if (value == null)
             throw new IllegalStateException(
-                    "Required parser property '" + key + "' not found.");
+                "Required parser property '" + key + "' not found.");
         return value;
     }
 }

@@ -12,7 +12,7 @@ import com.joutvhu.fixedwidth.parser.support.StringAssembler;
  * @since 1.0.0
  */
 public abstract class FixedWidthReader<T> extends ParsingApprover<ReadStrategy>
-        implements StringReader<T>, ReadStrategy {
+    implements StringReader<T>, ReadStrategy {
     public FixedWidthReader(FixedTypeInfo info, ReadStrategy strategy) {
         super(info, strategy);
     }

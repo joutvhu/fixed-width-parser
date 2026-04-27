@@ -11,13 +11,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Test;
 
-import java.lang.annotation.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Phase 3 — Annotation composition (B2)
- *
+ * <p>
  * Kiểm tra composed annotation (meta-annotation tổng hợp) được unwrap đúng.
  * Tất cả test này sẽ FAIL cho đến khi Phase 3 được implement.
  */
@@ -27,17 +30,23 @@ class AnnotationCompositionTest {
     // Composed annotations (preset)
     // -------------------------------------------------------------------------
 
-    /** Preset: số nguyên right-aligned, zero-padded */
+    /**
+     * Preset: số nguyên right-aligned, zero-padded
+     */
     @FixedPadding(value = '0', alignment = Alignment.RIGHT)
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD})
-    public @interface ZeroPaddedNumber {}
+    public @interface ZeroPaddedNumber {
+    }
 
-    /** Preset: date với format chuẩn */
+    /**
+     * Preset: date với format chuẩn
+     */
     @FixedFormat(format = "yyyy-MM-dd")
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD})
-    public @interface StandardDate {}
+    public @interface StandardDate {
+    }
 
     // -------------------------------------------------------------------------
     // Models dùng composed annotation
@@ -83,7 +92,7 @@ class AnnotationCompositionTest {
     @Test
     void composedAnnotation_parsedCorrectly() {
         ComposedModel model = FixedParser.parser()
-                .parse(ComposedModel.class, "00004200001000");
+            .parse(ComposedModel.class, "00004200001000");
 
         assertEquals(42, model.getCount());
         assertEquals(1000L, model.getAmount());
@@ -92,7 +101,7 @@ class AnnotationCompositionTest {
     @Test
     void composedDateAnnotation_formatApplied() {
         ComposedDateModel model = FixedParser.parser()
-                .parse(ComposedDateModel.class, "2024-01-15");
+            .parse(ComposedDateModel.class, "2024-01-15");
 
         assertEquals(java.time.LocalDate.of(2024, 1, 15), model.getDate());
     }

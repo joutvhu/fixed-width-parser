@@ -12,11 +12,11 @@ import lombok.Setter;
  * TypeA khi kind="A", TypeB khi kind="B", TypeC là default.
  */
 @FixedObject(
-        subTypes = {
-                @FixedObject.Type(value = SubTypeModel.TypeA.class, prop = "kind", oneOf = {"A"}),
-                @FixedObject.Type(value = SubTypeModel.TypeB.class, prop = "kind", matchWith = "^B.*$")
-        },
-        defaultSubType = SubTypeModel.TypeC.class
+    subTypes = {
+        @FixedObject.Type(value = SubTypeModel.TypeA.class, prop = "kind", oneOf = {"A"}),
+        @FixedObject.Type(value = SubTypeModel.TypeB.class, prop = "kind", matchWith = "^B.*$")
+    },
+    defaultSubType = SubTypeModel.TypeC.class
 )
 @Getter
 @Setter

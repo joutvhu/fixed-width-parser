@@ -14,13 +14,19 @@ public interface ContextFrame {
 
     // ── Identity ─────────────────────────────────────────────────────────────
 
-    /** Metadata for the type/field this frame represents. */
+    /**
+     * Metadata for the type/field this frame represents.
+     */
     FixedTypeInfo getTypeInfo();
 
-    /** What kind of node this frame is. */
+    /**
+     * What kind of node this frame is.
+     */
     FrameType getFrameType();
 
-    /** Depth in the tree — root object is 0, its fields are 1, etc. */
+    /**
+     * Depth in the tree — root object is 0, its fields are 1, etc.
+     */
     int getDepth();
 
     /**
@@ -44,7 +50,9 @@ public interface ContextFrame {
      */
     String getProcessedString();
 
-    /** Replaces the processed string. Only meaningful during READ phases. */
+    /**
+     * Replaces the processed string. Only meaningful during READ phases.
+     */
     void setProcessedString(String value);
 
     // ── Object being built ───────────────────────────────────────────────────
@@ -55,7 +63,9 @@ public interface ContextFrame {
      */
     Object getPartialResult();
 
-    /** The low-level string assembler for this frame. */
+    /**
+     * The low-level string assembler for this frame.
+     */
     StringAssembler getAssembler();
 
     /**

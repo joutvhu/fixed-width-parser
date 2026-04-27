@@ -2,7 +2,11 @@ package com.joutvhu.fixedwidth.parser.annotation;
 
 import com.joutvhu.fixedwidth.parser.convert.handler.ConditionalHandler;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Makes a field conditional: the field is only parsed/exported when another
@@ -30,9 +34,13 @@ import java.lang.annotation.*;
 @Documented
 public @interface FixedConditional {
 
-    /** Name of the field whose value determines whether this field is active. */
+    /**
+     * Name of the field whose value determines whether this field is active.
+     */
     String dependsOnField();
 
-    /** The value that {@code dependsOnField} must equal for this field to be active. */
+    /**
+     * The value that {@code dependsOnField} must equal for this field to be active.
+     */
     String whenValue();
 }

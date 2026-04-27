@@ -19,11 +19,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Phase 2 — Built-in handlers
- *
+ * <p>
  * Kiểm tra các built-in handler (migrate từ validator cũ) hoạt động đúng.
  * Tất cả test này sẽ FAIL cho đến khi Phase 2 được implement.
  */
@@ -129,14 +131,14 @@ class BuiltinHandlerTest {
     @ValueSource(strings = {"abc", "AB1"})
     void regexHandler_invalidValues_throwRegexMismatch(String value) {
         assertThrows(RegexMismatchException.class,
-                () -> FixedParser.parser().parse(RegexModel.class, value));
+            () -> FixedParser.parser().parse(RegexModel.class, value));
     }
 
     @Test
     void regexHandler_validatesOnWrite() {
         assertDoesNotThrow(() -> FixedParser.parser().export(new RegexModel("ABC")));
         assertThrows(RegexMismatchException.class,
-                () -> FixedParser.parser().export(new RegexModel("abc")));
+            () -> FixedParser.parser().export(new RegexModel("abc")));
     }
 
     // -------------------------------------------------------------------------
@@ -154,13 +156,13 @@ class BuiltinHandlerTest {
     @ValueSource(strings = {"WHT", "BLK"})
     void optionHandler_invalidValues_throwValidationException(String value) {
         assertThrows(FixedValidationException.class,
-                () -> FixedParser.parser().parse(OptionModel.class, value));
+            () -> FixedParser.parser().parse(OptionModel.class, value));
     }
 
     @Test
     void optionHandler_containsFalse_forbiddenValueThrows() {
         assertThrows(FixedValidationException.class,
-                () -> FixedParser.parser().parse(ExcludeOptionModel.class, "BAD"));
+            () -> FixedParser.parser().parse(ExcludeOptionModel.class, "BAD"));
     }
 
     @Test
@@ -172,7 +174,7 @@ class BuiltinHandlerTest {
     void optionHandler_validatesOnWrite() {
         assertDoesNotThrow(() -> FixedParser.parser().export(new OptionModel("RED")));
         assertThrows(FixedValidationException.class,
-                () -> FixedParser.parser().export(new OptionModel("WHT")));
+            () -> FixedParser.parser().export(new OptionModel("WHT")));
     }
 
     // -------------------------------------------------------------------------
@@ -192,7 +194,7 @@ class BuiltinHandlerTest {
     @Test
     void booleanHandler_invalidValue_throwsValidationException() {
         assertThrows(FixedValidationException.class,
-                () -> FixedParser.parser().parse(BooleanYNModel.class, "X"));
+            () -> FixedParser.parser().parse(BooleanYNModel.class, "X"));
     }
 
     @Test
@@ -218,7 +220,7 @@ class BuiltinHandlerTest {
     @Test
     void dateHandler_parseInvalidFormat_throws() {
         assertThrows(Exception.class,
-                () -> FixedParser.parser().parse(DateModel.class, "15/01/2024"));
+            () -> FixedParser.parser().parse(DateModel.class, "15/01/2024"));
     }
 
     @Test
@@ -230,7 +232,7 @@ class BuiltinHandlerTest {
     @Test
     void dateHandler_parseDateTime() {
         DateTimeModel model = FixedParser.parser()
-                .parse(DateTimeModel.class, "2024-01-15 14:30:00");
+            .parse(DateTimeModel.class, "2024-01-15 14:30:00");
         assertEquals(LocalDateTime.of(2024, 1, 15, 14, 30, 0), model.getDateTime());
     }
 
@@ -260,7 +262,7 @@ class BuiltinHandlerTest {
     @Test
     void numberHandler_invalidInteger_throws() {
         assertThrows(Exception.class,
-                () -> FixedParser.parser().parse(NumberModel.class, "abc  000001.5 "));
+            () -> FixedParser.parser().parse(NumberModel.class, "abc  000001.5 "));
     }
 
     // -------------------------------------------------------------------------

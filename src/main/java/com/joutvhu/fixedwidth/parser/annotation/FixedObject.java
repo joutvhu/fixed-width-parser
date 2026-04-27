@@ -1,13 +1,16 @@
 package com.joutvhu.fixedwidth.parser.annotation;
 
-import com.joutvhu.fixedwidth.parser.domain.Alignment;
-import com.joutvhu.fixedwidth.parser.domain.KeepPadding;
-import com.joutvhu.fixedwidth.parser.domain.Padding;
-
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Used to annotate the fixed width object
+ * Used to annotate the fixed width object.
+ *
+ * <p>For padding, alignment, and keep-padding configuration use
+ * {@link FixedPadding} on the class.
  *
  * @author Giao Ho
  * @since 1.0.0
@@ -24,52 +27,24 @@ public @interface FixedObject {
     String label() default "";
 
     /**
-     * Setups the length of the type
-     * 0 is unlimited length
+     * Setups the length of the type.
+     * 0 is unlimited length.
      *
      * @return length for the type
      */
     int length() default 0;
 
     /**
-     * Sets the padding character of the fixed width object
-     *
-     * @return padding of the fixed width object
-     */
-    char padding() default Padding.AUTO;
-
-    /**
-     * Sets the padding character for null value
-     *
-     * @return padding of the null value
-     */
-    char nullPadding() default Padding.AUTO;
-
-    /**
-     * Configures whether to retain the padding character when parsing values for this object
-     *
-     * @return flag indicating the padding character should be kept in the parsed value
-     */
-    KeepPadding keepPadding() default KeepPadding.AUTO;
-
-    /**
-     * Sets the alignment of the fixed width object
-     *
-     * @return alignment of the fixed width object
-     */
-    Alignment alignment() default Alignment.AUTO;
-
-    /**
      * List subtype
      *
-     * @return length for the type
+     * @return subtypes for polymorphic detection
      */
     Type[] subTypes() default {};
 
     /**
-     * Default type if can't be choices any subtype
+     * Default type if no subtype matches
      *
-     * @return default type
+     * @return default subtype class
      */
     Class<?> defaultSubType() default void.class;
 
@@ -85,8 +60,8 @@ public @interface FixedObject {
         Class<?> value();
 
         /**
-         * Property name use to check condition
-         * If prop is blank then length must be grater than 0
+         * Property name use to check condition.
+         * If prop is blank then length must be greater than 0.
          *
          * @return property name
          */
@@ -107,14 +82,14 @@ public @interface FixedObject {
         int length() default 0;
 
         /**
-         * Selection condition: value must be equals with one of the options
+         * Selection condition: value must be equal to one of the options
          *
          * @return value options
          */
         String[] oneOf() default {};
 
         /**
-         * Selection condition: value must be matching with the regular expression
+         * Selection condition: value must match the regular expression
          *
          * @return a regex
          */

@@ -1,6 +1,10 @@
 package com.joutvhu.fixedwidth.parser.annotation;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Splits a collection field by a delimiter character/string instead of using
@@ -17,9 +21,13 @@ import java.lang.annotation.*;
 @Documented
 public @interface FixedDelimiter {
 
-    /** The delimiter string used to split elements. */
+    /**
+     * The delimiter string used to split elements.
+     */
     String value();
 
-    /** Whether to trim each element after splitting. Default {@code true}. */
+    /**
+     * Whether to trim each element after splitting. Default {@code true}.
+     */
     boolean trim() default true;
 }

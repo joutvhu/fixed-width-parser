@@ -17,11 +17,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Phase 1 — Parser properties
- *
+ * <p>
  * Kiểm tra parser-level config và session-level property injection.
  * Tất cả test này sẽ FAIL cho đến khi Phase 1 được implement.
  */
@@ -34,7 +36,7 @@ class ParserPropertiesTest {
     @Test
     void parserLevelPropertyAvailableInAllSessions() {
         FixedParser parser = FixedParser.parser()
-                .withProperty("myConfig", "globalValue");
+            .withProperty("myConfig", "globalValue");
 
         List<String> values = new ArrayList<>();
         parser.onPhase(Phase.READ_AFTER_CUT, (ctx) -> {
@@ -52,7 +54,7 @@ class ParserPropertiesTest {
     @Test
     void parserLevelPropertyIsSharedAcrossMultipleParseCalls() {
         FixedParser parser = FixedParser.parser()
-                .withProperty("counter", 0);
+            .withProperty("counter", 0);
 
         // Property là immutable per-call — không thể mutate parser config từ session
         parser.parse(SimpleStringModel.class, "hello     ");
@@ -69,7 +71,7 @@ class ParserPropertiesTest {
     @Test
     void sessionPropertyOverridesParserConfig() {
         FixedParser parser = FixedParser.parser()
-                .withProperty("locale", Locale.US);
+            .withProperty("locale", Locale.US);
 
         List<Locale> locales = new ArrayList<>();
         parser.onPhase(Phase.READ_AFTER_CUT, (ctx) -> {
@@ -81,7 +83,7 @@ class ParserPropertiesTest {
 
         // Lần 2: override bằng session property
         parser.parse(SimpleStringModel.class, "hello     ",
-                ParseProperties.of("locale", Locale.JAPAN));
+            ParseProperties.of("locale", Locale.JAPAN));
 
         assertEquals(Locale.US, locales.get(0));
         assertEquals(Locale.JAPAN, locales.get(1));
@@ -90,7 +92,7 @@ class ParserPropertiesTest {
     @Test
     void sessionPropertyDoesNotAffectSubsequentCalls() {
         FixedParser parser = FixedParser.parser()
-                .withProperty("locale", Locale.US);
+            .withProperty("locale", Locale.US);
 
         List<Locale> locales = new ArrayList<>();
         parser.onPhase(Phase.READ_AFTER_CUT, (ctx) -> {
@@ -98,7 +100,7 @@ class ParserPropertiesTest {
         });
 
         parser.parse(SimpleStringModel.class, "hello     ",
-                ParseProperties.of("locale", Locale.JAPAN));
+            ParseProperties.of("locale", Locale.JAPAN));
         parser.parse(SimpleStringModel.class, "hello     "); // không có session property
 
         assertEquals(Locale.JAPAN, locales.get(0));
@@ -125,7 +127,7 @@ class ParserPropertiesTest {
     @Test
     void getPropertyFallsBackToParserConfigBeforeDefault() {
         FixedParser parser = FixedParser.parser()
-                .withProperty("key", "fromConfig");
+            .withProperty("key", "fromConfig");
 
         List<String> values = new ArrayList<>();
         parser.onPhase(Phase.READ_AFTER_CUT, (ctx) -> {
@@ -142,7 +144,7 @@ class ParserPropertiesTest {
 
         parser.onPhase(Phase.READ_AFTER_CUT, (ctx) -> {
             assertThrows(IllegalStateException.class,
-                    () -> ctx.requireProperty("missing", String.class));
+                () -> ctx.requireProperty("missing", String.class));
         });
 
         parser.parse(SimpleStringModel.class, "hello     ");
@@ -166,7 +168,7 @@ class ParserPropertiesTest {
         // Với locale khác nhau, format date có thể khác nhau
         // Test này xác nhận DateHandler đọc locale từ context property
         FixedParser parser = FixedParser.parser()
-                .withProperty("locale", Locale.US);
+            .withProperty("locale", Locale.US);
 
         DateModel model = parser.parse(DateModel.class, "15/01/2024");
         assertEquals(LocalDate.of(2024, 1, 15), model.getDate());
@@ -175,7 +177,7 @@ class ParserPropertiesTest {
     @Test
     void dateHandlerUsesTimezoneFromParserProperty() {
         FixedParser parser = FixedParser.parser()
-                .withProperty("timezone", ZoneId.of("Asia/Ho_Chi_Minh"));
+            .withProperty("timezone", ZoneId.of("Asia/Ho_Chi_Minh"));
 
         DateModel model = parser.parse(DateModel.class, "15/01/2024");
         assertNotNull(model.getDate());
@@ -184,11 +186,11 @@ class ParserPropertiesTest {
     @Test
     void dateHandlerUsesSessionTimezoneOverParserConfig() {
         FixedParser parser = FixedParser.parser()
-                .withProperty("timezone", ZoneId.of("UTC"));
+            .withProperty("timezone", ZoneId.of("UTC"));
 
         // Override timezone cho một lần parse cụ thể
         DateModel model = parser.parse(DateModel.class, "15/01/2024",
-                ParseProperties.of("timezone", ZoneId.of("Asia/Ho_Chi_Minh")));
+            ParseProperties.of("timezone", ZoneId.of("Asia/Ho_Chi_Minh")));
 
         assertNotNull(model.getDate());
     }
@@ -200,9 +202,9 @@ class ParserPropertiesTest {
     @Test
     void parsePropertiesBuilderCreatesCorrectMap() {
         ParseProperties props = ParseProperties.builder()
-                .set("locale", Locale.US)
-                .set("timezone", ZoneId.of("UTC"))
-                .build();
+            .set("locale", Locale.US)
+            .set("timezone", ZoneId.of("UTC"))
+            .build();
 
         assertEquals(Locale.US, props.get("locale", Locale.class));
         assertEquals(ZoneId.of("UTC"), props.get("timezone", ZoneId.class));
@@ -221,6 +223,6 @@ class ParserPropertiesTest {
         ParseProperties props = ParseProperties.of("key", "value");
 
         assertThrows(UnsupportedOperationException.class,
-                () -> props.set("newKey", "newValue"));
+            () -> props.set("newKey", "newValue"));
     }
 }

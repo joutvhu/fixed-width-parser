@@ -80,6 +80,14 @@ Marks a class as a fixed-width object. Required on every class you want to parse
 public class Product { ... }
 ```
 
+Use `@FixedPadding` on the class to set a default padding for all fields:
+
+```java
+@FixedObject
+@FixedPadding(value = '*', alignment = Alignment.LEFT)
+public class Record { ... }
+```
+
 ### `@FixedField`
 
 Marks a field for parsing. Fields without this annotation are ignored.
@@ -100,6 +108,10 @@ Annotates generic type parameters for collections and maps.
 ```java
 @FixedField(start = 10, length = 0)
 private List<@FixedParam(length = 5) String> items;
+
+// With padding on the param
+@FixedField(start = 0, length = 0)
+private List<@FixedParam(length = 5) @FixedPadding(value = '0', alignment = Alignment.RIGHT) String> ids;
 
 @FixedField(start = 0, length = 0)
 private Map<@FixedParam(length = 2) String, @FixedParam(length = 8) String> codes;

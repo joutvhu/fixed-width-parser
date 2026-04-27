@@ -11,7 +11,7 @@ import com.joutvhu.fixedwidth.parser.support.WriteStrategy;
  * @since 1.0.0
  */
 public abstract class FixedWidthWriter<T> extends ParsingApprover<WriteStrategy>
-        implements StringWriter<T>, WriteStrategy {
+    implements StringWriter<T>, WriteStrategy {
     public FixedWidthWriter(FixedTypeInfo info, WriteStrategy strategy) {
         super(info, strategy);
     }

@@ -35,7 +35,7 @@ public class DateHandler implements AnnotationHandler<FixedFormat> {
         if (CommonUtil.isBlank(value)) return;
 
         if (CommonUtil.isNotBlank(annotation.format()) &&
-                !CommonUtil.isDateValid(value, annotation.format(), true)) {
+            !CommonUtil.isDateValid(value, annotation.format(), true)) {
             String message = buildMessage(annotation, info, value);
             throw new TypeConversionException(message);
         }
@@ -44,15 +44,15 @@ public class DateHandler implements AnnotationHandler<FixedFormat> {
     private String buildMessage(FixedFormat annotation, FixedTypeInfo info, String value) {
         if (CommonUtil.isNotBlank(annotation.message())) {
             return annotation.nativeMessage()
-                    ? annotation.message()
-                    : info.formatMessage(annotation.message(),
-                            CommonUtil.mapOfEntries(
-                                    CommonUtil.mapEntryOf("{value}", () -> value),
-                                    CommonUtil.mapEntryOf("{format}", annotation::format)));
+                ? annotation.message()
+                : info.formatMessage(annotation.message(),
+                CommonUtil.mapOfEntries(
+                    CommonUtil.mapEntryOf("{value}", () -> value),
+                    CommonUtil.mapEntryOf("{format}", annotation::format)));
         }
         return info.formatMessage("{title} does not match the {format} format.",
-                CommonUtil.mapOfEntries(
-                        CommonUtil.mapEntryOf("{value}", () -> value),
-                        CommonUtil.mapEntryOf("{format}", annotation::format)));
+            CommonUtil.mapOfEntries(
+                CommonUtil.mapEntryOf("{value}", () -> value),
+                CommonUtil.mapEntryOf("{format}", annotation::format)));
     }
 }

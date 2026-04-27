@@ -21,23 +21,23 @@ import java.util.stream.Collectors;
 @UtilityClass
 public class FixedHelper {
     private Map<Class<?>, Class<?>> CLASS_MAP = CommonUtil.mapOfEntries(
-            CommonUtil.mapEntryOf(Collection.class, ArrayList.class),
-            CommonUtil.mapEntryOf(AbstractCollection.class, ArrayList.class),
-            CommonUtil.mapEntryOf(AbstractList.class, ArrayList.class),
-            CommonUtil.mapEntryOf(List.class, ArrayList.class),
-            CommonUtil.mapEntryOf(Set.class, HashSet.class),
-            CommonUtil.mapEntryOf(AbstractSet.class, HashSet.class),
-            CommonUtil.mapEntryOf(SortedSet.class, TreeSet.class),
-            CommonUtil.mapEntryOf(NavigableSet.class, TreeSet.class),
-            CommonUtil.mapEntryOf(Queue.class, LinkedList.class),
-            CommonUtil.mapEntryOf(Deque.class, LinkedList.class),
-            CommonUtil.mapEntryOf(AbstractSequentialList.class, LinkedList.class),
-            CommonUtil.mapEntryOf(Map.class, HashMap.class),
-            CommonUtil.mapEntryOf(AbstractMap.class, HashMap.class),
-            CommonUtil.mapEntryOf(SortedMap.class, TreeMap.class),
-            CommonUtil.mapEntryOf(NavigableMap.class, TreeMap.class),
-            CommonUtil.mapEntryOf(Dictionary.class, Hashtable.class),
-            CommonUtil.mapEntryOf(Temporal.class, Instant.class)
+        CommonUtil.mapEntryOf(Collection.class, ArrayList.class),
+        CommonUtil.mapEntryOf(AbstractCollection.class, ArrayList.class),
+        CommonUtil.mapEntryOf(AbstractList.class, ArrayList.class),
+        CommonUtil.mapEntryOf(List.class, ArrayList.class),
+        CommonUtil.mapEntryOf(Set.class, HashSet.class),
+        CommonUtil.mapEntryOf(AbstractSet.class, HashSet.class),
+        CommonUtil.mapEntryOf(SortedSet.class, TreeSet.class),
+        CommonUtil.mapEntryOf(NavigableSet.class, TreeSet.class),
+        CommonUtil.mapEntryOf(Queue.class, LinkedList.class),
+        CommonUtil.mapEntryOf(Deque.class, LinkedList.class),
+        CommonUtil.mapEntryOf(AbstractSequentialList.class, LinkedList.class),
+        CommonUtil.mapEntryOf(Map.class, HashMap.class),
+        CommonUtil.mapEntryOf(AbstractMap.class, HashMap.class),
+        CommonUtil.mapEntryOf(SortedMap.class, TreeMap.class),
+        CommonUtil.mapEntryOf(NavigableMap.class, TreeMap.class),
+        CommonUtil.mapEntryOf(Dictionary.class, Hashtable.class),
+        CommonUtil.mapEntryOf(Temporal.class, Instant.class)
     );
 
     /**
@@ -52,9 +52,9 @@ public class FixedHelper {
             Constructor<?> constructor = type.getConstructor();
             if (constructor != null) return (T) constructor.newInstance();
             else throw new UnsupportedOperationException(String
-                    .format("%s class do not have a no-arg constructor.", type.getName()));
+                .format("%s class do not have a no-arg constructor.", type.getName()));
         } catch (NoSuchMethodException | SecurityException | InstantiationException |
-                IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                 IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             throw new FixedException(e);
         }
     }
@@ -90,26 +90,26 @@ public class FixedHelper {
     public <T> List<Class<?>> getNormalTypesOf(Class<T> type, String... firstPrefix) {
         // Scope the scan to the URL(s) that contain the given type, avoiding a full classpath scan.
         Reflections reflections = new Reflections(new ConfigurationBuilder()
-                .setUrls(ClasspathHelper.forClass(type)));
+            .setUrls(ClasspathHelper.forClass(type)));
         return reflections.getSubTypesOf(type)
-                .stream()
-                .filter(c -> {
-                    Constructor<?> constructor = IgnoreError.execute(() -> c.getConstructor());
-                    if (constructor == null) return false;
-                    int mod = c.getModifiers();
-                    return Modifier.isPublic(mod) && !Modifier.isInterface(mod) && !Modifier.isAbstract(mod);
-                })
-                .sorted((o1, o2) -> {
-                    String n1 = o1.getName();
-                    String n2 = o2.getName();
-                    for (String p : firstPrefix) {
-                        boolean j1 = n1.startsWith(p);
-                        boolean j2 = n2.startsWith(p);
-                        if (j1 && !j2) return -1;
-                        if (!j1 && j2) return 1;
-                    }
-                    return 0;
-                })
-                .collect(Collectors.toList());
+            .stream()
+            .filter(c -> {
+                Constructor<?> constructor = IgnoreError.execute(() -> c.getConstructor());
+                if (constructor == null) return false;
+                int mod = c.getModifiers();
+                return Modifier.isPublic(mod) && !Modifier.isInterface(mod) && !Modifier.isAbstract(mod);
+            })
+            .sorted((o1, o2) -> {
+                String n1 = o1.getName();
+                String n2 = o2.getName();
+                for (String p : firstPrefix) {
+                    boolean j1 = n1.startsWith(p);
+                    boolean j2 = n2.startsWith(p);
+                    if (j1 && !j2) return -1;
+                    if (!j1 && j2) return 1;
+                }
+                return 0;
+            })
+            .collect(Collectors.toList());
     }
 }

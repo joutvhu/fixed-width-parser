@@ -8,10 +8,14 @@ package com.joutvhu.fixedwidth.parser.domain;
  */
 public enum OnError {
 
-    /** Re-throw the exception immediately (default / fail-fast behaviour). */
+    /**
+     * Re-throw the exception immediately (default / fail-fast behaviour).
+     */
     THROW,
 
-    /** Set the field to {@code null} and continue parsing. */
+    /**
+     * Set the field to {@code null} and continue parsing.
+     */
     NULL,
 
     /**
@@ -20,6 +24,8 @@ public enum OnError {
      */
     DEFAULT_VALUE,
 
-    /** Skip the field entirely (leave it at its Java default) and continue. */
+    /**
+     * Skip the field entirely (leave it at its Java default) and continue.
+     */
     SKIP
 }

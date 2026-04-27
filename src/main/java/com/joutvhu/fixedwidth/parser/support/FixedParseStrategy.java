@@ -57,7 +57,7 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
 
     public DefaultParseContext createReadContext(Map<String, Object> sessionProps) {
         DefaultParseContext ctx = new DefaultParseContext(
-                Phase.READ_PRE_CUT, parserConfig, sessionProps);
+            Phase.READ_PRE_CUT, parserConfig, sessionProps);
         activeContext.set(ctx);
         if (contextCreatedHook != null) contextCreatedHook.accept(ctx);
         return ctx;
@@ -65,7 +65,7 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
 
     public DefaultParseContext createWriteContext(Map<String, Object> sessionProps) {
         DefaultParseContext ctx = new DefaultParseContext(
-                Phase.WRITE_PRE_GET, parserConfig, sessionProps);
+            Phase.WRITE_PRE_GET, parserConfig, sessionProps);
         activeContext.set(ctx);
         if (contextCreatedHook != null) contextCreatedHook.accept(ctx);
         return ctx;
@@ -92,7 +92,7 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
     private boolean isNumber(FixedTypeInfo info) {
         Class<?> type = info.getType();
         return TypeConstants.INTEGER_NUMBER_TYPES.contains(type) ||
-                TypeConstants.DECIMAL_NUMBER_TYPES.contains(type);
+            TypeConstants.DECIMAL_NUMBER_TYPES.contains(type);
     }
 
     // ── ReadStrategy ──────────────────────────────────────────────────────────
@@ -104,15 +104,15 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
         // Only push a FIELD frame for leaf nodes.
         // Object types get their frame pushed by ObjectReader.
         boolean isObjectType = !actualInfo.getElementTypeInfo().isEmpty()
-                || actualInfo.getFixedObject() != null;
+            || actualInfo.getFixedObject() != null;
 
         DefaultParseContext ctx = activeContext.get();
         if (ctx != null && !isObjectType) {
             String rawString = assembler.getValue();
             int depth = ctx.frameStack().size();
             DefaultContextFrame frame = new DefaultContextFrame(
-                    actualInfo, FrameType.FIELD, depth, -1,
-                    assembler, rawString, null, null);
+                actualInfo, FrameType.FIELD, depth, -1,
+                assembler, rawString, null, null);
             ctx.pushFrame(frame);
             ctx.setCurrentValue(null);
             firePhaseHook(Phase.READ_AFTER_CUT);
@@ -129,7 +129,7 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
             if (effectiveAssembler.isBlank(actualInfo) && !isNumber(actualInfo) && !isCollectionType) {
                 if (actualInfo.require)
                     throw new MandatoryValueException(
-                            actualInfo.buildMessage("{title} cannot be blank."));
+                        actualInfo.buildMessage("{title} cannot be blank."));
                 return null;
             }
 
@@ -174,7 +174,7 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
 
                 if (result == null && actualInfo.require)
                     throw new MandatoryValueException(
-                            actualInfo.buildMessage("{label} cannot be null."));
+                        actualInfo.buildMessage("{label} cannot be null."));
                 return result;
             }
             throw new FixedException("Reader not found.");
@@ -211,13 +211,15 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
         return className + "." + info.getField().getName();
     }
 
-    /** Records an error into the context's error list. */
+    /**
+     * Records an error into the context's error list.
+     */
     private void recordError(DefaultParseContext ctx, FixedTypeInfo info,
                              Exception e, String rawValue) {
         String fieldPath = buildFieldPath(info, ctx);
         String raw = rawValue != null ? rawValue.replaceAll("\\s+$", "") : null;
         ParseError error = new DefaultParseError(
-                e.getMessage(), ctx.getPhase(), fieldPath, raw, e);
+            e.getMessage(), ctx.getPhase(), fieldPath, raw, e);
         ctx.addError(error);
     }
 
@@ -234,15 +236,15 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
         FixedTypeInfo actualInfo = info.detectTypeWith(value);
 
         boolean isObjectType = !actualInfo.getElementTypeInfo().isEmpty()
-                || actualInfo.getFixedObject() != null;
+            || actualInfo.getFixedObject() != null;
 
         DefaultParseContext ctx = activeContext.get();
         Object effectiveValue = value;
         if (ctx != null && !isObjectType) {
             int depth = ctx.frameStack().size();
             DefaultContextFrame frame = new DefaultContextFrame(
-                    actualInfo, FrameType.FIELD, depth, -1,
-                    null, null, null, null);
+                actualInfo, FrameType.FIELD, depth, -1,
+                null, null, null, null);
             ctx.pushFrame(frame);
             ctx.setCurrentValue(effectiveValue);
             firePhaseHook(Phase.WRITE_AFTER_GET);
@@ -263,8 +265,8 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
                 }
 
                 StringAssembler padded = FixedStringAssembler
-                        .of(CommonUtil.defaultIfNull(result, StringUtils.EMPTY))
-                        .pad(actualInfo);
+                    .of(CommonUtil.defaultIfNull(result, StringUtils.EMPTY))
+                    .pad(actualInfo);
 
                 if (ctx != null && !isObjectType) {
                     ctx.setCurrentValue(padded.getValue());
@@ -275,7 +277,7 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
                 if (padded.isBlank(actualInfo)) {
                     if (actualInfo.require)
                         throw new MandatoryValueException(
-                                actualInfo.buildMessage("{title} cannot be blank."));
+                            actualInfo.buildMessage("{title} cannot be blank."));
                 }
                 return padded.getValue();
             }

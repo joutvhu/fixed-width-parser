@@ -69,7 +69,7 @@ public abstract class TypeDetector implements FinalTypeFinder {
         this.parameterizedType = parameterizedType;
 
         Assert.isTrue(t instanceof Class, String
-                .format("The %s type is not a class.", t.getTypeName()));
+            .format("The %s type is not a class.", t.getTypeName()));
         this.type = (Class<?>) t;
         this.rootType = type;
 
@@ -182,7 +182,7 @@ public abstract class TypeDetector implements FinalTypeFinder {
      * annotations, up to {@code maxDepth} levels deep.
      */
     private <T extends Annotation> T findComposedAnnotation(
-            Class<T> target, Annotation[] annotations, int depth) {
+        Class<T> target, Annotation[] annotations, int depth) {
         if (depth > 3) return null;
         for (Annotation a : annotations) {
             Class<? extends Annotation> aType = a.annotationType();

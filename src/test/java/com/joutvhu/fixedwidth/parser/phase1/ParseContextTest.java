@@ -12,11 +12,14 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Phase 1 — ParseContext
- *
+ * <p>
  * Kiểm tra context được tạo, truyền đúng, và frame stack hoạt động chính xác.
  * Tất cả test này sẽ FAIL cho đến khi Phase 1 được implement.
  */
@@ -32,7 +35,7 @@ class ParseContextTest {
         List<ParseContext> captured = new ArrayList<>();
 
         FixedParser parser = FixedParser.parser()
-                .onContextCreated(captured::add); // hook để capture context
+            .onContextCreated(captured::add); // hook để capture context
 
         parser.parse(SimpleStringModel.class, "hello     ");
         parser.parse(SimpleStringModel.class, "world     ");
@@ -45,7 +48,7 @@ class ParseContextTest {
     void contextIsNotSharedBetweenCalls() {
         // Global property từ lần parse trước không leak sang lần sau
         FixedParser parser = FixedParser.parser()
-                .onContextCreated(ctx -> ctx.putGlobal("key", "value"));
+            .onContextCreated(ctx -> ctx.putGlobal("key", "value"));
 
         ParseContext[] last = new ParseContext[1];
         parser.onContextCreated(ctx -> last[0] = ctx);

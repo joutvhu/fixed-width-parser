@@ -42,11 +42,11 @@ public class DebugLogger {
         Object current = ctx.getCurrentValue();
 
         logger.fine(String.format("[%s] field=%s raw=%s processed=%s value=%s",
-                phase,
-                fieldPath,
-                quote(raw),
-                quote(processed),
-                current));
+            phase,
+            fieldPath,
+            quote(raw),
+            quote(processed),
+            current));
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

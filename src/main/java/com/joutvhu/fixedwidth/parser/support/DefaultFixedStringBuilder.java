@@ -61,7 +61,7 @@ public class DefaultFixedStringBuilder implements FixedStringBuilder {
         for (DefaultBuiltPart part : parts.values()) {
             FixedTypeInfo info = part.getTypeInfo();
             if (info != null && info.getStart() != null && info.getLength() != null
-                    && info.getLength() > 0) {
+                && info.getLength() > 0) {
                 totalLength = Math.max(totalLength, info.getStart() + info.getLength());
             }
         }
@@ -94,9 +94,24 @@ public class DefaultFixedStringBuilder implements FixedStringBuilder {
             this.value = value;
         }
 
-        @Override public String getFieldName() { return fieldName; }
-        @Override public FixedTypeInfo getTypeInfo() { return typeInfo; }
-        @Override public String getValue() { return value; }
-        @Override public String getRawValue() { return value; } // Phase 4 will refine this
+        @Override
+        public String getFieldName() {
+            return fieldName;
+        }
+
+        @Override
+        public FixedTypeInfo getTypeInfo() {
+            return typeInfo;
+        }
+
+        @Override
+        public String getValue() {
+            return value;
+        }
+
+        @Override
+        public String getRawValue() {
+            return value;
+        } // Phase 4 will refine this
     }
 }

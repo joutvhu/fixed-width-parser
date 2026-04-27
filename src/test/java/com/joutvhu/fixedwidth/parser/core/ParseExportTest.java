@@ -4,16 +4,13 @@ import com.joutvhu.fixedwidth.parser.FixedParser;
 import com.joutvhu.fixedwidth.parser.annotation.FixedField;
 import com.joutvhu.fixedwidth.parser.annotation.FixedObject;
 import com.joutvhu.fixedwidth.parser.annotation.FixedPadding;
-import com.joutvhu.fixedwidth.parser.annotation.FixedParam;
 import com.joutvhu.fixedwidth.parser.annotation.FixedRequired;
 import com.joutvhu.fixedwidth.parser.constraint.FixedFormat;
-import com.joutvhu.fixedwidth.parser.constraint.FixedOption;
 import com.joutvhu.fixedwidth.parser.domain.Alignment;
 import com.joutvhu.fixedwidth.parser.domain.KeepPadding;
 import com.joutvhu.fixedwidth.parser.exception.MandatoryValueException;
 import com.joutvhu.fixedwidth.parser.model.CollectionModel;
 import com.joutvhu.fixedwidth.parser.model.MultiFieldModel;
-import com.joutvhu.fixedwidth.parser.model.NestedModel;
 import com.joutvhu.fixedwidth.parser.model.SubTypeModel;
 import com.joutvhu.fixedwidth.parser.support.ItemReader;
 import lombok.AllArgsConstructor;
@@ -37,7 +34,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Core parse/export tests — behavior cơ bản của thư viện.
@@ -366,11 +369,11 @@ class ParseExportTest {
     @Test
     void parseStream_returnsAllItems() {
         Stream<String> input = Stream.of(
-                "040hello     Y2024-01-15",
-                "099world     N2024-06-01");
+            "040hello     Y2024-01-15",
+            "099world     N2024-06-01");
 
         List<MultiFieldModel> results = parser.parse(MultiFieldModel.class, input)
-                .collect(Collectors.toList());
+            .collect(Collectors.toList());
 
         assertEquals(2, results.size());
         assertEquals(40L, results.get(0).getId());
@@ -380,8 +383,8 @@ class ParseExportTest {
     @Test
     void exportStream_returnsAllLines() {
         Stream<MultiFieldModel> input = Stream.of(
-                new MultiFieldModel(40L, "hello     ", true, LocalDate.of(2024, 1, 15)),
-                new MultiFieldModel(99L, "world     ", false, LocalDate.of(2024, 6, 1)));
+            new MultiFieldModel(40L, "hello     ", true, LocalDate.of(2024, 1, 15)),
+            new MultiFieldModel(99L, "world     ", false, LocalDate.of(2024, 6, 1)));
 
         List<String> lines = parser.export(input).collect(Collectors.toList());
 
@@ -396,19 +399,19 @@ class ParseExportTest {
     @Test
     void parse_nullType_throws() {
         assertThrows(IllegalArgumentException.class,
-                () -> parser.parse((Class<StringModel>) null, "hello     "));
+            () -> parser.parse((Class<StringModel>) null, "hello     "));
     }
 
     @Test
     void parse_nullLine_throws() {
         assertThrows(IllegalArgumentException.class,
-                () -> parser.parse(StringModel.class, (String) null));
+            () -> parser.parse(StringModel.class, (String) null));
     }
 
     @Test
     void export_nullObject_throws() {
         assertThrows(IllegalArgumentException.class,
-                () -> parser.export((StringModel) null));
+            () -> parser.export((StringModel) null));
     }
 
     // -------------------------------------------------------------------------
@@ -428,7 +431,7 @@ class ParseExportTest {
     @Test
     void exportRequired_null_throws() {
         assertThrows(MandatoryValueException.class,
-                () -> parser.export(new RequiredModel(null)));
+            () -> parser.export(new RequiredModel(null)));
     }
 
     // -------------------------------------------------------------------------

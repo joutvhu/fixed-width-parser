@@ -5,7 +5,6 @@ import com.joutvhu.fixedwidth.parser.annotation.FixedField;
 import com.joutvhu.fixedwidth.parser.annotation.FixedHandler;
 import com.joutvhu.fixedwidth.parser.annotation.FixedObject;
 import com.joutvhu.fixedwidth.parser.convert.AnnotationHandler;
-import com.joutvhu.fixedwidth.parser.model.SimpleStringModel;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.support.ParseContext;
 import com.joutvhu.fixedwidth.parser.support.Phase;
@@ -14,17 +13,23 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Test;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Phase 2 — AnnotationHandler dispatch
- *
+ * <p>
  * Kiểm tra handler được gọi đúng phase, ctx.getPhase() đúng,
  * và custom handler hoạt động không cần đăng ký module.
  * Tất cả test này sẽ FAIL cho đến khi Phase 2 được implement.
@@ -54,7 +59,8 @@ class AnnotationHandlerTest {
     @FixedHandler(TrackingHandler.class)
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD})
-    public @interface TrackAnnotation {}
+    public @interface TrackAnnotation {
+    }
 
     @FixedObject
     @Data
@@ -149,7 +155,8 @@ class AnnotationHandlerTest {
     @FixedHandler(WriteTrackingHandler.class)
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD})
-    public @interface WriteTrackAnnotation {}
+    public @interface WriteTrackAnnotation {
+    }
 
     @FixedObject
     @Data
@@ -200,7 +207,8 @@ class AnnotationHandlerTest {
     @FixedHandler(BothDirectionHandler.class)
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD})
-    public @interface BothAnnotation {}
+    public @interface BothAnnotation {
+    }
 
     @FixedObject
     @Data
@@ -246,7 +254,8 @@ class AnnotationHandlerTest {
     @FixedHandler(UpperCaseHandler.class)
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD})
-    public @interface UpperCase {}
+    public @interface UpperCase {
+    }
 
     @FixedObject
     @Data
@@ -296,9 +305,14 @@ class AnnotationHandlerTest {
     void getDependenciesReturnsCorrectFields() {
         DependsOnField ann = new DependsOnField() {
             @Override
-            public String field() { return "otherField"; }
+            public String field() {
+                return "otherField";
+            }
+
             @Override
-            public Class<? extends Annotation> annotationType() { return DependsOnField.class; }
+            public Class<? extends Annotation> annotationType() {
+                return DependsOnField.class;
+            }
         };
 
         DependencyAwareHandler handler = new DependencyAwareHandler();
@@ -312,7 +326,9 @@ class AnnotationHandlerTest {
         TrackingHandler handler = new TrackingHandler();
         TrackAnnotation ann = new TrackAnnotation() {
             @Override
-            public Class<? extends Annotation> annotationType() { return TrackAnnotation.class; }
+            public Class<? extends Annotation> annotationType() {
+                return TrackAnnotation.class;
+            }
         };
 
         assertEquals(Collections.emptySet(), handler.getDependencies(ann, null));

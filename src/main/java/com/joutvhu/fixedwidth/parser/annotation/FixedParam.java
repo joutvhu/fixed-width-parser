@@ -1,13 +1,21 @@
 package com.joutvhu.fixedwidth.parser.annotation;
 
-import com.joutvhu.fixedwidth.parser.domain.Alignment;
-import com.joutvhu.fixedwidth.parser.domain.KeepPadding;
-import com.joutvhu.fixedwidth.parser.domain.Padding;
-
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Used to annotate the fixed width param
+ * Used to annotate the generic type parameters of collection and map fields.
+ *
+ * <p>For padding, alignment, and keep-padding configuration use
+ * {@link FixedPadding} as a type-use annotation on the same parameter.
+ *
+ * <p>Example:
+ * <pre>{@code
+ * List<@FixedParam(length = 5) @FixedPadding(value = '0', alignment = Alignment.RIGHT) String> items
+ * }</pre>
  *
  * @author Giao Ho
  * @since 1.0.0
@@ -24,38 +32,10 @@ public @interface FixedParam {
     String label() default "";
 
     /**
-     * Setups the length of the param
-     * 0 is unlimited length
+     * Setups the length of the param.
+     * 0 is unlimited length.
      *
      * @return length for the param
      */
     int length();
-
-    /**
-     * Sets the padding character of the fixed width param
-     *
-     * @return padding of the fixed width param
-     */
-    char padding() default Padding.AUTO;
-
-    /**
-     * Sets the padding character for null value
-     *
-     * @return padding of the null value
-     */
-    char nullPadding() default Padding.AUTO;
-
-    /**
-     * Configures whether to retain the padding character when parsing values for this param
-     *
-     * @return flag indicating the padding character should be kept in the parsed value
-     */
-    KeepPadding keepPadding() default KeepPadding.AUTO;
-
-    /**
-     * Sets the alignment of the fixed width param
-     *
-     * @return alignment of the fixed width param
-     */
-    Alignment alignment() default Alignment.AUTO;
 }

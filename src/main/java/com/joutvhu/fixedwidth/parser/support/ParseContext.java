@@ -37,7 +37,9 @@ public interface ParseContext {
 
     // ── Frame stack ──────────────────────────────────────────────────────────
 
-    /** The frame for the node currently being processed. */
+    /**
+     * The frame for the node currently being processed.
+     */
     ContextFrame currentFrame();
 
     /**
@@ -110,7 +112,9 @@ public interface ParseContext {
      */
     void put(String key, Object value);
 
-    /** Stores a global property. */
+    /**
+     * Stores a global property.
+     */
     void putGlobal(String key, Object value);
 
     /**
@@ -119,13 +123,19 @@ public interface ParseContext {
      */
     void putScoped(String key, Object value);
 
-    /** Returns the property value cast to {@code type}, or {@code null} if absent. */
+    /**
+     * Returns the property value cast to {@code type}, or {@code null} if absent.
+     */
     <T> T get(String key, Class<T> type);
 
-    /** Returns {@code true} if a property with the given key exists. */
+    /**
+     * Returns {@code true} if a property with the given key exists.
+     */
     boolean has(String key);
 
-    /** Removes a property. */
+    /**
+     * Removes a property.
+     */
     void remove(String key);
 
     // ── Parser / session properties ──────────────────────────────────────────

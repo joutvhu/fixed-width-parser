@@ -15,12 +15,18 @@ import java.util.List;
  */
 public interface ParseResult<T> {
 
-    /** The (possibly partial) parsed object. Never {@code null}. */
+    /**
+     * The (possibly partial) parsed object. Never {@code null}.
+     */
     T getValue();
 
-    /** {@code true} if at least one error was collected. */
+    /**
+     * {@code true} if at least one error was collected.
+     */
     boolean hasErrors();
 
-    /** All errors collected during the parse, in encounter order. */
+    /**
+     * All errors collected during the parse, in encounter order.
+     */
     List<ParseError> getErrors();
 }
