@@ -3,6 +3,7 @@ package com.joutvhu.fixedwidth.parser.convert.hook;
 import com.joutvhu.fixedwidth.parser.annotation.FixedCount;
 import com.joutvhu.fixedwidth.parser.codegen.AccessorRegistry;
 import com.joutvhu.fixedwidth.parser.codegen.FixedFieldAccessor;
+import com.joutvhu.fixedwidth.parser.codegen.NativeImageUtil;
 import com.joutvhu.fixedwidth.parser.convert.ModuleHook;
 import com.joutvhu.fixedwidth.parser.support.DefaultContextFrame;
 import com.joutvhu.fixedwidth.parser.support.DefaultFixedStringBuilder;
@@ -133,6 +134,7 @@ public class ObjectHook implements ModuleHook {
                 if (accessor != null) {
                     accessor.set(result, field.getName(), v);
                 } else {
+                    NativeImageUtil.assertNotNativeImageReflection(info.getType());
                     ReflectionUtil.makeAccessible(field);
                     ReflectionUtil.setField(field, result, v);
                 }
@@ -214,6 +216,7 @@ public class ObjectHook implements ModuleHook {
                 if (writeAccessor != null) {
                     item = writeAccessor.get(value, fieldInfo.getField().getName());
                 } else {
+                    NativeImageUtil.assertNotNativeImageReflection(info.getType());
                     ReflectionUtil.makeAccessible(fieldInfo.getField());
                     item = ReflectionUtil.getField(fieldInfo.getField(), value);
                 }
@@ -239,6 +242,7 @@ public class ObjectHook implements ModuleHook {
                 if (countAccessor != null) {
                     currentVal = countAccessor.get(value, fieldInfo.getField().getName());
                 } else {
+                    NativeImageUtil.assertNotNativeImageReflection(info.getType());
                     ReflectionUtil.makeAccessible(fieldInfo.getField());
                     currentVal = ReflectionUtil.getField(fieldInfo.getField(), value);
                 }

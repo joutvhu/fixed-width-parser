@@ -127,22 +127,41 @@ public final class AccessorGenerator {
     /**
      * Returns a cast expression for the setter parameter.
      * Primitive types need unboxing casts; reference types use a simple cast.
+     *
+     * <p>Uses the erased type name (stripping any type-use annotations that
+     * {@link javax.lang.model.type.TypeMirror#toString()} may include) so the
+     * generated cast compiles cleanly without importing annotation types.
      */
     private String getCastExpression(ModelField field) {
-        // Simple heuristic for casting when reading from Object
-        String typeName = field.getFieldType().toString();
-        
-        // If it's a primitive, use the wrapper class for casting and let auto-unboxing handle it
-        if (typeName.equals("int")) return "(java.lang.Integer) value";
-        if (typeName.equals("long")) return "(java.lang.Long) value";
-        if (typeName.equals("double")) return "(java.lang.Double) value";
-        if (typeName.equals("float")) return "(java.lang.Float) value";
+        // TypeMirror.toString() may include type-use annotations, e.g.:
+        //   "java.lang.@com.example.MyAnnotation Long"
+        // We only want the bare type name for the cast.
+        String typeName = erasedTypeName(field);
+
+        if (typeName.equals("int"))     return "(java.lang.Integer) value";
+        if (typeName.equals("long"))    return "(java.lang.Long) value";
+        if (typeName.equals("double"))  return "(java.lang.Double) value";
+        if (typeName.equals("float"))   return "(java.lang.Float) value";
         if (typeName.equals("boolean")) return "(java.lang.Boolean) value";
-        if (typeName.equals("char")) return "(java.lang.Character) value";
-        if (typeName.equals("short")) return "(java.lang.Short) value";
-        if (typeName.equals("byte")) return "(java.lang.Byte) value";
-        
+        if (typeName.equals("char"))    return "(java.lang.Character) value";
+        if (typeName.equals("short"))   return "(java.lang.Short) value";
+        if (typeName.equals("byte"))    return "(java.lang.Byte) value";
+
         return "(" + typeName + ") value";
+    }
+
+    /**
+     * Returns the erased, annotation-free type name suitable for use in a cast.
+     *
+     * <p>Strips any {@code @Annotation(...)} segments that javac injects into
+     * {@link javax.lang.model.type.TypeMirror#toString()} for annotated types.
+     */
+    private String erasedTypeName(ModelField field) {
+        // Use the processing environment to get the erased type, which never
+        // includes type-use annotations in its string representation.
+        javax.lang.model.type.TypeMirror erased =
+            processingEnv.getTypeUtils().erasure(field.getFieldType());
+        return erased.toString();
     }
 
 }

@@ -51,3 +51,44 @@ tasks.withType(JavaCompile).configureEach {
         '-processor', 'lombok.launch.AnnotationProcessorHider$AnnotationProcessor,com.joutvhu.fixedwidth.parser.processor.FixedWidthProcessor'
     ])
 }
+
+// ── Phase 4 benchmark tasks ───────────────────────────────────────────────────
+
+/**
+ * Generates 1M rows of fixed-width Product data.
+ * Requires Python 3 on PATH.
+ *
+ * Usage:  ./gradlew :example:generateData
+ *         ./gradlew :example:generateData --args="500000 data/products.txt"
+ */
+tasks.register('generateData', Exec) {
+    group = 'benchmark'
+    description = 'Generate fixed-width Product data using generate-data.py (requires Python 3)'
+
+    def rows   = project.findProperty('rows')   ?: '1000000'
+    def output = project.findProperty('output') ?: 'data/products.txt'
+
+    commandLine 'python', 'generate-data.py', rows, output
+    workingDir  projectDir
+}
+
+/**
+ * Runs the Phase 4 throughput benchmark against the generated data file.
+ * Run generateData first if data/products.txt does not exist.
+ *
+ * Usage:  ./gradlew :example:benchmark
+ *         ./gradlew :example:benchmark -Pdata=data/products.txt
+ */
+tasks.register('benchmark', JavaExec) {
+    group       = 'benchmark'
+    description = 'Run the Phase 4 throughput benchmark (parse 1M Product rows)'
+    classpath   = sourceSets.main.runtimeClasspath
+    mainClass   = 'com.example.Benchmark'
+
+    def dataFile = project.findProperty('data') ?: 'data/products.txt'
+    args dataFile
+
+    // Give the JVM enough heap for 1M rows in memory
+    jvmArgs '-Xmx512m'
+}
+
