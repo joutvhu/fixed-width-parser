@@ -1,22 +1,36 @@
 package com.example;
 
+import com.joutvhu.fixedwidth.parser.annotation.FixedCount;
 import com.joutvhu.fixedwidth.parser.annotation.FixedField;
 import com.joutvhu.fixedwidth.parser.annotation.FixedObject;
-import lombok.AllArgsConstructor;
+import com.joutvhu.fixedwidth.parser.annotation.FixedParam;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
+import java.util.List;
+import java.util.Map;
 
 @Data
 @FixedObject
-@NoArgsConstructor
-@AllArgsConstructor
-public class User {
-    @FixedField(length = 5)
-    private Long id;
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+public class User extends AbstractUser {
+    @FixedField(start = 16, length = 15)
+    private Address address;
 
-    @FixedField(start = 5, length = 10)
-    private String username;
+    @FixedField(start = 31, length = 2)
+    private Integer roleCount;
 
-    @FixedField(start = 15, length = 20)
-    private String email;
+    @FixedField(start = 33, length = 10)
+    @FixedCount(field = "roleCount")
+    private List<@FixedParam(length = 5) String> roles;
+
+    @FixedField(start = 43, length = 20)
+    @FixedCount(value = 2)
+    private Map<@FixedParam(length = 5) String, @FixedParam(length = 5) String> metadata;
+
+    public User() {
+        this.type = "U";
+    }
 }
