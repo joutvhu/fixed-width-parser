@@ -42,34 +42,44 @@ public @interface FixedField {
      * The field is required (non-null)
      *
      * @return is required
+     * @deprecated Use {@link com.joutvhu.fixedwidth.parser.annotation.FixedRequired} instead.
      */
+    @Deprecated
     boolean required() default false;
 
     /**
      * Sets the padding character of the fixed width field
      *
      * @return padding of the fixed width field
+     * @deprecated Use {@link com.joutvhu.fixedwidth.parser.annotation.FixedPadding} instead.
      */
+    @Deprecated
     char padding() default Padding.AUTO;
 
     /**
      * Sets the padding character for null value
      *
      * @return padding for the null value
+     * @deprecated Use {@link com.joutvhu.fixedwidth.parser.annotation.FixedPadding#nullValue()} instead.
      */
+    @Deprecated
     char nullPadding() default Padding.AUTO;
 
     /**
      * Configures whether to retain the padding character when parsing values for this field
      *
      * @return flag indicating the padding character should be kept in the parsed value
+     * @deprecated Use {@link com.joutvhu.fixedwidth.parser.annotation.FixedPadding#keep()} instead.
      */
+    @Deprecated
     KeepPadding keepPadding() default KeepPadding.AUTO;
 
     /**
      * Sets the alignment of the fixed width field
      *
      * @return alignment of the fixed width field
+     * @deprecated Use {@link com.joutvhu.fixedwidth.parser.annotation.FixedPadding#alignment()} instead.
      */
+    @Deprecated
     Alignment alignment() default Alignment.AUTO;
 }

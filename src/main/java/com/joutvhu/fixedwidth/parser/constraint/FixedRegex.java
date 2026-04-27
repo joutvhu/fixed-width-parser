@@ -1,5 +1,8 @@
 package com.joutvhu.fixedwidth.parser.constraint;
 
+import com.joutvhu.fixedwidth.parser.annotation.FixedHandler;
+import com.joutvhu.fixedwidth.parser.convert.handler.RegexHandler;
+
 import java.lang.annotation.*;
 
 /**
@@ -8,6 +11,7 @@ import java.lang.annotation.*;
  * @author Giao Ho
  * @since 1.0.0
  */
+@FixedHandler(RegexHandler.class)
 @Target({ElementType.TYPE, ElementType.FIELD, ElementType.TYPE_PARAMETER, ElementType.TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

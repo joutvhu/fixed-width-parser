@@ -149,14 +149,52 @@ public abstract class TypeDetector implements FinalTypeFinder {
     }
 
     /**
-     * Find an annotation from field, annotatedType, type by annotation class
+     * Find an annotation from field, annotatedType, type by annotation class.
+     *
+     * <p>Also searches composed annotations (meta-annotations) up to depth 3.
+     * For example, if a field has {@code @ZeroPaddedNumber} and that annotation
+     * is itself annotated with {@code @FixedPadding}, this method will find
+     * {@code @FixedPadding} via composition.
      *
      * @param annotationClass the Class object corresponding to the annotation type
      * @param <T>             the type of the annotation to query for and return if present
      * @return annotation for the specified annotation type
      */
     public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
-        return ReflectionUtil.getAnnotation(annotationClass, field, annotatedType, type);
+        // Direct lookup first
+        T direct = ReflectionUtil.getAnnotation(annotationClass, field, annotatedType, type);
+        if (direct != null) return direct;
+
+        // Composed annotation lookup — search meta-annotations on field annotations
+        if (field != null) {
+            T composed = findComposedAnnotation(annotationClass, field.getAnnotations(), 1);
+            if (composed != null) return composed;
+        }
+        if (annotatedType != null) {
+            T composed = findComposedAnnotation(annotationClass, annotatedType.getAnnotations(), 1);
+            if (composed != null) return composed;
+        }
+        return null;
+    }
+
+    /**
+     * Recursively searches for {@code target} as a meta-annotation on the given
+     * annotations, up to {@code maxDepth} levels deep.
+     */
+    private <T extends Annotation> T findComposedAnnotation(
+            Class<T> target, Annotation[] annotations, int depth) {
+        if (depth > 3) return null;
+        for (Annotation a : annotations) {
+            Class<? extends Annotation> aType = a.annotationType();
+            // Skip standard Java meta-annotations to avoid infinite recursion
+            if (aType.getName().startsWith("java.lang.annotation.")) continue;
+            T found = aType.getAnnotation(target);
+            if (found != null) return found;
+            // Recurse into meta-annotations of this annotation
+            T deeper = findComposedAnnotation(target, aType.getAnnotations(), depth + 1);
+            if (deeper != null) return deeper;
+        }
+        return null;
     }
 
     /**

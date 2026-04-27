@@ -171,6 +171,10 @@ public class FixedTypeInfo extends TypeInfoSetter {
             if (TypeConstants.INTEGER_NUMBER_TYPES.contains(type) ||
                     TypeConstants.DECIMAL_NUMBER_TYPES.contains(type))
                 return false;
+            // When a custom padding char is explicitly set (not AUTO), default to DROP
+            // so that the custom padding is stripped on parse.
+            if (padding != null && padding != Padding.AUTO)
+                return false;
             return true;
         }
         return KeepPadding.KEEP.equals(keepPadding);

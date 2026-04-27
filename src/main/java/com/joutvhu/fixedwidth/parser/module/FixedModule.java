@@ -1,11 +1,15 @@
 package com.joutvhu.fixedwidth.parser.module;
 
+import com.joutvhu.fixedwidth.parser.annotation.FixedHandler;
+import com.joutvhu.fixedwidth.parser.convert.AnnotationHandler;
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthReader;
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthValidator;
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthWriter;
 import com.joutvhu.fixedwidth.parser.convert.ParsingApprover;
 import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
+import com.joutvhu.fixedwidth.parser.support.ParseContext;
+import com.joutvhu.fixedwidth.parser.support.Phase;
 import com.joutvhu.fixedwidth.parser.support.ReadStrategy;
 import com.joutvhu.fixedwidth.parser.support.WriteStrategy;
 import com.joutvhu.fixedwidth.parser.util.IgnoreError;
@@ -14,6 +18,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -21,8 +26,11 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Fixed module.
- * Management readers, writers and validators
+ * Fixed module — manages readers, writers, validators, and annotation handlers.
+ *
+ * <p>Phase 2 adds {@link #invokeAnnotationHandlers}: for every annotation on the
+ * field/class that carries {@link FixedHandler}, the declared
+ * {@link AnnotationHandler} is instantiated and invoked at the current phase.
  *
  * @author Giao Ho
  * @since 1.0.0
@@ -32,6 +40,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public abstract class FixedModule {
+
     private Set<Class<? extends FixedWidthReader>> readers = new LinkedHashSet<>();
     private Set<Class<? extends FixedWidthWriter>> writers = new LinkedHashSet<>();
     private Set<Class<? extends FixedWidthValidator>> validators = new LinkedHashSet<>();
@@ -47,12 +56,8 @@ public abstract class FixedModule {
         }
     }
 
-    /**
-     * Merge another module to this module
-     *
-     * @param module another module
-     * @return this
-     */
+    // ── Module composition ────────────────────────────────────────────────────
+
     public FixedModule merge(FixedModule module) {
         readers.addAll(module.readers);
         writers.addAll(module.writers);
@@ -60,17 +65,9 @@ public abstract class FixedModule {
         return this;
     }
 
-    /**
-     * Create readers, writers or validators by class types
-     *
-     * @param takeOne      create only one instance
-     * @param handlers     {@link Set} of class types
-     * @param info         the {@link FixedTypeInfo}
-     * @param strategy     the {@link FixedParseStrategy}
-     * @param strategyType strategy class type
-     * @param <T>          result type
-     * @return list of reader, writer or validator
-     */
+    // ── Reader / Writer / Validator (existing mechanism) ─────────────────────
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private <T extends ParsingApprover> List<T> createHandlersBy(
             boolean takeOne, Set<Class<? extends T>> handlers, FixedTypeInfo info,
             FixedParseStrategy strategy, Class<?> strategyType) {
@@ -86,7 +83,6 @@ public abstract class FixedModule {
                     return constructor.newInstance(info);
                 }
             });
-
             if (handler != null) {
                 result.add(handler);
                 if (takeOne) return result;
@@ -95,15 +91,6 @@ public abstract class FixedModule {
         return result;
     }
 
-    /**
-     * Create one reader, writer or validator by class types
-     *
-     * @param handlers {@link Set} of class types
-     * @param info     the {@link FixedTypeInfo}
-     * @param strategy the {@link FixedParseStrategy}
-     * @param <T>      result type
-     * @return reader, writer or validator
-     */
     private <T extends ParsingApprover> T createHandlerBy(
             Set<Class<? extends T>> handlers, FixedTypeInfo info,
             FixedParseStrategy strategy, Class<?> strategyType) {
@@ -111,36 +98,92 @@ public abstract class FixedModule {
         return result.isEmpty() ? null : result.get(0);
     }
 
-    /**
-     * Create reader by {@link FixedTypeInfo} and {@link FixedParseStrategy}
-     *
-     * @param info     the {@link FixedTypeInfo}
-     * @param strategy the {@link FixedParseStrategy}
-     * @return reader
-     */
     public final FixedWidthReader<Object> createReaderBy(FixedTypeInfo info, FixedParseStrategy strategy) {
         return createHandlerBy(readers, info, strategy, ReadStrategy.class);
     }
 
-    /**
-     * Create writer by {@link FixedTypeInfo} and {@link FixedParseStrategy}
-     *
-     * @param info     the {@link FixedTypeInfo}
-     * @param strategy the {@link FixedParseStrategy}
-     * @return writer
-     */
     public final FixedWidthWriter<Object> createWriterBy(FixedTypeInfo info, FixedParseStrategy strategy) {
         return createHandlerBy(writers, info, strategy, WriteStrategy.class);
     }
 
-    /**
-     * Create validators by {@link FixedTypeInfo} and {@link FixedParseStrategy}
-     *
-     * @param info     the {@link FixedTypeInfo}
-     * @param strategy the {@link FixedParseStrategy}
-     * @return validators
-     */
     public final List<FixedWidthValidator> createValidatorsBy(FixedTypeInfo info, FixedParseStrategy strategy) {
         return createHandlersBy(false, validators, info, strategy, null);
+    }
+
+    // ── Annotation handler dispatch (Phase 2) ────────────────────────────────
+
+    /**
+     * Scans all annotations on the field/class represented by {@code info},
+     * finds those annotated with {@link FixedHandler}, instantiates the declared
+     * {@link AnnotationHandler}, and invokes it if it is registered for the
+     * current phase.
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public final void invokeAnnotationHandlers(FixedTypeInfo info, ParseContext ctx) {
+        if (ctx == null) return;
+        Phase currentPhase = ctx.getPhase();
+
+        for (Annotation annotation : collectAnnotations(info)) {
+            FixedHandler fixedHandler = annotation.annotationType()
+                    .getAnnotation(FixedHandler.class);
+            if (fixedHandler == null) continue;
+
+            Class<? extends AnnotationHandler<?>> handlerClass = fixedHandler.value();
+            AnnotationHandler handler = IgnoreError.execute(() -> {
+                Constructor ctor = handlerClass.getConstructor();
+                return (AnnotationHandler) ctor.newInstance();
+            });
+            if (handler == null) continue;
+
+            Set<Phase> phases = handler.getPhases(annotation);
+            if (phases != null && phases.contains(currentPhase)) {
+                handler.handle(annotation, info, ctx);
+            }
+        }
+    }
+
+    /**
+     * Collects all annotations relevant to the given {@link FixedTypeInfo}:
+     * field annotations, annotated-type annotations, and class-level annotations.
+     *
+     * <p>Also unwraps composed annotations (meta-annotations) up to depth 3.
+     * For example, if a field has {@code @StandardDate} and that annotation is
+     * itself annotated with {@code @FixedFormat}, the {@code @FixedFormat}
+     * instance is included in the result.
+     */
+    private List<Annotation> collectAnnotations(FixedTypeInfo info) {
+        List<Annotation> result = new ArrayList<>();
+        if (info.getField() != null) {
+            for (Annotation a : info.getField().getAnnotations()) {
+                result.add(a);
+                collectComposedAnnotations(a, result, 1);
+            }
+        }
+        if (info.getAnnotatedType() != null) {
+            for (Annotation a : info.getAnnotatedType().getAnnotations()) {
+                result.add(a);
+                collectComposedAnnotations(a, result, 1);
+            }
+        }
+        if (info.getType() != null) {
+            for (Annotation a : info.getType().getAnnotations()) {
+                result.add(a);
+                collectComposedAnnotations(a, result, 1);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Recursively collects meta-annotations from {@code annotation} up to
+     * {@code maxDepth} levels, skipping standard Java meta-annotations.
+     */
+    private void collectComposedAnnotations(Annotation annotation, List<Annotation> result, int depth) {
+        if (depth > 3) return;
+        for (Annotation meta : annotation.annotationType().getAnnotations()) {
+            if (meta.annotationType().getName().startsWith("java.lang.annotation.")) continue;
+            result.add(meta);
+            collectComposedAnnotations(meta, result, depth + 1);
+        }
     }
 }

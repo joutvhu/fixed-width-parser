@@ -19,9 +19,8 @@ import java.util.function.Consumer;
 /**
  * Fixed width string serialization and deserialization.
  *
- * <p>Phase 1 adds {@link ParseContext} creation and propagation.
- * The context is created once per top-level call and threaded through
- * all nested read/write operations via a {@link ThreadLocal}.
+ * <p>Phase 1: {@link ParseContext} creation and propagation via ThreadLocal.
+ * <p>Phase 2: {@link FixedModule#invokeAnnotationHandlers} called at each phase.
  *
  * @author Giao Ho
  * @since 1.0.0
@@ -29,19 +28,17 @@ import java.util.function.Consumer;
 public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
 
     private FixedModule module;
-
-    // Parser-level config — shared across all calls on this strategy instance
     private Map<String, Object> parserConfig = Collections.emptyMap();
-
-    // Optional hook for tests / Phase 2 handler dispatch
     private Consumer<ParseContext> contextCreatedHook = null;
     private final java.util.Map<Phase, Consumer<ParseContext>> phaseHooks = new java.util.HashMap<>();
-
-    // Active context for the current call — ThreadLocal so strategy is thread-safe
     private final ThreadLocal<DefaultParseContext> activeContext = new ThreadLocal<>();
 
     public FixedParseStrategy(FixedModule module) {
         this.module = module;
+    }
+
+    public FixedModule getModule() {
+        return module;
     }
 
     public void setParserConfig(Map<String, Object> config) {
@@ -56,11 +53,8 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
         phaseHooks.put(phase, hook);
     }
 
-    // ── Context management ───────────────────────────────────────────────────
+    // ── Context management ────────────────────────────────────────────────────
 
-    /**
-     * Creates a new context for a top-level read call.
-     */
     public DefaultParseContext createReadContext(Map<String, Object> sessionProps) {
         DefaultParseContext ctx = new DefaultParseContext(
                 Phase.READ_PRE_CUT, parserConfig, sessionProps);
@@ -69,9 +63,6 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
         return ctx;
     }
 
-    /**
-     * Creates a new context for a top-level write call.
-     */
     public DefaultParseContext createWriteContext(Map<String, Object> sessionProps) {
         DefaultParseContext ctx = new DefaultParseContext(
                 Phase.WRITE_PRE_GET, parserConfig, sessionProps);
@@ -92,12 +83,11 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
         if (hook != null) hook.accept(ctx);
     }
 
-    /** Public variant used by ObjectReader / ObjectWriter. */
     public void firePhaseHookPublic(Phase phase) {
         firePhaseHook(phase);
     }
 
-    // ── Helpers ──────────────────────────────────────────────────────────────
+    // ── Helpers ───────────────────────────────────────────────────────────────
 
     private boolean isNumber(FixedTypeInfo info) {
         Class<?> type = info.getType();
@@ -112,36 +102,35 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
         }
     }
 
-    // ── ReadStrategy ─────────────────────────────────────────────────────────
+    // ── ReadStrategy ──────────────────────────────────────────────────────────
 
     @Override
     public Object read(FixedTypeInfo info, StringAssembler assembler) {
         FixedTypeInfo actualInfo = info.detectTypeWith(assembler);
 
-        // Only push a FIELD frame for leaf nodes (non-object types).
-        // Object types get their frame pushed by ObjectReader itself,
-        // which also has access to the child assemblers.
+        // Only push a FIELD frame for leaf nodes.
+        // Object types get their frame pushed by ObjectReader.
         boolean isObjectType = !actualInfo.getElementTypeInfo().isEmpty()
                 || actualInfo.getFixedObject() != null;
 
         DefaultParseContext ctx = activeContext.get();
         if (ctx != null && !isObjectType) {
-            // ── READ_AFTER_CUT: push field frame with raw string ──────────────
-            // assembler is already a child assembler (sliced by ObjectReader),
-            // so assembler.getValue() IS the raw substring for this field.
             String rawString = assembler.getValue();
             int depth = ctx.frameStack().size();
             DefaultContextFrame frame = new DefaultContextFrame(
-                    actualInfo, FrameType.FIELD,
-                    depth, -1,
+                    actualInfo, FrameType.FIELD, depth, -1,
                     assembler, rawString, null, null);
             ctx.pushFrame(frame);
             ctx.setCurrentValue(null);
             firePhaseHook(Phase.READ_AFTER_CUT);
+            module.invokeAnnotationHandlers(actualInfo, ctx);
         }
 
+        // effectiveAssembler may be replaced if a handler modifies processedString
+        StringAssembler effectiveAssembler = assembler;
+
         try {
-            if (assembler.isBlank(actualInfo) && !isNumber(actualInfo)) {
+            if (effectiveAssembler.isBlank(actualInfo) && !isNumber(actualInfo)) {
                 if (actualInfo.require)
                     throw new MandatoryValueException(
                             actualInfo.buildMessage("{title} cannot be blank."));
@@ -149,25 +138,32 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
             }
 
             // ── READ_AFTER_TRANSFORM ──────────────────────────────────────────
-            String validationValue = assembler.getValue();
+            String validationValue = effectiveAssembler.getValue();
             if (actualInfo.getElementTypeInfo().isEmpty() && !actualInfo.getDefaultKeepPadding()) {
                 validationValue = FixedStringAssembler.of(validationValue).trim(actualInfo).getValue();
             }
             if (ctx != null && !isObjectType) {
                 ctx.currentFrame().setProcessedString(validationValue);
                 firePhaseHook(Phase.READ_AFTER_TRANSFORM);
+                module.invokeAnnotationHandlers(actualInfo, ctx);
+                // Handler may have modified processedString — propagate to assembler
+                String processed = ctx.getProcessedString();
+                if (processed != null && !processed.equals(validationValue)) {
+                    validationValue = processed;
+                    effectiveAssembler = FixedStringAssembler.of(processed);
+                }
             }
             validate(actualInfo, validationValue, ValidationType.BEFORE_READ);
 
             // ── Reader ────────────────────────────────────────────────────────
             FixedWidthReader<Object> reader = module.createReaderBy(actualInfo, this);
             if (reader != null) {
-                Object result = reader.read(assembler);
+                Object result = reader.read(effectiveAssembler);
 
-                // ── READ_AFTER_CONVERT ────────────────────────────────────────
                 if (ctx != null && !isObjectType) {
                     ctx.setCurrentValue(result);
                     firePhaseHook(Phase.READ_AFTER_CONVERT);
+                    module.invokeAnnotationHandlers(actualInfo, ctx);
                     result = ctx.getCurrentValue();
                 }
 
@@ -183,7 +179,7 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
         }
     }
 
-    // ── WriteStrategy ────────────────────────────────────────────────────────
+    // ── WriteStrategy ─────────────────────────────────────────────────────────
 
     @Override
     public String write(FixedTypeInfo info, Object value) {
@@ -195,32 +191,32 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
 
         FixedTypeInfo actualInfo = info.detectTypeWith(value);
 
-        // Only push a FIELD frame for leaf nodes — ObjectWriter handles object frames.
         boolean isObjectType = !actualInfo.getElementTypeInfo().isEmpty()
                 || actualInfo.getFixedObject() != null;
 
         DefaultParseContext ctx = activeContext.get();
+        Object effectiveValue = value;
         if (ctx != null && !isObjectType) {
             int depth = ctx.frameStack().size();
             DefaultContextFrame frame = new DefaultContextFrame(
-                    actualInfo, FrameType.FIELD,
-                    depth, -1,
+                    actualInfo, FrameType.FIELD, depth, -1,
                     null, null, null, null);
             ctx.pushFrame(frame);
-            ctx.setCurrentValue(value);
+            ctx.setCurrentValue(effectiveValue);
             firePhaseHook(Phase.WRITE_AFTER_GET);
-            value = ctx.getCurrentValue();
+            module.invokeAnnotationHandlers(actualInfo, ctx);
+            effectiveValue = ctx.getCurrentValue();
         }
 
         try {
             FixedWidthWriter<Object> writer = module.createWriterBy(actualInfo, this);
             if (writer != null) {
-                Object finalValue = value;
-                String result = writer.write(finalValue);
+                String result = writer.write(effectiveValue);
 
                 if (ctx != null && !isObjectType) {
                     ctx.setCurrentValue(result);
                     firePhaseHook(Phase.WRITE_AFTER_CONVERT);
+                    module.invokeAnnotationHandlers(actualInfo, ctx);
                     result = (String) ctx.getCurrentValue();
                 }
 
@@ -231,6 +227,7 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
                 if (ctx != null && !isObjectType) {
                     ctx.setCurrentValue(padded.getValue());
                     firePhaseHook(Phase.WRITE_AFTER_TRANSFORM);
+                    module.invokeAnnotationHandlers(actualInfo, ctx);
                 }
 
                 if (padded.isBlank(actualInfo)) {

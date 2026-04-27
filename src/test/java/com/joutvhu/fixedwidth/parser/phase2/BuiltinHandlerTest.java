@@ -252,7 +252,8 @@ class BuiltinHandlerTest {
 
     @Test
     void numberHandler_parseDouble() {
-        NumberModel model = FixedParser.parser().parse(NumberModel.class, "000420000001.5");
+        // doubleVal: start=5, length=8 → "00001.50" → trim → "1.50" → 1.5
+        NumberModel model = FixedParser.parser().parse(NumberModel.class, "0004200001.50");
         assertEquals(1.5, model.getDoubleVal(), 0.001);
     }
 

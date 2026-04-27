@@ -1,5 +1,7 @@
 package com.joutvhu.fixedwidth.parser.annotation;
 
+import com.joutvhu.fixedwidth.parser.convert.handler.ConditionalHandler;
+
 import java.lang.annotation.*;
 
 /**
@@ -22,6 +24,7 @@ import java.lang.annotation.*;
  * @author Giao Ho
  * @since 2.0.0
  */
+@FixedHandler(ConditionalHandler.class)
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
