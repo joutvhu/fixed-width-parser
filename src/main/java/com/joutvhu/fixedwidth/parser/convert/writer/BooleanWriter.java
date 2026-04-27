@@ -32,7 +32,10 @@ public class BooleanWriter extends FixedWidthWriter<Boolean> implements BooleanH
 
         if (value != null) {
             if (!splitOptions(format)) {
-                if (info.getLength() > 4)
+                com.joutvhu.fixedwidth.parser.constraint.FixedBoolean fixedBoolean = info.getAnnotation(com.joutvhu.fixedwidth.parser.constraint.FixedBoolean.class);
+                if (fixedBoolean != null && fixedBoolean.trueValues().length > 0 && fixedBoolean.falseValues().length > 0)
+                    options = new String[]{fixedBoolean.trueValues()[0], fixedBoolean.falseValues()[0]};
+                else if (info.getLength() > 4)
                     options = new String[]{"TRUE", "FALSE"};
                 else if (info.getLength() > 2)
                     options = new String[]{"YES", "NO"};

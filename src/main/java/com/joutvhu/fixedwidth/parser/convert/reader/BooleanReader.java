@@ -44,10 +44,14 @@ public class BooleanReader extends FixedWidthReader<Boolean> implements BooleanH
                     return false;
             }
 
-            for (String v : new String[]{"Y", "T", "YES", "TRUE", "ON", "1"})
+            com.joutvhu.fixedwidth.parser.constraint.FixedBoolean fixedBoolean = info.getAnnotation(com.joutvhu.fixedwidth.parser.constraint.FixedBoolean.class);
+            String[] trueValues = fixedBoolean != null ? fixedBoolean.trueValues() : new String[]{"Y", "T", "YES", "TRUE", "ON", "1"};
+            String[] falseValues = fixedBoolean != null ? fixedBoolean.falseValues() : new String[]{"N", "F", "NO", "FALSE", "OFF", "0"};
+
+            for (String v : trueValues)
                 if (v.equalsIgnoreCase(value) || v.equalsIgnoreCase(trimValue))
                     return true;
-            for (String v : new String[]{"N", "F", "NO", "FALSE", "OFF", "0"})
+            for (String v : falseValues)
                 if (v.equalsIgnoreCase(value) || v.equalsIgnoreCase(trimValue))
                     return false;
             if (boolean.class.equals(type))
