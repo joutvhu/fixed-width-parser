@@ -174,12 +174,12 @@ class FixedStringBuilderTest {
     @Test
     void checksumHandler_differentInputProducesDifferentChecksum() {
         ChecksumModel m1 = new ChecksumModel();
-        m1.setCode("HELLO");
-        m1.setData("WORLD     ");
+        m1.setCode("AAAAA");
+        m1.setData("BBBBBBBBB ");
 
         ChecksumModel m2 = new ChecksumModel();
-        m2.setCode("WORLD");
-        m2.setData("HELLO     ");
+        m2.setCode("CCCCC");
+        m2.setData("DDDDDDDDD ");
 
         String e1 = FixedParser.parser().export(m1);
         String e2 = FixedParser.parser().export(m2);

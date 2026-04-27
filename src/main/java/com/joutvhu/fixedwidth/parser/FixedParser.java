@@ -1,15 +1,19 @@
 package com.joutvhu.fixedwidth.parser;
 
+import com.joutvhu.fixedwidth.parser.debug.DebugLogger;
+import com.joutvhu.fixedwidth.parser.doc.SchemaDocument;
 import com.joutvhu.fixedwidth.parser.module.DefaultModule;
 import com.joutvhu.fixedwidth.parser.module.FixedModule;
 import com.joutvhu.fixedwidth.parser.support.*;
 import com.joutvhu.fixedwidth.parser.util.Assert;
+import com.joutvhu.fixedwidth.parser.validation.SchemaValidator;
 
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 /**
@@ -210,6 +214,56 @@ public class FixedParser {
             }
             return null;
         });
+    }
+
+    // ── Phase 6: Schema validation ───────────────────────────────────────────
+
+    /**
+     * Validates the schema of the given class and returns a {@link SchemaValidator}
+     * whose result can be inspected or thrown.
+     *
+     * <pre>{@code
+     * FixedParser.parser().validate(Product.class).throwIfInvalid();
+     * }</pre>
+     */
+    public SchemaValidator validate(Class<?> type) {
+        return SchemaValidator.validate(type);
+    }
+
+    /**
+     * Returns a {@link SchemaDocument} for the given class, which can be rendered
+     * as Markdown, JSON, or CSV.
+     *
+     * <pre>{@code
+     * String md = FixedParser.parser().document(Product.class).toMarkdown();
+     * }</pre>
+     */
+    public SchemaDocument document(Class<?> type) {
+        return SchemaDocument.of(type);
+    }
+
+    // ── Phase 6: Debug mode ───────────────────────────────────────────────────
+
+    /**
+     * Enables debug logging for every phase transition.
+     * Each log line shows: phase, field name, raw value, processed value, converted value.
+     *
+     * <pre>{@code
+     * Logger log = LoggerFactory.getLogger(MyClass.class);
+     * FixedParser.parser().debug(log).parse(Product.class, line);
+     * }</pre>
+     *
+     * @param logger the SLF4J logger to write debug output to
+     * @return this (fluent)
+     */
+    public FixedParser debug(Logger logger) {
+        DebugLogger debugLogger = new DebugLogger(logger);
+        Consumer<ParseContext> hook = debugLogger::log;
+        // Register the hook for all phases
+        for (Phase phase : Phase.values()) {
+            strategy.setPhaseHook(phase, hook);
+        }
+        return this;
     }
 
     // ── Collect-all-errors mode (Phase 5) ────────────────────────────────────
