@@ -54,6 +54,11 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.36'
     compileOnly 'org.projectlombok:lombok:1.18.36'
 
+    testCompileOnly 'org.projectlombok:lombok:1.18.36'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.36'
+    // Add our own processor so that test @FixedObject models generate accessors
+    testAnnotationProcessor files(sourceSets.main.output)
+
     implementation 'org.apache.commons:commons-lang3'
     implementation "com.google.re2j:re2j"
     implementation "org.reflections:reflections"
@@ -84,6 +89,15 @@ jar {
         rename {
             it.replace('pom-default.xml', 'pom.xml')
         }
+    }
+    // Register the APT processor via SPI — done here instead of src/main/resources
+    // to avoid the bootstrap issue (javac would try to load the processor before it is compiled)
+    into('META-INF/services') {
+        from({
+            def f = new File(temporaryDir, 'javax.annotation.processing.Processor')
+            f.text = 'com.joutvhu.fixedwidth.parser.processor.FixedWidthProcessor\n'
+            f
+        })
     }
 }
 

@@ -1,6 +1,8 @@
 package com.joutvhu.fixedwidth.parser.convert.hook;
 
 import com.joutvhu.fixedwidth.parser.annotation.FixedCount;
+import com.joutvhu.fixedwidth.parser.codegen.AccessorRegistry;
+import com.joutvhu.fixedwidth.parser.codegen.FixedFieldAccessor;
 import com.joutvhu.fixedwidth.parser.convert.ModuleHook;
 import com.joutvhu.fixedwidth.parser.support.DefaultContextFrame;
 import com.joutvhu.fixedwidth.parser.support.DefaultFixedStringBuilder;
@@ -125,8 +127,15 @@ public class ObjectHook implements ModuleHook {
                 StringAssembler childAssembler = assembler.child(fieldInfo);
                 Object v = strategy.read(fieldInfo, childAssembler);
 
-                ReflectionUtil.makeAccessible(field);
-                ReflectionUtil.setField(field, result, v);
+                // Fast path: use generated accessor if available
+                FixedFieldAccessor<Object> accessor = AccessorRegistry.get(
+                    (Class<Object>) info.getType());
+                if (accessor != null) {
+                    accessor.set(result, field.getName(), v);
+                } else {
+                    ReflectionUtil.makeAccessible(field);
+                    ReflectionUtil.setField(field, result, v);
+                }
 
                 if (objectFrame != null) {
                     objectFrame.setPartialResult(result);
@@ -198,8 +207,16 @@ public class ObjectHook implements ModuleHook {
 
                 if (skip) continue;
 
-                ReflectionUtil.makeAccessible(fieldInfo.getField());
-                Object item = ReflectionUtil.getField(fieldInfo.getField(), value);
+                // Fast path: use generated accessor if available
+                Object item;
+                FixedFieldAccessor<Object> writeAccessor = AccessorRegistry.get(
+                    (Class<Object>) info.getType());
+                if (writeAccessor != null) {
+                    item = writeAccessor.get(value, fieldInfo.getField().getName());
+                } else {
+                    ReflectionUtil.makeAccessible(fieldInfo.getField());
+                    item = ReflectionUtil.getField(fieldInfo.getField(), value);
+                }
                 String written = strategy.write(fieldInfo, item);
                 assembler.set(fieldInfo, written);
                 builder.addPart(fieldInfo.getName(), fieldInfo, written);
@@ -215,8 +232,16 @@ public class ObjectHook implements ModuleHook {
                 });
                 if (!isCountTarget) continue;
 
-                ReflectionUtil.makeAccessible(fieldInfo.getField());
-                Object currentVal = ReflectionUtil.getField(fieldInfo.getField(), value);
+                // Fast path: use generated accessor for count-field re-write
+                Object currentVal;
+                FixedFieldAccessor<Object> countAccessor = AccessorRegistry.get(
+                    (Class<Object>) info.getType());
+                if (countAccessor != null) {
+                    currentVal = countAccessor.get(value, fieldInfo.getField().getName());
+                } else {
+                    ReflectionUtil.makeAccessible(fieldInfo.getField());
+                    currentVal = ReflectionUtil.getField(fieldInfo.getField(), value);
+                }
                 if (currentVal == null) continue;
                 String currentWritten = strategy.write(fieldInfo, currentVal);
                 String previousWritten = builder.getPart(fieldInfo.getName());
