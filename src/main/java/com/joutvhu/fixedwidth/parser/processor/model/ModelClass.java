@@ -112,7 +112,7 @@ public final class ModelClass {
 
             modelFields.add(new ModelField(
                 fieldName, fieldType, getterName, setterName,
-                hasGetter, hasSetter,
+                hasGetter, hasSetter, fieldElement,
                 start, length, require, padding, nullPadding, keepPadding, alignment));
         }
 

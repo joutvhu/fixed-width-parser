@@ -1,6 +1,7 @@
 package com.joutvhu.fixedwidth.parser.processor;
 
 import com.joutvhu.fixedwidth.parser.processor.generator.AccessorGenerator;
+import com.joutvhu.fixedwidth.parser.processor.generator.MetaGenerator;
 import com.joutvhu.fixedwidth.parser.processor.model.ModelClass;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -48,12 +49,18 @@ public class FixedWidthProcessor extends AbstractProcessor {
                 try {
                     ModelClass model = ModelClass.from(typeElement, processingEnv);
 
-                    processingEnv.getMessager().printMessage(
-                        Diagnostic.Kind.NOTE,
-                        "fixed-width-parser: generating accessor for " + qualifiedName,
-                        typeElement);
+                    // Phase 3: Compile-time validation
+                    boolean isValid = com.joutvhu.fixedwidth.parser.processor.validation.ProcessorSchemaCheck.validate(model, processingEnv);
 
-                    new AccessorGenerator(processingEnv).generate(model);
+                    if (isValid) {
+                        processingEnv.getMessager().printMessage(
+                            Diagnostic.Kind.NOTE,
+                            "fixed-width-parser: generating accessor for " + qualifiedName,
+                            typeElement);
+
+                        new AccessorGenerator(processingEnv).generate(model);
+                        new MetaGenerator(processingEnv).generate(model);
+                    }
                 } catch (Exception e) {
                     processingEnv.getMessager().printMessage(
                         Diagnostic.Kind.WARNING,

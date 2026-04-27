@@ -18,6 +18,9 @@ public final class ModelField {
     private final boolean hasGetter;
     private final boolean hasSetter;
 
+    // Phase 3: Provide raw element for validation
+    private final javax.lang.model.element.Element element;
+
     // Phase 2: Metadata pre-computation
     private final Integer start;
     private final Integer length;
@@ -30,6 +33,7 @@ public final class ModelField {
     public ModelField(String fieldName, TypeMirror fieldType,
                       String getterName, String setterName,
                       boolean hasGetter, boolean hasSetter,
+                      javax.lang.model.element.Element element,
                       Integer start, Integer length, boolean require,
                       Character padding, Character nullPadding, String keepPadding, String alignment) {
         this.fieldName = fieldName;
@@ -38,6 +42,7 @@ public final class ModelField {
         this.setterName = setterName;
         this.hasGetter = hasGetter;
         this.hasSetter = hasSetter;
+        this.element = element;
         this.start = start;
         this.length = length;
         this.require = require;
@@ -69,6 +74,10 @@ public final class ModelField {
 
     public boolean hasSetter() {
         return hasSetter;
+    }
+
+    public javax.lang.model.element.Element getElement() {
+        return element;
     }
 
     public Integer getStart() {
