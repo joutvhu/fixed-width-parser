@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Task 9.1 — Property 2: Phase isolation.
  *
  * <p>FOR ALL hook H registered at phase P, {@code H.handle()} is called exactly once
- * at phase P and NOT called at any phase not in {@code getSupportedPhases()}.
+ * at phase P and NOT called at any phase not in {@code phases()}.
  *
  * <p><b>Validates: Requirements 1.3, 8.1, 8.2, 10.2</b>
  */
@@ -59,7 +59,7 @@ class PhaseIsolationTest {
     /**
      * A ModuleHook that:
      * - supports String fields only
-     * - declares getSupportedPhases() = {READ_AFTER_TRANSFORM}
+     * - declares phases() = {READ_AFTER_TRANSFORM}
      * - records every phase it is actually called at
      */
     public static class TrackingHook implements ModuleHook {
@@ -73,7 +73,7 @@ class PhaseIsolationTest {
         }
 
         @Override
-        public Set<Phase> getSupportedPhases() {
+        public Set<Phase> phases() {
             return EnumSet.of(Phase.READ_AFTER_TRANSFORM);
         }
 
@@ -99,7 +99,7 @@ class PhaseIsolationTest {
         }
 
         @Override
-        public Set<Phase> getSupportedPhases() {
+        public Set<Phase> phases() {
             return EnumSet.of(Phase.WRITE_AFTER_GET);
         }
 
@@ -186,7 +186,7 @@ class PhaseIsolationTest {
     }
 
     /**
-     * Verify that no call happened at any phase outside getSupportedPhases().
+     * Verify that no call happened at any phase outside phases().
      */
     @Test
     void property2_hookNeverCalledAtUnsupportedPhases() {

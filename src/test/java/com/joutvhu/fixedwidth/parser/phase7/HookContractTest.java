@@ -28,14 +28,14 @@ class HookContractTest {
         }
     }
 
-    // Hook that overrides getSupportedPhases
+    // Hook that overrides phases
     static class ReadOnlyHook implements Hook {
         @Override
         public void handle(FixedTypeInfo info, ParseContext ctx) {
         }
 
         @Override
-        public Set<Phase> getSupportedPhases() {
+        public Set<Phase> phases() {
             return EnumSet.of(Phase.READ_AFTER_TRANSFORM);
         }
     }
@@ -53,25 +53,25 @@ class HookContractTest {
     }
 
     @Test
-    void defaultGetSupportedPhases_returnsAllPhases() {
+    void defaultPhases_returnsAllPhases() {
         Hook hook = new NoOpHook();
-        Set<Phase> phases = hook.getSupportedPhases();
+        Set<Phase> phases = hook.phases();
         assertNotNull(phases);
         assertEquals(EnumSet.allOf(Phase.class), phases);
     }
 
     @Test
-    void defaultGetDependencies_returnsEmptySet() {
+    void defaultDependencies_returnsEmptySet() {
         Hook hook = new NoOpHook();
-        Set<String> deps = hook.getDependencies(null);
+        Set<String> deps = hook.dependencies(null);
         assertNotNull(deps);
         assertTrue(deps.isEmpty());
     }
 
     @Test
-    void overriddenGetSupportedPhases_returnsSubset() {
+    void overriddenPhases_returnsSubset() {
         Hook hook = new ReadOnlyHook();
-        Set<Phase> phases = hook.getSupportedPhases();
+        Set<Phase> phases = hook.phases();
         assertEquals(1, phases.size());
         assertTrue(phases.contains(Phase.READ_AFTER_TRANSFORM));
     }
@@ -83,14 +83,14 @@ class HookContractTest {
     }
 
     @Test
-    void moduleHook_defaultGetSupportedPhases_returnsAllPhases() {
+    void moduleHook_defaultPhases_returnsAllPhases() {
         ModuleHook hook = new NoOpModuleHook();
-        assertEquals(EnumSet.allOf(Phase.class), hook.getSupportedPhases());
+        assertEquals(EnumSet.allOf(Phase.class), hook.phases());
     }
 
     @Test
-    void moduleHook_defaultGetDependencies_returnsEmptySet() {
+    void moduleHook_defaultDependencies_returnsEmptySet() {
         ModuleHook hook = new NoOpModuleHook();
-        assertTrue(hook.getDependencies(null).isEmpty());
+        assertTrue(hook.dependencies(null).isEmpty());
     }
 }

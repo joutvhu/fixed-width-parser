@@ -26,7 +26,7 @@ public class NumberHandler implements Hook, NumberHelper {
     private boolean isDecimal;
 
     @Override
-    public Set<Phase> getSupportedPhases() {
+    public Set<Phase> phases() {
         return Collections.singleton(Phase.READ_AFTER_TRANSFORM);
     }
 

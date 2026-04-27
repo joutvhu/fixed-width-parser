@@ -38,7 +38,7 @@ public interface Hook {
      * The set of phases that this hook wants to be called for.
      * Default: all phases.
      */
-    default Set<Phase> getSupportedPhases() {
+    default Set<Phase> phases() {
         return EnumSet.allOf(Phase.class);
     }
 
@@ -46,7 +46,7 @@ public interface Hook {
      * Names of fields that must be processed before this field.
      * Default: empty set.
      */
-    default Set<String> getDependencies(FixedTypeInfo info) {
+    default Set<String> dependencies(FixedTypeInfo info) {
         return Collections.emptySet();
     }
 }

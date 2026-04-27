@@ -33,12 +33,12 @@ import java.util.Set;
 public class ConditionalHandler implements Hook {
 
     @Override
-    public Set<Phase> getSupportedPhases() {
+    public Set<Phase> phases() {
         return new HashSet<>(Arrays.asList(Phase.READ_PRE_CUT, Phase.WRITE_PRE_GET));
     }
 
     @Override
-    public Set<String> getDependencies(FixedTypeInfo info) {
+    public Set<String> dependencies(FixedTypeInfo info) {
         FixedConditional annotation = info.getAnnotation(FixedConditional.class);
         if (annotation == null) return Collections.emptySet();
         return Collections.singleton(annotation.dependsOnField());

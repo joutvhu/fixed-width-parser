@@ -22,7 +22,7 @@ import java.util.Set;
 public class DateHandler implements Hook {
 
     @Override
-    public Set<Phase> getSupportedPhases() {
+    public Set<Phase> phases() {
         return Collections.singleton(Phase.READ_AFTER_TRANSFORM);
     }
 

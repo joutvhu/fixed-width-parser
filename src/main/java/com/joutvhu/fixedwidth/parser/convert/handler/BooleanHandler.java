@@ -26,7 +26,7 @@ public class BooleanHandler implements Hook, BooleanHelper {
     private String[] options;
 
     @Override
-    public Set<Phase> getSupportedPhases() {
+    public Set<Phase> phases() {
         return Collections.singleton(Phase.READ_AFTER_TRANSFORM);
     }
 

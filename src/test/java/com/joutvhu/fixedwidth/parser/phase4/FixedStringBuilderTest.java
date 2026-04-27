@@ -41,12 +41,12 @@ class FixedStringBuilderTest {
 
     public static class ChecksumHandler implements Hook {
         @Override
-        public Set<Phase> getSupportedPhases() {
+        public Set<Phase> phases() {
             return Set.of(Phase.WRITE_PRE_GET);
         }
 
         @Override
-        public Set<String> getDependencies(FixedTypeInfo info) {
+        public Set<String> dependencies(FixedTypeInfo info) {
             FixedChecksum annotation = info.getAnnotation(FixedChecksum.class);
             return Set.of(annotation.includeFields());
         }
@@ -83,6 +83,7 @@ class FixedStringBuilderTest {
         @FixedField(start = 5, length = 10)
         private String data;
 
+        @FixedChecksum(includeFields = {"code", "data"})
         @FixedField(start = 15, length = 2)
         private Integer checksum; // automatically computed from code + data
     }

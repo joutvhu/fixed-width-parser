@@ -146,7 +146,7 @@ public abstract class FixedModule {
                 continue;
             }
 
-            if (hook.getSupportedPhases().contains(currentPhase)) {
+            if (hook.phases().contains(currentPhase)) {
                 hook.handle(info, ctx);
                 if (ctx.isSkipField()) return;
             }
@@ -166,7 +166,7 @@ public abstract class FixedModule {
             throw new NoHookFoundException(info);
         }
 
-        if (selected.getSupportedPhases().contains(currentPhase)) {
+        if (selected.phases().contains(currentPhase)) {
             selected.handle(info, ctx);
         }
     }

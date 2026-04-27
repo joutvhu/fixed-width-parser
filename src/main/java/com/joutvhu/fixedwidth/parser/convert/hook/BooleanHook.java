@@ -34,7 +34,7 @@ public class BooleanHook implements ModuleHook, BooleanHelper {
     }
 
     @Override
-    public Set<Phase> getSupportedPhases() {
+    public Set<Phase> phases() {
         return EnumSet.of(Phase.READ_AFTER_TRANSFORM, Phase.WRITE_AFTER_GET);
     }
 

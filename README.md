@@ -396,7 +396,7 @@ public @interface UpperCase {}
 // 2. Implement the hook
 public class UpperCaseHook implements Hook {
     @Override
-    public Set<Phase> getSupportedPhases() {
+    public Set<Phase> phases() {
         return EnumSet.of(Phase.READ_AFTER_TRANSFORM);
     }
 

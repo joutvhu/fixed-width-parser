@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  * recognised by the parser. When the annotated annotation is found on a
  * field or class, the declared {@link Hook} is instantiated (per-invocation,
  * no-arg constructor) and invoked at the phases it registers via
- * {@link Hook#getSupportedPhases()}.
+ * {@link Hook#phases()}.
  *
  * @author Giao Ho
  * @since 2.0.0

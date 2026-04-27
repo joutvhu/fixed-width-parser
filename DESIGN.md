@@ -355,14 +355,14 @@ The handler system is the primary extension mechanism. It decouples annotation s
 
 1. Any annotation can be linked to a hook by annotating it with `@FixedHandler(MyHook.class)`.
 2. At each pipeline phase, `FixedModule.invokeHooks()` scans all annotations on the current field/class.
-3. For each annotation that carries `@FixedHandler`, the declared hook is instantiated (no-arg constructor) and invoked if the current phase is in `hook.getSupportedPhases()`.
+3. For each annotation that carries `@FixedHandler`, the declared hook is instantiated (no-arg constructor) and invoked if the current phase is in `hook.phases()`.
 4. Composed annotations (meta-annotations) are unwrapped up to depth 3, so `@StandardDate` → `@FixedFormat` works automatically.
 
 ```
 field annotations
   └─ for each annotation A:
        └─ A.annotationType().getAnnotation(FixedHandler.class)?
-            └─ yes → instantiate hook → hook.getSupportedPhases() contains currentPhase?
+            └─ yes → instantiate hook → hook.phases() contains currentPhase?
                  └─ yes → hook.handle(info, ctx)
 ```
 
@@ -371,10 +371,10 @@ field annotations
 ```java
 public interface Hook {
     // Which phases to be called at (default: all phases)
-    default Set<Phase> getSupportedPhases() { ... }
+    default Set<Phase> phases() { ... }
 
     // Field names that must be parsed before this field
-    default Set<String> getDependencies(FixedTypeInfo info) { ... }
+    default Set<String> dependencies(FixedTypeInfo info) { ... }
 
     // The actual logic
     void handle(FixedTypeInfo info, ParseContext ctx);
@@ -609,7 +609,7 @@ public @interface UpperCase {}
 public class UpperCaseHook implements Hook {
 
     @Override
-    public Set<Phase> getSupportedPhases() {
+    public Set<Phase> phases() {
         return EnumSet.of(Phase.READ_AFTER_TRANSFORM);
     }
 

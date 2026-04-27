@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <p>Each test verifies:
  * <ol>
  *   <li>The handler implements {@link Hook} (not the old AnnotationHandler)</li>
- *   <li>{@code getSupportedPhases()} returns the correct phases</li>
+ *   <li>{@code phases()} returns the correct phases</li>
  *   <li>{@code handle()} works correctly with the new interface</li>
  * </ol>
  */
@@ -152,9 +152,9 @@ class AnnotationHandlerMigrationTest {
     @Test
     void regexHandler_supportedPhases() {
         RegexHandler handler = new RegexHandler();
-        assertTrue(handler.getSupportedPhases().contains(Phase.READ_AFTER_TRANSFORM));
-        assertTrue(handler.getSupportedPhases().contains(Phase.WRITE_AFTER_TRANSFORM));
-        assertEquals(2, handler.getSupportedPhases().size());
+        assertTrue(handler.phases().contains(Phase.READ_AFTER_TRANSFORM));
+        assertTrue(handler.phases().contains(Phase.WRITE_AFTER_TRANSFORM));
+        assertEquals(2, handler.phases().size());
     }
 
     @Test
@@ -191,9 +191,9 @@ class AnnotationHandlerMigrationTest {
     @Test
     void optionHandler_supportedPhases() {
         OptionHandler handler = new OptionHandler();
-        assertTrue(handler.getSupportedPhases().contains(Phase.READ_AFTER_TRANSFORM));
-        assertTrue(handler.getSupportedPhases().contains(Phase.WRITE_AFTER_TRANSFORM));
-        assertEquals(2, handler.getSupportedPhases().size());
+        assertTrue(handler.phases().contains(Phase.READ_AFTER_TRANSFORM));
+        assertTrue(handler.phases().contains(Phase.WRITE_AFTER_TRANSFORM));
+        assertEquals(2, handler.phases().size());
     }
 
     @Test
@@ -222,9 +222,9 @@ class AnnotationHandlerMigrationTest {
     @Test
     void conditionalHandler_supportedPhases() {
         ConditionalHandler handler = new ConditionalHandler();
-        assertTrue(handler.getSupportedPhases().contains(Phase.READ_PRE_CUT));
-        assertTrue(handler.getSupportedPhases().contains(Phase.WRITE_PRE_GET));
-        assertEquals(2, handler.getSupportedPhases().size());
+        assertTrue(handler.phases().contains(Phase.READ_PRE_CUT));
+        assertTrue(handler.phases().contains(Phase.WRITE_PRE_GET));
+        assertEquals(2, handler.phases().size());
     }
 
     @Test
@@ -247,9 +247,9 @@ class AnnotationHandlerMigrationTest {
     @Test
     void formatDispatchHandler_supportedPhases() {
         FormatDispatchHandler handler = new FormatDispatchHandler();
-        assertTrue(handler.getSupportedPhases().contains(Phase.READ_AFTER_TRANSFORM));
-        assertTrue(handler.getSupportedPhases().contains(Phase.WRITE_AFTER_TRANSFORM));
-        assertEquals(2, handler.getSupportedPhases().size());
+        assertTrue(handler.phases().contains(Phase.READ_AFTER_TRANSFORM));
+        assertTrue(handler.phases().contains(Phase.WRITE_AFTER_TRANSFORM));
+        assertEquals(2, handler.phases().size());
     }
 
     @Test
@@ -278,8 +278,8 @@ class AnnotationHandlerMigrationTest {
     @Test
     void booleanHandler_supportedPhases() {
         BooleanHandler handler = new BooleanHandler();
-        assertTrue(handler.getSupportedPhases().contains(Phase.READ_AFTER_TRANSFORM));
-        assertEquals(1, handler.getSupportedPhases().size());
+        assertTrue(handler.phases().contains(Phase.READ_AFTER_TRANSFORM));
+        assertEquals(1, handler.phases().size());
     }
 
     @Test
@@ -308,8 +308,8 @@ class AnnotationHandlerMigrationTest {
     @Test
     void dateHandler_supportedPhases() {
         DateHandler handler = new DateHandler();
-        assertTrue(handler.getSupportedPhases().contains(Phase.READ_AFTER_TRANSFORM));
-        assertEquals(1, handler.getSupportedPhases().size());
+        assertTrue(handler.phases().contains(Phase.READ_AFTER_TRANSFORM));
+        assertEquals(1, handler.phases().size());
     }
 
     @Test
@@ -338,8 +338,8 @@ class AnnotationHandlerMigrationTest {
     @Test
     void numberHandler_supportedPhases() {
         NumberHandler handler = new NumberHandler();
-        assertTrue(handler.getSupportedPhases().contains(Phase.READ_AFTER_TRANSFORM));
-        assertEquals(1, handler.getSupportedPhases().size());
+        assertTrue(handler.phases().contains(Phase.READ_AFTER_TRANSFORM));
+        assertEquals(1, handler.phases().size());
     }
 
     @Test
@@ -368,9 +368,9 @@ class AnnotationHandlerMigrationTest {
     @Test
     void encodingHandler_supportedPhases() {
         EncodingHandler handler = new EncodingHandler();
-        assertTrue(handler.getSupportedPhases().contains(Phase.READ_AFTER_CUT));
-        assertTrue(handler.getSupportedPhases().contains(Phase.WRITE_AFTER_CONVERT));
-        assertEquals(2, handler.getSupportedPhases().size());
+        assertTrue(handler.phases().contains(Phase.READ_AFTER_CUT));
+        assertTrue(handler.phases().contains(Phase.WRITE_AFTER_CONVERT));
+        assertEquals(2, handler.phases().size());
     }
 
     @Test

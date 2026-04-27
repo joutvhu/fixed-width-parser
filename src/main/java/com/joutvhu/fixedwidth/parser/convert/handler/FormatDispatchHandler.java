@@ -28,7 +28,7 @@ public class FormatDispatchHandler implements Hook, NumberHelper {
     private boolean isDecimal;
 
     @Override
-    public Set<Phase> getSupportedPhases() {
+    public Set<Phase> phases() {
         return new HashSet<>(Arrays.asList(
             Phase.READ_AFTER_TRANSFORM,
             Phase.WRITE_AFTER_TRANSFORM));

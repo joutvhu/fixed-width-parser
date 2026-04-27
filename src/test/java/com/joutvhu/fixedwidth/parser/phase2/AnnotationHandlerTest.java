@@ -44,7 +44,7 @@ class AnnotationHandlerTest {
 
     public static class TrackingHandler implements Hook {
         @Override
-        public Set<Phase> getSupportedPhases() {
+        public Set<Phase> phases() {
             return Set.of(Phase.READ_AFTER_CUT, Phase.READ_AFTER_TRANSFORM);
         }
 
@@ -141,7 +141,7 @@ class AnnotationHandlerTest {
 
     public static class WriteTrackingHandler implements Hook {
         @Override
-        public Set<Phase> getSupportedPhases() {
+        public Set<Phase> phases() {
             return Set.of(Phase.WRITE_AFTER_GET, Phase.WRITE_AFTER_TRANSFORM);
         }
 
@@ -193,7 +193,7 @@ class AnnotationHandlerTest {
 
     public static class BothDirectionHandler implements Hook {
         @Override
-        public Set<Phase> getSupportedPhases() {
+        public Set<Phase> phases() {
             return Set.of(Phase.READ_AFTER_CUT, Phase.WRITE_AFTER_GET);
         }
 
@@ -237,7 +237,7 @@ class AnnotationHandlerTest {
 
     public static class UpperCaseHandler implements Hook {
         @Override
-        public Set<Phase> getSupportedPhases() {
+        public Set<Phase> phases() {
             return Set.of(Phase.READ_AFTER_TRANSFORM);
         }
 
@@ -273,24 +273,24 @@ class AnnotationHandlerTest {
     }
 
     // -------------------------------------------------------------------------
-    // getDependencies() — handler declares dependencies
+    // dependencies() — handler declares dependencies
     // -------------------------------------------------------------------------
 
     public static class DependencyAwareHandler implements Hook {
         @Override
-        public Set<String> getDependencies(FixedTypeInfo info) {
+        public Set<String> dependencies(FixedTypeInfo info) {
             DependsOnField annotation = info.getAnnotation(DependsOnField.class);
             return Set.of(annotation.field());
         }
 
         @Override
-        public Set<Phase> getSupportedPhases() {
+        public Set<Phase> phases() {
             return Set.of(Phase.READ_AFTER_CONVERT);
         }
 
         @Override
         public void handle(FixedTypeInfo info, ParseContext ctx) {
-            // no-op — only testing getDependencies()
+            // no-op — only testing dependencies()
         }
     }
 
@@ -317,7 +317,7 @@ class AnnotationHandlerTest {
     void getDependenciesReturnsCorrectFields() throws Exception {
         DependencyAwareHandler handler = new DependencyAwareHandler();
         FixedTypeInfo info = FixedTypeInfo.of(DependsOnFieldModel.class.getDeclaredField("dependent"));
-        Set<String> deps = handler.getDependencies(info);
+        Set<String> deps = handler.dependencies(info);
         assertEquals(Set.of("otherField"), deps);
     }
 
@@ -325,6 +325,6 @@ class AnnotationHandlerTest {
     void handlerWithNoDependenciesReturnsEmptySet() throws Exception {
         TrackingHandler handler = new TrackingHandler();
         FixedTypeInfo info = FixedTypeInfo.of(TrackedModel.class.getDeclaredField("value"));
-        assertEquals(Collections.emptySet(), handler.getDependencies(info));
+        assertEquals(Collections.emptySet(), handler.dependencies(info));
     }
 }

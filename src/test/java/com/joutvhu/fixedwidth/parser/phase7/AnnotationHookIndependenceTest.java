@@ -49,7 +49,7 @@ class AnnotationHookIndependenceTest {
         }
 
         @Override
-        public Set<Phase> getSupportedPhases() {
+        public Set<Phase> phases() {
             return EnumSet.of(Phase.READ_PRE_CUT);
         }
 

@@ -31,7 +31,7 @@ import java.util.Set;
 public class EncodingHandler implements Hook {
 
     @Override
-    public Set<Phase> getSupportedPhases() {
+    public Set<Phase> phases() {
         return new HashSet<>(Arrays.asList(
             Phase.READ_AFTER_CUT,
             Phase.WRITE_AFTER_CONVERT));
