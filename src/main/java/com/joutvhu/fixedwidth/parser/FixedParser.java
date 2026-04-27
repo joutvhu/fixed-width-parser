@@ -212,58 +212,61 @@ public class FixedParser {
         });
     }
 
-    // ── Collect-all-errors mode (Phase 5 stub) ────────────────────────────────
+    // ── Collect-all-errors mode (Phase 5) ────────────────────────────────────
+
+    // Whether this parser instance runs in collect-all-errors mode
+    private boolean collectErrorsMode = false;
 
     /**
      * Switches this parser to collect-all-errors mode.
-     * In this mode {@link #parseResult} is used instead of {@link #parse}.
-     * <p><b>Phase 5 stub</b> — full implementation in Phase 5.
+     * In this mode {@link #parseResult} collects all field errors instead of
+     * throwing on the first one.
      */
     public FixedParser collectErrors() {
-        // Phase 5 will wire up error collection; for now return this for chaining
+        this.collectErrorsMode = true;
         return this;
     }
 
     /**
-     * Parses a fixed-width string and returns a {@link ParseResult} that may
-     * contain both a (partial) value and a list of errors.
-     * <p><b>Phase 5 stub</b> — delegates to normal parse and wraps the result.
+     * Parses a fixed-width string and returns a {@link ParseResult} that contains
+     * both the (possibly partial) value and a list of all errors encountered.
      */
+    @SuppressWarnings("unchecked")
     public <T> ParseResult<T> parseResult(Class<T> type, String line) {
+        Assert.notNull(type, "The class type must not be null!");
+        Assert.notNull(line, "The line must not be null!");
+
+        DefaultParseContext ctx = strategy.createReadContext(java.util.Collections.emptyMap());
+        ctx.setCollectErrors(true);
+
         try {
-            T value = parse(type, line);
-            return new SimpleParseResult<>(value, java.util.Collections.emptyList());
+            StringAssembler stringAssembler = FixedStringAssembler.of(line);
+            FixedTypeInfo fixedTypeInfo = FixedTypeInfo.of(type);
+            T value = (T) strategy.read(fixedTypeInfo, stringAssembler);
+            return new DefaultParseResult<>(value, ctx.getCollectedErrors());
         } catch (Exception e) {
-            return new SimpleParseResult<>(null,
-                    java.util.Collections.singletonList(new SimpleParseError(e)));
+            // Top-level exception (e.g. object-level failure)
+            java.util.List<ParseError> errors = new java.util.ArrayList<>(ctx.getCollectedErrors());
+            if (errors.isEmpty()) {
+                errors.add(new DefaultParseError(e.getMessage(), null, type.getSimpleName(), null, e));
+            }
+            return new DefaultParseResult<>(null, errors);
         }
     }
 
-    /** Minimal ParseResult implementation used until Phase 5. */
-    private static final class SimpleParseResult<T> implements ParseResult<T> {
+    /** Full ParseResult implementation. */
+    private static final class DefaultParseResult<T> implements ParseResult<T> {
         private final T value;
         private final java.util.List<ParseError> errors;
 
-        SimpleParseResult(T value, java.util.List<ParseError> errors) {
+        DefaultParseResult(T value, java.util.List<ParseError> errors) {
             this.value = value;
-            this.errors = errors;
+            this.errors = java.util.Collections.unmodifiableList(
+                    new java.util.ArrayList<>(errors));
         }
 
         @Override public T getValue() { return value; }
         @Override public boolean hasErrors() { return !errors.isEmpty(); }
         @Override public java.util.List<ParseError> getErrors() { return errors; }
-    }
-
-    /** Minimal ParseError implementation used until Phase 5. */
-    private static final class SimpleParseError implements ParseError {
-        private final Throwable cause;
-
-        SimpleParseError(Throwable cause) { this.cause = cause; }
-
-        @Override public String getMessage() { return cause.getMessage(); }
-        @Override public com.joutvhu.fixedwidth.parser.support.Phase getPhase() { return null; }
-        @Override public String getFieldPath() { return null; }
-        @Override public String getRawValue() { return null; }
-        @Override public Throwable getCause() { return cause; }
     }
 }

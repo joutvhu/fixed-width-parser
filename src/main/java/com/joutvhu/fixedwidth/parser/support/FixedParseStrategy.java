@@ -1,5 +1,7 @@
 package com.joutvhu.fixedwidth.parser.support;
 
+import com.joutvhu.fixedwidth.parser.DefaultParseError;
+import com.joutvhu.fixedwidth.parser.ParseError;
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthReader;
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthValidator;
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthWriter;
@@ -11,6 +13,7 @@ import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import com.joutvhu.fixedwidth.parser.util.TypeConstants;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -130,7 +133,10 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
         StringAssembler effectiveAssembler = assembler;
 
         try {
-            if (effectiveAssembler.isBlank(actualInfo) && !isNumber(actualInfo)) {
+            // For collection types, don't short-circuit on blank — let the reader
+            // handle it (e.g. return empty list when count=0)
+            boolean isCollectionType = Collection.class.isAssignableFrom(actualInfo.getType());
+            if (effectiveAssembler.isBlank(actualInfo) && !isNumber(actualInfo) && !isCollectionType) {
                 if (actualInfo.require)
                     throw new MandatoryValueException(
                             actualInfo.buildMessage("{title} cannot be blank."));
@@ -145,7 +151,8 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
             if (ctx != null && !isObjectType) {
                 ctx.currentFrame().setProcessedString(validationValue);
                 firePhaseHook(Phase.READ_AFTER_TRANSFORM);
-                module.invokeAnnotationHandlers(actualInfo, ctx);
+                // Invoke handlers — in collect mode, catch and record errors
+                invokeHandlersSafe(actualInfo, ctx, validationValue);
                 // Handler may have modified processedString — propagate to assembler
                 String processed = ctx.getProcessedString();
                 if (processed != null && !processed.equals(validationValue)) {
@@ -153,12 +160,33 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
                     effectiveAssembler = FixedStringAssembler.of(processed);
                 }
             }
-            validate(actualInfo, validationValue, ValidationType.BEFORE_READ);
+
+            // Validate — in collect mode, catch and record errors
+            final String finalValidationValue = validationValue;
+            if (ctx != null && ctx.isCollectErrors()) {
+                try {
+                    validate(actualInfo, finalValidationValue, ValidationType.BEFORE_READ);
+                } catch (Exception e) {
+                    recordError(ctx, actualInfo, e, assembler.getValue());
+                    return null; // field failed — return null and continue
+                }
+            } else {
+                validate(actualInfo, validationValue, ValidationType.BEFORE_READ);
+            }
 
             // ── Reader ────────────────────────────────────────────────────────
             FixedWidthReader<Object> reader = module.createReaderBy(actualInfo, this);
             if (reader != null) {
-                Object result = reader.read(effectiveAssembler);
+                Object result;
+                try {
+                    result = reader.read(effectiveAssembler);
+                } catch (Exception e) {
+                    if (ctx != null && ctx.isCollectErrors()) {
+                        recordError(ctx, actualInfo, e, assembler.getValue());
+                        return null;
+                    }
+                    throw e;
+                }
 
                 if (ctx != null && !isObjectType) {
                     ctx.setCurrentValue(result);
@@ -177,6 +205,43 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
         } finally {
             if (ctx != null && !isObjectType) ctx.popFrame();
         }
+    }
+
+    /**
+     * Invokes annotation handlers; in collect-all mode, catches exceptions and
+     * records them as errors instead of propagating.
+     */
+    private void invokeHandlersSafe(FixedTypeInfo info, DefaultParseContext ctx,
+                                    String rawValue) {
+        if (ctx.isCollectErrors()) {
+            try {
+                module.invokeAnnotationHandlers(info, ctx);
+            } catch (Exception e) {
+                recordError(ctx, info, e, rawValue);
+            }
+        } else {
+            module.invokeAnnotationHandlers(info, ctx);
+        }
+    }
+
+    /**
+     * Builds a field path string like {@code "ClassName.fieldName"} from the
+     * current context frame stack.
+     */
+    private String buildFieldPath(FixedTypeInfo info, DefaultParseContext ctx) {
+        if (info.getField() == null) return info.getName();
+        String className = info.getField().getDeclaringClass().getSimpleName();
+        return className + "." + info.getField().getName();
+    }
+
+    /** Records an error into the context's error list. */
+    private void recordError(DefaultParseContext ctx, FixedTypeInfo info,
+                             Exception e, String rawValue) {
+        String fieldPath = buildFieldPath(info, ctx);
+        String raw = rawValue != null ? rawValue.replaceAll("\\s+$", "") : null;
+        ParseError error = new DefaultParseError(
+                e.getMessage(), ctx.getPhase(), fieldPath, raw, e);
+        ctx.addError(error);
     }
 
     // ── WriteStrategy ─────────────────────────────────────────────────────────

@@ -1,5 +1,7 @@
 package com.joutvhu.fixedwidth.parser.support;
 
+import com.joutvhu.fixedwidth.parser.ParseError;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,6 +29,10 @@ public class DefaultParseContext implements ParseContext {
     private Phase currentPhase;
     private Object currentValue;
     private boolean skipField = false;
+
+    // Phase 5: collect-all error mode
+    private boolean collectErrors = false;
+    private final List<ParseError> collectedErrors = new ArrayList<>();
 
     private final Deque<DefaultContextFrame> stack = new ArrayDeque<>();
     private final Map<String, Object> globalProps = new HashMap<>();
@@ -110,6 +116,20 @@ public class DefaultParseContext implements ParseContext {
     public boolean isSkipField() { return skipField; }
 
     public void resetSkipField() { this.skipField = false; }
+
+    // ── Collect-all error mode (Phase 5) ─────────────────────────────────────
+
+    public void setCollectErrors(boolean collectErrors) {
+        this.collectErrors = collectErrors;
+    }
+
+    public boolean isCollectErrors() { return collectErrors; }
+
+    public void addError(ParseError error) { collectedErrors.add(error); }
+
+    public List<ParseError> getCollectedErrors() {
+        return Collections.unmodifiableList(collectedErrors);
+    }
 
     // ── Properties ───────────────────────────────────────────────────────────
 

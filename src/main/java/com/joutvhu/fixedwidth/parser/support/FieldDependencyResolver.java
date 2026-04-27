@@ -67,6 +67,17 @@ public class FieldDependencyResolver {
                     dependents.computeIfAbsent(dep, k -> new HashSet<>()).add(name);
                 }
             }
+
+            // @FixedCount(field) also declares a dependency
+            com.joutvhu.fixedwidth.parser.annotation.FixedCount fixedCount = f.getField() != null
+                    ? f.getField().getAnnotation(com.joutvhu.fixedwidth.parser.annotation.FixedCount.class) : null;
+            if (fixedCount != null && !fixedCount.field().isEmpty()) {
+                String dep = fixedCount.field();
+                if (byName.containsKey(dep)) {
+                    dependencies.get(name).add(dep);
+                    dependents.computeIfAbsent(dep, k -> new HashSet<>()).add(name);
+                }
+            }
         }
 
         // Kahn's algorithm — start with nodes that have no dependencies

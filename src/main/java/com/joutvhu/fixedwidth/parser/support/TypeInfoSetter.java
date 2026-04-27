@@ -179,8 +179,13 @@ public abstract class TypeInfoSetter extends TypeDetector {
                 Collections.addAll(annotatedTypes, annotatedTypesArray);
         }
 
-        for (AnnotatedType at : annotatedTypes)
+        for (AnnotatedType at : annotatedTypes) {
+            // Skip generic type parameters that don't have @FixedParam
+            // (e.g. List<String> without @FixedParam — used with @FixedDelimiter)
+            if (at.getAnnotation(com.joutvhu.fixedwidth.parser.annotation.FixedParam.class) == null)
+                continue;
             genericTypes.add(FixedMetadataRegistry.get(at));
+        }
         return genericTypes;
     }
 

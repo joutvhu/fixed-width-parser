@@ -107,6 +107,32 @@ public class ObjectWriter extends FixedWidthWriter<Object> {
                 // Record in the builder for handler access
                 builder.addPart(fieldInfo.getName(), fieldInfo, written);
             }
+
+            // ── Re-write count fields updated by @FixedCount(field) writers ──
+            // After writing collection fields, the count field on the source object
+            // may have been updated by CollectionWriter.updateCountField().
+            // Re-write those fields to reflect the actual count.
+            for (FixedTypeInfo fieldInfo : children) {
+                if (fieldInfo.getField() == null) continue;
+                // Only re-write if this field is referenced as a count field
+                boolean isCountTarget = children.stream().anyMatch(f -> {
+                    if (f.getField() == null) return false;
+                    com.joutvhu.fixedwidth.parser.annotation.FixedCount fc =
+                            f.getField().getAnnotation(com.joutvhu.fixedwidth.parser.annotation.FixedCount.class);
+                    return fc != null && fieldInfo.getName().equals(fc.field());
+                });
+                if (!isCountTarget) continue;
+
+                ReflectionUtil.makeAccessible(fieldInfo.getField());
+                Object currentVal = ReflectionUtil.getField(fieldInfo.getField(), value);
+                if (currentVal == null) continue;
+                String currentWritten = write(fieldInfo, currentVal);
+                String previousWritten = builder.getPart(fieldInfo.getName());
+                if (previousWritten != null && !currentWritten.equals(previousWritten)) {
+                    assembler.set(fieldInfo, currentWritten);
+                    builder.replacePart(fieldInfo.getName(), currentWritten);
+                }
+            }
             return assembler.getValue();
 
         } finally {
