@@ -3,7 +3,9 @@ package com.joutvhu.fixedwidth.parser.core;
 import com.joutvhu.fixedwidth.parser.FixedParser;
 import com.joutvhu.fixedwidth.parser.annotation.FixedField;
 import com.joutvhu.fixedwidth.parser.annotation.FixedObject;
+import com.joutvhu.fixedwidth.parser.annotation.FixedPadding;
 import com.joutvhu.fixedwidth.parser.annotation.FixedParam;
+import com.joutvhu.fixedwidth.parser.annotation.FixedRequired;
 import com.joutvhu.fixedwidth.parser.constraint.FixedFormat;
 import com.joutvhu.fixedwidth.parser.constraint.FixedOption;
 import com.joutvhu.fixedwidth.parser.domain.Alignment;
@@ -188,13 +190,16 @@ class ParseExportTest {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class AlignmentModel {
-        @FixedField(length = 10, alignment = Alignment.LEFT)
+        @FixedPadding(alignment = Alignment.LEFT)
+        @FixedField(length = 10)
         private String left;
 
-        @FixedField(start = 10, length = 10, alignment = Alignment.RIGHT)
+        @FixedPadding(alignment = Alignment.RIGHT)
+        @FixedField(start = 10, length = 10)
         private String right;
 
-        @FixedField(start = 20, length = 10, alignment = Alignment.CENTER)
+        @FixedPadding(alignment = Alignment.CENTER)
+        @FixedField(start = 20, length = 10)
         private String center;
     }
 
@@ -233,10 +238,12 @@ class ParseExportTest {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class KeepPaddingModel {
-        @FixedField(length = 10, keepPadding = KeepPadding.DROP)
+        @FixedPadding(keep = KeepPadding.DROP)
+        @FixedField(length = 10)
         private String dropped;
 
-        @FixedField(start = 10, length = 10, keepPadding = KeepPadding.KEEP)
+        @FixedPadding(keep = KeepPadding.KEEP)
+        @FixedField(start = 10, length = 10)
         private String kept;
     }
 
@@ -413,7 +420,8 @@ class ParseExportTest {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class RequiredModel {
-        @FixedField(length = 5, required = true)
+        @FixedRequired
+        @FixedField(length = 5)
         private String value;
     }
 

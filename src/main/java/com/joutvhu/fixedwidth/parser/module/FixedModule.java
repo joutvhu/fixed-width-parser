@@ -3,7 +3,6 @@ package com.joutvhu.fixedwidth.parser.module;
 import com.joutvhu.fixedwidth.parser.annotation.FixedHandler;
 import com.joutvhu.fixedwidth.parser.convert.AnnotationHandler;
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthReader;
-import com.joutvhu.fixedwidth.parser.convert.FixedWidthValidator;
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthWriter;
 import com.joutvhu.fixedwidth.parser.convert.ParsingApprover;
 import com.joutvhu.fixedwidth.parser.support.FixedParseStrategy;
@@ -43,7 +42,6 @@ public abstract class FixedModule {
 
     private Set<Class<? extends FixedWidthReader>> readers = new LinkedHashSet<>();
     private Set<Class<? extends FixedWidthWriter>> writers = new LinkedHashSet<>();
-    private Set<Class<? extends FixedWidthValidator>> validators = new LinkedHashSet<>();
 
     public FixedModule(Class<?>... classes) {
         for (Class<?> c : classes) {
@@ -51,8 +49,6 @@ public abstract class FixedModule {
                 this.readers.add((Class<? extends FixedWidthReader>) c);
             else if (FixedWidthWriter.class.isAssignableFrom(c))
                 this.writers.add((Class<? extends FixedWidthWriter>) c);
-            else if (FixedWidthValidator.class.isAssignableFrom(c))
-                this.validators.add((Class<? extends FixedWidthValidator>) c);
         }
     }
 
@@ -61,7 +57,6 @@ public abstract class FixedModule {
     public FixedModule merge(FixedModule module) {
         readers.addAll(module.readers);
         writers.addAll(module.writers);
-        validators.addAll(module.validators);
         return this;
     }
 
@@ -104,10 +99,6 @@ public abstract class FixedModule {
 
     public final FixedWidthWriter<Object> createWriterBy(FixedTypeInfo info, FixedParseStrategy strategy) {
         return createHandlerBy(writers, info, strategy, WriteStrategy.class);
-    }
-
-    public final List<FixedWidthValidator> createValidatorsBy(FixedTypeInfo info, FixedParseStrategy strategy) {
-        return createHandlersBy(false, validators, info, strategy, null);
     }
 
     // ── Annotation handler dispatch (Phase 2) ────────────────────────────────

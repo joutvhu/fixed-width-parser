@@ -7,8 +7,6 @@ import com.joutvhu.fixedwidth.parser.annotation.FixedParam;
 import com.joutvhu.fixedwidth.parser.annotation.FixedRequired;
 import com.joutvhu.fixedwidth.parser.domain.Alignment;
 import com.joutvhu.fixedwidth.parser.domain.KeepPadding;
-import com.joutvhu.fixedwidth.parser.domain.Padding;
-import com.joutvhu.fixedwidth.parser.util.Assert;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import com.joutvhu.fixedwidth.parser.util.ReflectionUtil;
 import com.joutvhu.fixedwidth.parser.util.TypeConstants;
@@ -84,46 +82,31 @@ public abstract class TypeInfoSetter extends TypeDetector {
         this.start = fixedField.start();
         this.length = fixedField.length();
 
-        // ── @FixedRequired / @FixedField(required) ────────────────────────────
-        // Precedence: @FixedRequired on field > @FixedField(required) > NOT_NULL_TYPES
+        // ── @FixedRequired ────────────────────────────────────────────────────
         FixedRequired fixedRequired = getAnnotation(FixedRequired.class);
-        this.require = TypeConstants.NOT_NULL_TYPES.contains(type)
-                || fixedRequired != null
-                || fixedField.required();
+        this.require = TypeConstants.NOT_NULL_TYPES.contains(type) || fixedRequired != null;
 
         // ── @FixedPadding precedence ──────────────────────────────────────────
         // 1. @FixedPadding on field
-        // 2. @FixedField(padding/nullPadding/keepPadding/alignment) — backward compat
-        // 3. @FixedPadding on class (default for all fields in the class)
+        // 2. @FixedPadding on class (default for all fields in the class)
         FixedPadding fieldPadding = getAnnotation(FixedPadding.class);
         FixedPadding classPadding = field.getDeclaringClass().getAnnotation(FixedPadding.class);
 
         if (fieldPadding != null) {
-            // Field-level @FixedPadding wins
             this.padding = fieldPadding.value();
             this.nullPadding = fieldPadding.nullValue();
             this.keepPadding = fieldPadding.keep();
             this.alignment = fieldPadding.alignment();
-        } else if (fixedField.padding() != Padding.AUTO
-                || fixedField.nullPadding() != Padding.AUTO
-                || fixedField.keepPadding() != KeepPadding.AUTO
-                || fixedField.alignment() != Alignment.AUTO) {
-            // @FixedField attributes explicitly set — backward compat
-            this.padding = fixedField.padding();
-            this.nullPadding = fixedField.nullPadding();
-            this.keepPadding = fixedField.keepPadding();
-            this.alignment = fixedField.alignment();
         } else if (classPadding != null) {
-            // Class-level @FixedPadding as default
             this.padding = classPadding.value();
             this.nullPadding = classPadding.nullValue();
             this.keepPadding = classPadding.keep();
             this.alignment = classPadding.alignment();
         } else {
-            this.padding = fixedField.padding();
-            this.nullPadding = fixedField.nullPadding();
-            this.keepPadding = fixedField.keepPadding();
-            this.alignment = fixedField.alignment();
+            this.padding = null;
+            this.nullPadding = null;
+            this.keepPadding = null;
+            this.alignment = null;
         }
 
         this.elementTypeInfo = Collections.unmodifiableList(this.detectFields(type));

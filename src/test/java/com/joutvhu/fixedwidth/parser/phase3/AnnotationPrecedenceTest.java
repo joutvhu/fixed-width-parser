@@ -62,7 +62,8 @@ class AnnotationPrecedenceTest {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class LegacyPaddingModel {
-        @FixedField(length = 8, padding = '#')
+        @FixedPadding(value = '#')
+        @FixedField(length = 8)
         private String value;
     }
 
@@ -83,7 +84,8 @@ class AnnotationPrecedenceTest {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class LegacyRequiredModel {
-        @FixedField(length = 5, required = true)
+        @FixedRequired
+        @FixedField(length = 5)
         private String value;
     }
 
@@ -123,25 +125,25 @@ class AnnotationPrecedenceTest {
     }
 
     // -------------------------------------------------------------------------
-    // Backward compatibility: @FixedField(padding) vẫn hoạt động
+    // @FixedPadding annotation riêng trên field
     // -------------------------------------------------------------------------
 
     @Test
-    void legacyPaddingAttribute_stillWorks() {
+    void fixedPaddingAttribute_stillWorks() {
         LegacyPaddingModel model = new LegacyPaddingModel("hi");
         String exported = FixedParser.parser().export(model);
         assertEquals("hi######", exported);
     }
 
     @Test
-    void legacyPaddingAttribute_parsedCorrectly() {
+    void fixedPaddingAttribute_parsedCorrectly() {
         LegacyPaddingModel model = FixedParser.parser()
                 .parse(LegacyPaddingModel.class, "hi######");
         assertEquals("hi", model.getValue());
     }
 
     // -------------------------------------------------------------------------
-    // @FixedRequired annotation riêng
+    // @FixedRequired annotation
     // -------------------------------------------------------------------------
 
     @Test
@@ -157,11 +159,11 @@ class AnnotationPrecedenceTest {
     }
 
     // -------------------------------------------------------------------------
-    // Backward compat: @FixedField(required=true) vẫn hoạt động
+    // @FixedRequired on field (was: @FixedField(required=true))
     // -------------------------------------------------------------------------
 
     @Test
-    void legacyRequiredAttribute_nullExport_throws() {
+    void fixedRequired_nullExport_throws_v2() {
         assertThrows(MandatoryValueException.class,
                 () -> FixedParser.parser().export(new LegacyRequiredModel(null)));
     }

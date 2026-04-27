@@ -112,14 +112,6 @@ public class FixedParser {
 
     // ── Parse ─────────────────────────────────────────────────────────────────
 
-    /**
-     * @deprecated use {@link #parse(Class, String)} instead.
-     */
-    @Deprecated
-    public <T> T parse(String line, Class<T> type) {
-        return this.parse(type, line);
-    }
-
     /** Parses a fixed-width string into an object of the given type. */
     public <T> T parse(Class<T> type, String line) {
         return parse(type, line, null);

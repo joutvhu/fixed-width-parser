@@ -3,9 +3,7 @@ package com.joutvhu.fixedwidth.parser.support;
 import com.joutvhu.fixedwidth.parser.DefaultParseError;
 import com.joutvhu.fixedwidth.parser.ParseError;
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthReader;
-import com.joutvhu.fixedwidth.parser.convert.FixedWidthValidator;
 import com.joutvhu.fixedwidth.parser.convert.FixedWidthWriter;
-import com.joutvhu.fixedwidth.parser.convert.ValidationType;
 import com.joutvhu.fixedwidth.parser.exception.FixedException;
 import com.joutvhu.fixedwidth.parser.exception.MandatoryValueException;
 import com.joutvhu.fixedwidth.parser.module.FixedModule;
@@ -15,7 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -98,13 +95,6 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
                 TypeConstants.DECIMAL_NUMBER_TYPES.contains(type);
     }
 
-    private void validate(FixedTypeInfo info, String value, ValidationType type) {
-        List<FixedWidthValidator> validators = module.createValidatorsBy(info, this);
-        for (FixedWidthValidator validator : validators) {
-            validator.validate(value, type);
-        }
-    }
-
     // ── ReadStrategy ──────────────────────────────────────────────────────────
 
     @Override
@@ -159,19 +149,6 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
                     validationValue = processed;
                     effectiveAssembler = FixedStringAssembler.of(processed);
                 }
-            }
-
-            // Validate — in collect mode, catch and record errors
-            final String finalValidationValue = validationValue;
-            if (ctx != null && ctx.isCollectErrors()) {
-                try {
-                    validate(actualInfo, finalValidationValue, ValidationType.BEFORE_READ);
-                } catch (Exception e) {
-                    recordError(ctx, actualInfo, e, assembler.getValue());
-                    return null; // field failed — return null and continue
-                }
-            } else {
-                validate(actualInfo, validationValue, ValidationType.BEFORE_READ);
             }
 
             // ── Reader ────────────────────────────────────────────────────────
@@ -299,8 +276,6 @@ public class FixedParseStrategy implements ReadStrategy, WriteStrategy {
                     if (actualInfo.require)
                         throw new MandatoryValueException(
                                 actualInfo.buildMessage("{title} cannot be blank."));
-                } else {
-                    validate(actualInfo, padded.getValue(), ValidationType.AFTER_WRITE);
                 }
                 return padded.getValue();
             }
