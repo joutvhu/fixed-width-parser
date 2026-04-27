@@ -24,13 +24,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * Phase 1 — Parser properties
  * <p>
- * Kiểm tra parser-level config và session-level property injection.
- * Tất cả test này sẽ FAIL cho đến khi Phase 1 được implement.
+ * Tests parser-level config and session-level property injection.
+ * All these tests will FAIL until Phase 1 is implemented.
  */
 class ParserPropertiesTest {
 
     // -------------------------------------------------------------------------
-    // Parser-level config (global, tồn tại suốt vòng đời parser)
+    // Parser-level config (global, exists throughout the parser lifecycle)
     // -------------------------------------------------------------------------
 
     @Test
@@ -56,16 +56,16 @@ class ParserPropertiesTest {
         FixedParser parser = FixedParser.parser()
             .withProperty("counter", 0);
 
-        // Property là immutable per-call — không thể mutate parser config từ session
+        // Property is immutable per-call — cannot mutate parser config from session
         parser.parse(SimpleStringModel.class, "hello     ");
         parser.parse(SimpleStringModel.class, "world     ");
 
-        // Parser config không thay đổi giữa các lần parse
+        // Parser config does not change between parse calls
         assertEquals(0, parser.getProperty("counter", Integer.class));
     }
 
     // -------------------------------------------------------------------------
-    // Session-level property (per-call, ghi đè parser config)
+    // Session-level property (per-call, overrides parser config)
     // -------------------------------------------------------------------------
 
     @Test
@@ -78,10 +78,10 @@ class ParserPropertiesTest {
             locales.add(ctx.getProperty("locale", Locale.class, Locale.getDefault()));
         });
 
-        // Lần 1: dùng parser config
+        // Run 1: uses parser config
         parser.parse(SimpleStringModel.class, "hello     ");
 
-        // Lần 2: override bằng session property
+        // Run 2: overrides with session property
         parser.parse(SimpleStringModel.class, "hello     ",
             ParseProperties.of("locale", Locale.JAPAN));
 
@@ -101,10 +101,10 @@ class ParserPropertiesTest {
 
         parser.parse(SimpleStringModel.class, "hello     ",
             ParseProperties.of("locale", Locale.JAPAN));
-        parser.parse(SimpleStringModel.class, "hello     "); // không có session property
+        parser.parse(SimpleStringModel.class, "hello     "); // no session property
 
         assertEquals(Locale.JAPAN, locales.get(0));
-        assertEquals(Locale.US, locales.get(1)); // trở về parser config
+        assertEquals(Locale.US, locales.get(1)); // returns to parser config
     }
 
     // -------------------------------------------------------------------------
@@ -113,7 +113,7 @@ class ParserPropertiesTest {
 
     @Test
     void getPropertyFallsBackToDefaultWhenNotSet() {
-        FixedParser parser = FixedParser.parser(); // không set property nào
+        FixedParser parser = FixedParser.parser(); // no property set
 
         List<String> values = new ArrayList<>();
         parser.onPhase(Phase.READ_AFTER_CUT, (ctx) -> {
@@ -135,7 +135,7 @@ class ParserPropertiesTest {
         });
 
         parser.parse(SimpleStringModel.class, "hello     ");
-        assertEquals("fromConfig", values.get(0)); // config thắng default
+        assertEquals("fromConfig", values.get(0)); // config wins over default
     }
 
     @Test
@@ -151,7 +151,7 @@ class ParserPropertiesTest {
     }
 
     // -------------------------------------------------------------------------
-    // Built-in properties: locale và timezone cho DateHandler
+    // Built-in properties: locale and timezone for DateHandler
     // -------------------------------------------------------------------------
 
     @FixedObject
@@ -165,8 +165,8 @@ class ParserPropertiesTest {
 
     @Test
     void dateHandlerUsesLocaleFromParserProperty() {
-        // Với locale khác nhau, format date có thể khác nhau
-        // Test này xác nhận DateHandler đọc locale từ context property
+        // With different locales, date format can be different
+        // This test confirms that DateHandler reads locale from context property
         FixedParser parser = FixedParser.parser()
             .withProperty("locale", Locale.US);
 
@@ -188,7 +188,7 @@ class ParserPropertiesTest {
         FixedParser parser = FixedParser.parser()
             .withProperty("timezone", ZoneId.of("UTC"));
 
-        // Override timezone cho một lần parse cụ thể
+        // Override timezone for a specific parse run
         DateModel model = parser.parse(DateModel.class, "15/01/2024",
             ParseProperties.of("timezone", ZoneId.of("Asia/Ho_Chi_Minh")));
 

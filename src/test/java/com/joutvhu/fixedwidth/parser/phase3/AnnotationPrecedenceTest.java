@@ -19,8 +19,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * Phase 3 — Annotation precedence
  * <p>
- * Kiểm tra thứ tự ưu tiên: field annotation > class annotation > default.
- * Tất cả test này sẽ FAIL cho đến khi Phase 3 được implement.
+ * Tests precedence: field annotation > class annotation > default.
+ * All these tests will FAIL until Phase 3 is implemented.
  */
 class AnnotationPrecedenceTest {
 
@@ -28,7 +28,7 @@ class AnnotationPrecedenceTest {
     // Models
     // -------------------------------------------------------------------------
 
-    // Class-level padding: tất cả field dùng '*' padding
+    // Class-level padding: all fields use '*' padding
     @FixedObject
     @FixedPadding(value = '*', alignment = Alignment.LEFT)
     @Data
@@ -50,14 +50,14 @@ class AnnotationPrecedenceTest {
     @AllArgsConstructor
     public static class FieldOverrideModel {
         @FixedField(length = 8)
-        private String fieldA; // dùng class-level '*'
+        private String fieldA; // uses class-level '*'
 
         @FixedPadding(value = '-', alignment = Alignment.RIGHT) // override
         @FixedField(start = 8, length = 8)
-        private String fieldB; // dùng field-level '-'
+        private String fieldB; // uses field-level '-'
     }
 
-    // Backward compat: @FixedField(padding) vẫn hoạt động
+    // Backward compatibility: @FixedPadding on field still works
     @FixedObject
     @Data
     @NoArgsConstructor
@@ -68,7 +68,7 @@ class AnnotationPrecedenceTest {
         private String value;
     }
 
-    // @FixedRequired annotation riêng
+    // Dedicated @FixedRequired annotation
     @FixedObject
     @Data
     @NoArgsConstructor
@@ -79,7 +79,7 @@ class AnnotationPrecedenceTest {
         private String value;
     }
 
-    // Backward compat: @FixedField(required=true) vẫn hoạt động
+    // Dedicated @FixedRequired annotation on field
     @FixedObject
     @Data
     @NoArgsConstructor
@@ -91,7 +91,7 @@ class AnnotationPrecedenceTest {
     }
 
     // -------------------------------------------------------------------------
-    // Class-level annotation áp dụng cho tất cả field
+    // Class-level annotation applied to all fields
     // -------------------------------------------------------------------------
 
     @Test
@@ -126,7 +126,7 @@ class AnnotationPrecedenceTest {
     }
 
     // -------------------------------------------------------------------------
-    // @FixedPadding annotation riêng trên field
+    // Dedicated @FixedPadding annotation on field
     // -------------------------------------------------------------------------
 
     @Test
@@ -160,7 +160,7 @@ class AnnotationPrecedenceTest {
     }
 
     // -------------------------------------------------------------------------
-    // @FixedRequired on field (was: @FixedField(required=true))
+    // Dedicated @FixedRequired annotation on field
     // -------------------------------------------------------------------------
 
     @Test
@@ -175,7 +175,7 @@ class AnnotationPrecedenceTest {
 
     @Test
     void fieldAnnotationHasHigherPrecedenceThanClassAnnotation() {
-        // fieldB dùng '-' (field-level) thay vì '*' (class-level)
+        // fieldB uses '-' (field-level) instead of '*' (class-level)
         FieldOverrideModel model = FixedParser.parser()
             .parse(FieldOverrideModel.class, "hello***---world");
 

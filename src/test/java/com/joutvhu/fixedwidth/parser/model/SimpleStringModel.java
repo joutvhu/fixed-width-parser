@@ -7,8 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Minimal model: một field string duy nhất.
- * Dùng để test các tính năng cơ bản mà không có noise từ các field khác.
+ * Minimal model: a single string field.
+ * Used to test basic features without noise from other fields.
  */
 @FixedObject
 @Data

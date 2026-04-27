@@ -20,22 +20,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Phase 1 — ParseContext
  * <p>
- * Kiểm tra context được tạo, truyền đúng, và frame stack hoạt động chính xác.
- * Tất cả test này sẽ FAIL cho đến khi Phase 1 được implement.
+ * Tests that the context is created, correctly passed, and the frame stack functions correctly.
+ * All these tests will FAIL until Phase 1 is implemented.
  */
 class ParseContextTest {
 
     // -------------------------------------------------------------------------
-    // Context tồn tại trong suốt parse session
+    // Context exists throughout the parse session
     // -------------------------------------------------------------------------
 
     @Test
     void contextIsCreatedForEachParseCall() {
-        // Mỗi lần gọi parse() tạo một context mới độc lập
+        // Each parse() call creates a new independent context
         List<ParseContext> captured = new ArrayList<>();
 
         FixedParser parser = FixedParser.parser()
-            .onContextCreated(captured::add); // hook để capture context
+            .onContextCreated(captured::add); // hook to capture context
 
         parser.parse(SimpleStringModel.class, "hello     ");
         parser.parse(SimpleStringModel.class, "world     ");
@@ -46,7 +46,7 @@ class ParseContextTest {
 
     @Test
     void contextIsNotSharedBetweenCalls() {
-        // Global property từ lần parse trước không leak sang lần sau
+        // Global property from the previous parse run doesn't leak to the next
         FixedParser parser = FixedParser.parser()
             .onContextCreated(ctx -> ctx.putGlobal("key", "value"));
 
@@ -59,12 +59,12 @@ class ParseContextTest {
         parser.parse(SimpleStringModel.class, "world     ");
         ParseContext second = last[0];
 
-        // Hai context khác nhau, property không leak
+        // Two different contexts, properties don't leak
         assertNotSame(first, second);
     }
 
     // -------------------------------------------------------------------------
-    // Frame stack — thông tin về vị trí trong cây
+    // Frame stack — information about position in the tree
     // -------------------------------------------------------------------------
 
     @Test
@@ -124,7 +124,7 @@ class ParseContextTest {
 
         parser.parse(MultiFieldModel.class, "040hello     Y2024-01-15");
 
-        // Tất cả field đều có parent là MultiFieldModel
+        // All fields have MultiFieldModel as parent
         assertTrue(parentTypes.stream().allMatch(t -> t.equals("MultiFieldModel")));
     }
 
@@ -141,18 +141,18 @@ class ParseContextTest {
 
         parser.parse(NestedModel.class, "ABCHanoiMain St   ");
 
-        // Ít nhất một field có stack depth >= 2
+        // At least one field has stack depth >= 2
         assertTrue(stacks.stream().anyMatch(s -> s.size() >= 2));
     }
 
     // -------------------------------------------------------------------------
-    // Raw string — chuỗi gốc sau khi cắt
+    // Raw string — original string after cutting
     // -------------------------------------------------------------------------
 
     @Test
     void rawStringIsExactSubstringBeforeAnyProcessing() {
         // Field "value" start=0, length=10
-        // Input: "hello     " → raw = "hello     " (chưa trim)
+        // Input: "hello     " → raw = "hello     " (not trimmed)
         FixedParser parser = FixedParser.parser();
         List<String> rawValues = new ArrayList<>();
 
@@ -163,12 +163,12 @@ class ParseContextTest {
         parser.parse(SimpleStringModel.class, "hello     ");
 
         assertEquals(1, rawValues.size());
-        assertEquals("hello     ", rawValues.get(0)); // raw giữ nguyên padding
+        assertEquals("hello     ", rawValues.get(0)); // raw preserves padding
     }
 
     @Test
     void rawStringIsImmutableThroughoutSession() {
-        // getRawString() luôn trả về cùng giá trị dù handler có setProcessedString()
+        // getRawString() always returns the same value even if a handler calls setProcessedString()
         FixedParser parser = FixedParser.parser();
         List<String> rawAtCut = new ArrayList<>();
         List<String> rawAtConvert = new ArrayList<>();
@@ -184,7 +184,7 @@ class ParseContextTest {
         parser.parse(SimpleStringModel.class, "hello     ");
 
         assertEquals("hello     ", rawAtCut.get(0));
-        assertEquals("hello     ", rawAtConvert.get(0)); // raw không thay đổi
+        assertEquals("hello     ", rawAtConvert.get(0)); // raw doesn't change
     }
 
     @Test
@@ -206,7 +206,7 @@ class ParseContextTest {
     }
 
     // -------------------------------------------------------------------------
-    // Phase — ctx.getPhase() đúng tại mỗi thời điểm
+    // Phase — ctx.getPhase() is correct at each point
     // -------------------------------------------------------------------------
 
     @Test
@@ -242,7 +242,7 @@ class ParseContextTest {
     }
 
     // -------------------------------------------------------------------------
-    // Custom properties — scoped và global
+    // Custom properties — scoped and global
     // -------------------------------------------------------------------------
 
     @Test
@@ -269,7 +269,7 @@ class ParseContextTest {
         parser.onPhase(Phase.READ_AFTER_CUT, (ctx) -> {
             ctx.putScoped("scopedKey", "scopedValue");
         });
-        // Sau khi field frame pop, scoped property không còn ở object frame
+        // After the field frame pops, the scoped property is no longer in the object frame
         parser.onPhase(Phase.READ_AFTER_OBJECT, (ctx) -> {
             hasKey.add(ctx.has("scopedKey"));
         });
@@ -280,14 +280,14 @@ class ParseContextTest {
 
     @Test
     void partialResultContainsAlreadyParsedFields() {
-        // Khi parse field thứ 2, partialResult của parent đã có field thứ 1
+        // When parsing the 2nd field, the parent's partialResult already has the 1st field
         FixedParser parser = FixedParser.parser();
         List<Object> partials = new ArrayList<>();
         int[] callCount = {0};
 
         parser.onPhase(Phase.READ_AFTER_CONVERT, (ctx) -> {
             callCount[0]++;
-            if (callCount[0] == 2) { // field thứ 2 (name)
+            if (callCount[0] == 2) { // 2nd field (name)
                 partials.add(ctx.parentFrame().getPartialResult());
             }
         });
@@ -296,6 +296,6 @@ class ParseContextTest {
 
         assertFalse(partials.isEmpty());
         MultiFieldModel partial = (MultiFieldModel) partials.get(0);
-        assertEquals(40L, partial.getId()); // field id đã được parse
+        assertEquals(40L, partial.getId()); // field id has been parsed
     }
 }

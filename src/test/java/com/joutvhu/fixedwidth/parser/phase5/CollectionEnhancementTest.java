@@ -22,8 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Phase 5 — Collection enhancements
  * <p>
- * Kiểm tra @FixedCount, @FixedDelimiter, @FixedTerminator.
- * Tất cả test này sẽ FAIL cho đến khi Phase 5 được implement.
+ * Tests @FixedCount, @FixedDelimiter, @FixedTerminator.
+ * All these tests will FAIL until Phase 5 is implemented.
  */
 class CollectionEnhancementTest {
 
@@ -32,7 +32,7 @@ class CollectionEnhancementTest {
     // -------------------------------------------------------------------------
 
     /**
-     * Fixed count: luôn đúng 3 element
+     * Fixed count: always exactly 3 elements
      */
     @FixedObject
     @Data
@@ -45,7 +45,7 @@ class CollectionEnhancementTest {
     }
 
     /**
-     * Count từ field khác
+     * Count from another field
      */
     @FixedObject
     @Data
@@ -61,7 +61,7 @@ class CollectionEnhancementTest {
     }
 
     /**
-     * Delimiter: tách bằng ","
+     * Delimiter: separate by ","
      */
     @FixedObject
     @Data
@@ -74,7 +74,7 @@ class CollectionEnhancementTest {
     }
 
     /**
-     * Terminator: đọc đến "|"
+     * Terminator: read until "|"
      */
     @FixedObject
     @Data
@@ -103,7 +103,7 @@ class CollectionEnhancementTest {
 
     @Test
     void fixedCount_doesNotReadBeyondCount() {
-        // Input có 4 element nhưng count=3 → chỉ đọc 3
+        // Input has 4 elements but count=3 → only read 3
         FixedCountModel model = FixedParser.parser()
             .parse(FixedCountModel.class, "AAAAABBBBBCCCCCDDDD");
 
@@ -119,12 +119,12 @@ class CollectionEnhancementTest {
     }
 
     // -------------------------------------------------------------------------
-    // @FixedCount(field) — count từ field khác
+    // @FixedCount(field) — count from another field
     // -------------------------------------------------------------------------
 
     @Test
     void countField_parsesCorrectNumberOfElements() {
-        // "03" = 3 items, rồi 3 items × 3 chars
+        // "03" = 3 items, then 3 items × 3 chars
         CountFieldModel model = FixedParser.parser()
             .parse(CountFieldModel.class, "03AAABBBCCC");
 
@@ -147,7 +147,7 @@ class CollectionEnhancementTest {
     @Test
     void countField_exportUpdatesCountField() {
         CountFieldModel model = new CountFieldModel(0, Arrays.asList("AAA", "BBB"));
-        // itemCount phải được tự động set thành 2 khi export
+        // itemCount must be automatically set to 2 during export
         String exported = FixedParser.parser().export(model);
 
         assertEquals("02", exported.substring(0, 2));
@@ -206,7 +206,7 @@ class CollectionEnhancementTest {
         TerminatorModel model = FixedParser.parser()
             .parse(TerminatorModel.class, "AAABBBCCCDDDEEEFFFG");
 
-        // Đọc đến hết field length (20 chars / 3 = 6 items, nhưng 19 chars → 6 items + 1 partial)
+        // Read until the end of field length (20 chars / 3 = 6 items, but 19 chars → 6 items + 1 partial)
         assertFalse(model.getItems().isEmpty());
     }
 

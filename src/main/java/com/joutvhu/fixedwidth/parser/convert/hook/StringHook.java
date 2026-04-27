@@ -2,7 +2,6 @@ package com.joutvhu.fixedwidth.parser.convert.hook;
 
 import com.joutvhu.fixedwidth.parser.convert.ModuleHook;
 import com.joutvhu.fixedwidth.parser.exception.FixedParserException;
-import com.joutvhu.fixedwidth.parser.support.FixedStringAssembler;
 import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.support.ParseContext;
 import com.joutvhu.fixedwidth.parser.support.Phase;

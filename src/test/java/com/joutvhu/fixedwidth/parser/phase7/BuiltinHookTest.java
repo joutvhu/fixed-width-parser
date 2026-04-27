@@ -21,7 +21,10 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Task 6.1 — Unit tests for built-in hooks.
@@ -63,7 +66,7 @@ class BuiltinHookTest {
         LocalDate date;
     }
 
-    enum Status { ACTIVE, INACTIVE }
+    enum Status {ACTIVE, INACTIVE}
 
     @FixedObject
     @Data

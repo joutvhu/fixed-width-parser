@@ -20,7 +20,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tasks 13, 13.1, 13.2 — Integration tests, round-trip property tests,
@@ -154,31 +159,41 @@ class HookSystemTest {
     static final List<String> mergeCallLog = new java.util.ArrayList<>();
 
     static class PriorityHookA implements ModuleHook {
-        @Override public boolean supports(FixedTypeInfo info) {
+        @Override
+        public boolean supports(FixedTypeInfo info) {
             return String.class.equals(info.getType());
         }
-        @Override public void handle(FixedTypeInfo info, ParseContext ctx) {
+
+        @Override
+        public void handle(FixedTypeInfo info, ParseContext ctx) {
             mergeCallLog.add("A");
             ctx.setCurrentValue(ctx.getProcessedString());
         }
     }
 
     static class PriorityHookB implements ModuleHook {
-        @Override public boolean supports(FixedTypeInfo info) {
+        @Override
+        public boolean supports(FixedTypeInfo info) {
             return String.class.equals(info.getType());
         }
-        @Override public void handle(FixedTypeInfo info, ParseContext ctx) {
+
+        @Override
+        public void handle(FixedTypeInfo info, ParseContext ctx) {
             mergeCallLog.add("B");
             ctx.setCurrentValue(ctx.getProcessedString());
         }
     }
 
     static class ModuleA extends FixedModule {
-        ModuleA() { super(PriorityHookA.class); }
+        ModuleA() {
+            super(PriorityHookA.class);
+        }
     }
 
     static class ModuleB extends FixedModule {
-        ModuleB() { super(PriorityHookB.class); }
+        ModuleB() {
+            super(PriorityHookB.class);
+        }
     }
 
     @Test

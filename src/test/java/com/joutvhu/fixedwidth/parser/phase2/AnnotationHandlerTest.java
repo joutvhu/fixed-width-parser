@@ -29,14 +29,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Phase 2 — AnnotationHandler dispatch
  * <p>
- * Kiểm tra handler được gọi đúng phase, ctx.getPhase() đúng,
- * và custom handler hoạt động không cần đăng ký module.
- * Tất cả test này sẽ FAIL cho đến khi Phase 2 được implement.
+ * Tests that the handler is called in the correct phase, ctx.getPhase() is correct,
+ * and custom handlers work without module registration.
+ * All these tests will FAIL until Phase 2 is implemented.
  */
 class AnnotationHandlerTest {
 
     // -------------------------------------------------------------------------
-    // Custom annotation + handler definitions (dùng trong test)
+    // Custom annotation + handler definitions (used in tests)
     // -------------------------------------------------------------------------
 
     static List<Phase> CALLED_PHASES = new ArrayList<>();
@@ -72,7 +72,7 @@ class AnnotationHandlerTest {
     }
 
     // -------------------------------------------------------------------------
-    // Handler được gọi đúng phase
+    // Handler is called in the correct phase
     // -------------------------------------------------------------------------
 
     @Test
@@ -89,7 +89,7 @@ class AnnotationHandlerTest {
         CALLED_PHASES.clear();
         FixedParser.parser().parse(TrackedModel.class, "hello");
 
-        // TrackingHandler chỉ đăng ký READ_AFTER_CUT và READ_AFTER_TRANSFORM
+        // TrackingHandler only registers READ_AFTER_CUT and READ_AFTER_TRANSFORM
         assertFalse(CALLED_PHASES.contains(Phase.READ_AFTER_CONVERT));
         assertFalse(CALLED_PHASES.contains(Phase.WRITE_AFTER_GET));
     }
@@ -99,29 +99,29 @@ class AnnotationHandlerTest {
         CALLED_PHASES.clear();
         FixedParser.parser().parse(TrackedModel.class, "hello");
 
-        // Mỗi lần handle() được gọi, ctx.getPhase() phải đúng với phase đó
+        // Each time handle() is called, ctx.getPhase() must match that phase
         assertEquals(2, CALLED_PHASES.size());
         assertEquals(Phase.READ_AFTER_CUT, CALLED_PHASES.get(0));
         assertEquals(Phase.READ_AFTER_TRANSFORM, CALLED_PHASES.get(1));
     }
 
     // -------------------------------------------------------------------------
-    // Custom handler không cần đăng ký module
+    // Custom handler works without module registration
     // -------------------------------------------------------------------------
 
     @Test
     void customHandlerWorksWithoutModuleRegistration() {
-        // Chỉ cần đặt @FixedHandler trên annotation là đủ
+        // Simply placing @FixedHandler on the annotation is enough
         CALLED_PHASES.clear();
-        FixedParser parser = FixedParser.parser(); // DefaultModule, không thêm gì
+        FixedParser parser = FixedParser.parser(); // DefaultModule, nothing else added
 
         parser.parse(TrackedModel.class, "hello");
 
-        assertFalse(CALLED_PHASES.isEmpty()); // handler được gọi tự động
+        assertFalse(CALLED_PHASES.isEmpty()); // handler is called automatically
     }
 
     // -------------------------------------------------------------------------
-    // Handler đăng ký nhiều phase — một handle() xử lý tất cả
+    // Handler registered for multiple phases — one handle() processes all
     // -------------------------------------------------------------------------
 
     @Test
@@ -129,12 +129,12 @@ class AnnotationHandlerTest {
         CALLED_PHASES.clear();
         FixedParser.parser().parse(TrackedModel.class, "hello");
 
-        // TrackingHandler đăng ký 2 phase → được gọi 2 lần cho 1 field
+        // TrackingHandler registers 2 phases → called twice for 1 field
         assertEquals(2, CALLED_PHASES.size());
     }
 
     // -------------------------------------------------------------------------
-    // Handler trên WRITE direction
+    // Handler on WRITE direction
     // -------------------------------------------------------------------------
 
     static List<Phase> WRITE_PHASES = new ArrayList<>();
@@ -186,7 +186,7 @@ class AnnotationHandlerTest {
     }
 
     // -------------------------------------------------------------------------
-    // Handler tham gia cả READ và WRITE
+    // Handler participating in both READ and WRITE
     // -------------------------------------------------------------------------
 
     static List<Phase> BOTH_PHASES = new ArrayList<>();
@@ -232,7 +232,7 @@ class AnnotationHandlerTest {
     }
 
     // -------------------------------------------------------------------------
-    // Handler có thể modify giá trị qua context
+    // Handler can modify values via context
     // -------------------------------------------------------------------------
 
     public static class UpperCaseHandler implements Hook {
@@ -273,7 +273,7 @@ class AnnotationHandlerTest {
     }
 
     // -------------------------------------------------------------------------
-    // getDependencies() — handler khai báo dependency
+    // getDependencies() — handler declares dependencies
     // -------------------------------------------------------------------------
 
     public static class DependencyAwareHandler implements Hook {
@@ -290,7 +290,7 @@ class AnnotationHandlerTest {
 
         @Override
         public void handle(FixedTypeInfo info, ParseContext ctx) {
-            // no-op — chỉ test getDependencies()
+            // no-op — only testing getDependencies()
         }
     }
 

@@ -24,8 +24,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Phase 5 — Error handling & reporting
  * <p>
- * Kiểm tra collect-all mode, ParseError context, và error recovery strategy.
- * Tất cả test này sẽ FAIL cho đến khi Phase 5 được implement.
+ * Tests collect-all mode, ParseError context, and error recovery strategy.
+ * All these tests will FAIL until Phase 5 is implemented.
  */
 class ErrorHandlingTest {
 
@@ -39,14 +39,14 @@ class ErrorHandlingTest {
     public static class MultiErrorModel {
         @FixedRegex(regex = "^[A-Z]{3}$")
         @FixedField(length = 3)
-        private String code; // lỗi nếu không phải 3 chữ hoa
+        private String code; // error if not 3 uppercase letters
 
         @FixedField(start = 3, length = 5)
-        private Integer number; // lỗi nếu không phải số
+        private Integer number; // error if not a number
 
         @FixedFormat(format = "yyyy-MM-dd")
         @FixedField(start = 8, length = 10)
-        private LocalDate date; // lỗi nếu sai format
+        private LocalDate date; // error if wrong format
     }
 
     @FixedObject
@@ -54,44 +54,44 @@ class ErrorHandlingTest {
     @NoArgsConstructor
     public static class RecoveryModel {
         @FixedField(length = 5)
-        private Integer value; // có thể lỗi
+        private Integer value; // may fail
     }
 
     // -------------------------------------------------------------------------
-    // Fail-fast mode (default) — throw ngay khi gặp lỗi đầu tiên
+    // Fail-fast mode (default) — throw immediately on the first error
     // -------------------------------------------------------------------------
 
     @Test
     void failFast_throwsOnFirstError() {
-        // "abc" không match regex ^[A-Z]{3}$ → throw ngay, không check field sau
+        // "abc" doesn't match regex ^[A-Z]{3}$ → throw immediately, don't check subsequent fields
         assertThrows(FixedValidationException.class,
             () -> FixedParser.parser().parse(MultiErrorModel.class, "abcXXXXX2024-01-15"));
     }
 
     // -------------------------------------------------------------------------
-    // Collect-all mode — thu thập tất cả lỗi
+    // Collect-all mode — collect all errors
     // -------------------------------------------------------------------------
 
     @Test
     void collectAll_returnsAllErrors() {
-        // "abc" lỗi regex, "XXXXX" lỗi number, "not-a-date" lỗi date
+        // "abc" regex error, "XXXXX" number error, "not-a-date" date error
         ParseResult<MultiErrorModel> result = FixedParser.parser()
             .collectErrors()
             .parseResult(MultiErrorModel.class, "abcXXXXXnot-a-dat");
 
         assertTrue(result.hasErrors());
-        assertTrue(result.getErrors().size() >= 2); // ít nhất 2 lỗi
+        assertTrue(result.getErrors().size() >= 2); // at least 2 errors
     }
 
     @Test
     void collectAll_continuesParsing_afterError() {
-        // Dù field đầu lỗi, vẫn tiếp tục parse các field sau
+        // Even if the first field has an error, continue parsing subsequent fields
         ParseResult<MultiErrorModel> result = FixedParser.parser()
             .collectErrors()
             .parseResult(MultiErrorModel.class, "abc0004200000000  ");
 
         assertTrue(result.hasErrors());
-        // Field number (42) vẫn được parse dù field code lỗi
+        // Field number (42) is still parsed even though field code has an error
         assertNotNull(result.getValue());
         assertEquals(42, result.getValue().getNumber());
     }
@@ -108,7 +108,7 @@ class ErrorHandlingTest {
     }
 
     // -------------------------------------------------------------------------
-    // ParseError — context đầy đủ
+    // ParseError — full context
     // -------------------------------------------------------------------------
 
     @Test
@@ -140,7 +140,7 @@ class ErrorHandlingTest {
 
         ParseError error = result.getErrors().get(0);
         assertNotNull(error.getPhase());
-        // Regex validation xảy ra ở READ_AFTER_TRANSFORM
+        // Regex validation occurs at READ_AFTER_TRANSFORM
         assertEquals(Phase.READ_AFTER_TRANSFORM, error.getPhase());
     }
 
@@ -173,8 +173,8 @@ class ErrorHandlingTest {
     @Data
     @NoArgsConstructor
     public static class NullRecoveryModel {
-        // Phase 5: @FixedRegex sẽ có onError attribute
-        // Tạm thời dùng collect-all mode để test behavior
+        // Phase 5: @FixedRegex will have an onError attribute
+        // Temporarily use collect-all mode to test behavior
         @FixedRegex(regex = "^[A-Z]+$")
         @FixedField(length = 3)
         String code;
@@ -182,18 +182,18 @@ class ErrorHandlingTest {
 
     @Test
     void onErrorNull_collectAllMode_fieldIsNullOnError() {
-        // Trong collect-all mode, field lỗi trả về null thay vì throw
+        // In collect-all mode, field error returns null instead of throwing
         ParseResult<NullRecoveryModel> result = FixedParser.parser()
             .collectErrors()
             .parseResult(NullRecoveryModel.class, "abc");
 
-        // Phase 5 sẽ implement đầy đủ — hiện tại chỉ verify có lỗi
+        // Phase 5 will be fully implemented — currently only verifying that there are errors
         assertTrue(result.hasErrors());
     }
 
     @Test
     void onErrorThrow_stillThrows() {
-        // OnError.THROW là default behavior — fail-fast
+        // OnError.THROW is the default behavior — fail-fast
         assertThrows(Exception.class,
             () -> FixedParser.parser().parse(MultiErrorModel.class, "abcXXXXX2024-01-15"));
     }
@@ -208,7 +208,7 @@ class ErrorHandlingTest {
             .collectErrors()
             .parseResult(MultiErrorModel.class, "abcXXXXXnot-a-dat");
 
-        // Có lỗi nhưng vẫn trả về partial object (không null)
+        // Has errors but still returns a partial object (not null)
         assertNotNull(result.getValue());
     }
 

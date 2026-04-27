@@ -6,7 +6,10 @@ import com.joutvhu.fixedwidth.parser.support.FixedTypeInfo;
 import com.joutvhu.fixedwidth.parser.support.ParseContext;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  * Task 4.1 — Unit tests for FixedModule hook registry.
@@ -17,24 +20,47 @@ class FixedModuleHookRegistryTest {
     // ── Test hooks ────────────────────────────────────────────────────────────
 
     static class HookA implements ModuleHook {
-        @Override public boolean supports(FixedTypeInfo info) { return true; }
-        @Override public void handle(FixedTypeInfo info, ParseContext ctx) {}
+        @Override
+        public boolean supports(FixedTypeInfo info) {
+            return true;
+        }
+
+        @Override
+        public void handle(FixedTypeInfo info, ParseContext ctx) {
+        }
     }
 
     static class HookB implements ModuleHook {
-        @Override public boolean supports(FixedTypeInfo info) { return true; }
-        @Override public void handle(FixedTypeInfo info, ParseContext ctx) {}
+        @Override
+        public boolean supports(FixedTypeInfo info) {
+            return true;
+        }
+
+        @Override
+        public void handle(FixedTypeInfo info, ParseContext ctx) {
+        }
     }
 
     static class HookC implements ModuleHook {
-        @Override public boolean supports(FixedTypeInfo info) { return true; }
-        @Override public void handle(FixedTypeInfo info, ParseContext ctx) {}
+        @Override
+        public boolean supports(FixedTypeInfo info) {
+            return true;
+        }
+
+        @Override
+        public void handle(FixedTypeInfo info, ParseContext ctx) {
+        }
     }
 
     // Concrete FixedModule for testing
     static class TestModule extends FixedModule {
-        TestModule() { super(); }
-        TestModule(Class<?>... classes) { super(classes); }
+        TestModule() {
+            super();
+        }
+
+        TestModule(Class<?>... classes) {
+            super(classes);
+        }
     }
 
     // ── Tests ─────────────────────────────────────────────────────────────────

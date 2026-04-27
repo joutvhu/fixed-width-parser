@@ -43,9 +43,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Core parse/export tests — behavior cơ bản của thư viện.
- * Đây là test "smoke test" đảm bảo tính năng cốt lõi hoạt động đúng
- * sau mỗi phase refactor.
+ * Core parse/export tests — basic behavior of the library.
+ * These are "smoke tests" to ensure core features work correctly
+ * after each phase of refactoring.
  */
 class ParseExportTest {
 
@@ -385,7 +385,7 @@ class ParseExportTest {
         ItemReader<MultiFieldModel> reader = parser.parse(MultiFieldModel.class, is);
 
         assertTrue(reader.hasNext());
-        assertTrue(reader.hasNext()); // gọi nhiều lần không advance cursor
+        assertTrue(reader.hasNext()); // multiple calls do not advance the cursor
         assertTrue(reader.hasNext());
         assertNotNull(reader.next());
         assertFalse(reader.hasNext());

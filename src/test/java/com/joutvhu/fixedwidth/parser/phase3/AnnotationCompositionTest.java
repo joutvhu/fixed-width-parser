@@ -21,8 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Phase 3 — Annotation composition (B2)
  * <p>
- * Kiểm tra composed annotation (meta-annotation tổng hợp) được unwrap đúng.
- * Tất cả test này sẽ FAIL cho đến khi Phase 3 được implement.
+ * Tests that composed annotations (meta-annotations) are correctly unwrapped.
+ * All these tests will FAIL until Phase 3 is implemented.
  */
 class AnnotationCompositionTest {
 
@@ -31,7 +31,7 @@ class AnnotationCompositionTest {
     // -------------------------------------------------------------------------
 
     /**
-     * Preset: số nguyên right-aligned, zero-padded
+     * Preset: right-aligned, zero-padded integer
      */
     @FixedPadding(value = '0', alignment = Alignment.RIGHT)
     @Retention(RetentionPolicy.RUNTIME)
@@ -40,7 +40,7 @@ class AnnotationCompositionTest {
     }
 
     /**
-     * Preset: date với format chuẩn
+     * Preset: date with standard format
      */
     @FixedFormat(format = "yyyy-MM-dd")
     @Retention(RetentionPolicy.RUNTIME)
@@ -49,7 +49,7 @@ class AnnotationCompositionTest {
     }
 
     // -------------------------------------------------------------------------
-    // Models dùng composed annotation
+    // Models using composed annotations
     // -------------------------------------------------------------------------
 
     @FixedObject
@@ -77,7 +77,7 @@ class AnnotationCompositionTest {
     }
 
     // -------------------------------------------------------------------------
-    // Composed annotation được unwrap đúng
+    // Composed annotation is correctly unwrapped
     // -------------------------------------------------------------------------
 
     @Test
@@ -113,7 +113,7 @@ class AnnotationCompositionTest {
     }
 
     // -------------------------------------------------------------------------
-    // Nhiều field dùng cùng composed annotation — không có shared state
+    // Multiple fields using the same composed annotation — no shared state
     // -------------------------------------------------------------------------
 
     @Test
@@ -129,7 +129,7 @@ class AnnotationCompositionTest {
     }
 
     // -------------------------------------------------------------------------
-    // Round-trip với composed annotation
+    // Round-trip with composed annotation
     // -------------------------------------------------------------------------
 
     @Test

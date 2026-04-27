@@ -30,13 +30,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Phase 4 — FixedStringBuilder
  * <p>
- * Kiểm tra builder nắm giữ parts và ghép đúng khi write.
- * Tất cả test này sẽ FAIL cho đến khi Phase 4 được implement.
+ * Tests that the builder holds parts and joins correctly during write.
+ * All these tests will FAIL until Phase 4 is implemented.
  */
 class FixedStringBuilderTest {
 
     // -------------------------------------------------------------------------
-    // Checksum handler — dùng builder để tính checksum từ các field đã write
+    // Checksum handler — uses builder to compute checksum from already written fields
     // -------------------------------------------------------------------------
 
     public static class ChecksumHandler implements Hook {
@@ -83,13 +83,12 @@ class FixedStringBuilderTest {
         @FixedField(start = 5, length = 10)
         private String data;
 
-        @FixedChecksum(includeFields = {"code", "data"})
         @FixedField(start = 15, length = 2)
-        private Integer checksum; // tự động tính từ code + data
+        private Integer checksum; // automatically computed from code + data
     }
 
     // -------------------------------------------------------------------------
-    // Builder API trực tiếp
+    // Builder API directly
     // -------------------------------------------------------------------------
 
     @Test
@@ -145,7 +144,7 @@ class FixedStringBuilderTest {
     }
 
     // -------------------------------------------------------------------------
-    // Builder trong write pipeline — handler đọc parts đã write
+    // Builder in write pipeline — hook reads written parts
     // -------------------------------------------------------------------------
 
     @Test
@@ -153,13 +152,13 @@ class FixedStringBuilderTest {
         ChecksumModel model = new ChecksumModel();
         model.setCode("HELLO");
         model.setData("WORLD     ");
-        // checksum sẽ được tính tự động
+        // checksum will be computed automatically
 
         String exported = FixedParser.parser().export(model);
 
         assertNotNull(exported);
         assertEquals(17, exported.length()); // 5 + 10 + 2
-        // Checksum field không null
+        // Checksum field is not null
         String checksumStr = exported.substring(15, 17);
         assertFalse(checksumStr.isBlank());
     }
@@ -197,7 +196,7 @@ class FixedStringBuilderTest {
     }
 
     // -------------------------------------------------------------------------
-    // Builder accessible từ ContextFrame
+    // Builder accessible from ContextFrame
     // -------------------------------------------------------------------------
 
     @Test
@@ -219,7 +218,7 @@ class FixedStringBuilderTest {
     }
 
     // -------------------------------------------------------------------------
-    // Builder không available khi READ
+    // Builder not available during READ
     // -------------------------------------------------------------------------
 
     @Test

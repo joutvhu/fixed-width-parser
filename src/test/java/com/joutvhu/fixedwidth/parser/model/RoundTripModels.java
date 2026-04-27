@@ -20,7 +20,8 @@ import java.util.UUID;
  */
 public final class RoundTripModels {
 
-    private RoundTripModels() {}
+    private RoundTripModels() {
+    }
 
     @FixedObject
     @Data
@@ -77,7 +78,7 @@ public final class RoundTripModels {
         LocalDate value;
     }
 
-    public enum Color { RED, GREEN, BLUE }
+    public enum Color {RED, GREEN, BLUE}
 
     @FixedObject
     @Data

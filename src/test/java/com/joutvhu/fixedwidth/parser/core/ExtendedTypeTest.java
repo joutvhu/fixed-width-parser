@@ -2,9 +2,9 @@ package com.joutvhu.fixedwidth.parser.core;
 
 import com.joutvhu.fixedwidth.parser.FixedParser;
 import com.joutvhu.fixedwidth.parser.annotation.FixedField;
-import com.joutvhu.fixedwidth.parser.constraint.FixedFormat;
 import com.joutvhu.fixedwidth.parser.annotation.FixedObject;
 import com.joutvhu.fixedwidth.parser.constraint.FixedEnum;
+import com.joutvhu.fixedwidth.parser.constraint.FixedFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

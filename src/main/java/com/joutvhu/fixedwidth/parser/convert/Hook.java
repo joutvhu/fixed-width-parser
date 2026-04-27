@@ -9,20 +9,20 @@ import java.util.EnumSet;
 import java.util.Set;
 
 /**
- * Interface thống nhất cho tất cả hook trong pipeline fixed-width.
+ * Unified interface for all hooks in the fixed-width pipeline.
  *
- * <p>Thay thế hoàn toàn {@code FixedWidthReader}, {@code FixedWidthWriter},
- * và {@code AnnotationHandler}. Một Hook duy nhất xử lý cả parse lẫn export
- * bằng cách kiểm tra {@code ctx.getPhase()} bên trong {@link #handle}.
+ * <p>Completely replaces {@code FixedWidthReader}, {@code FixedWidthWriter},
+ * and {@code AnnotationHandler}. A single Hook handles both parse and export
+ * by checking {@code ctx.getPhase()} inside {@link #handle}.
  *
- * <p><b>Vòng đời:</b>
+ * <p><b>Lifecycle:</b>
  * <ul>
- *   <li>Annotation-hook: khởi tạo mới cho mỗi lần gọi {@link #handle} (per-invocation).</li>
- *   <li>Module-hook: singleton — khởi tạo một lần khi đăng ký vào module.</li>
+ *   <li>Annotation-hook: newly initialized for each {@link #handle} call (per-invocation).</li>
+ *   <li>Module-hook: singleton — initialized once when registered with the module.</li>
  * </ul>
  *
- * <p><b>Thread-safety:</b> Module-hook phải thread-safe vì instance được tái sử dụng
- * qua nhiều lần parse/export đồng thời. Annotation-hook không cần thread-safe.
+ * <p><b>Thread-safety:</b> Module-hooks must be thread-safe because instances are reused
+ * across multiple concurrent parse/export calls. Annotation-hooks do not need to be thread-safe.
  *
  * @author Giao Ho
  * @since 3.0.0
@@ -30,21 +30,21 @@ import java.util.Set;
 public interface Hook {
 
     /**
-     * Thực thi logic của hook tại phase hiện tại.
+     * Executes the hook logic at the current phase.
      */
     void handle(FixedTypeInfo info, ParseContext ctx);
 
     /**
-     * Tập hợp các phase mà hook này muốn được gọi.
-     * Default: tất cả các phase.
+     * The set of phases that this hook wants to be called for.
+     * Default: all phases.
      */
     default Set<Phase> getSupportedPhases() {
         return EnumSet.allOf(Phase.class);
     }
 
     /**
-     * Tên các field phải được xử lý trước field này.
-     * Default: tập rỗng.
+     * Names of fields that must be processed before this field.
+     * Default: empty set.
      */
     default Set<String> getDependencies(FixedTypeInfo info) {
         return Collections.emptySet();

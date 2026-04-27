@@ -25,7 +25,9 @@ import java.util.EnumSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Task 10.1 — Property 4: Annotation-hook independence.
@@ -43,7 +45,8 @@ class AnnotationHookIndependenceTest {
 
     public static class TrackingAnnotationHook implements Hook {
 
-        public TrackingAnnotationHook() {}
+        public TrackingAnnotationHook() {
+        }
 
         @Override
         public Set<Phase> getSupportedPhases() {
@@ -61,11 +64,14 @@ class AnnotationHookIndependenceTest {
     @FixedHandler(TrackingAnnotationHook.class)
     @Target(ElementType.FIELD)
     @Retention(RetentionPolicy.RUNTIME)
-    public @interface Tracked {}
+    public @interface Tracked {
+    }
 
     // ── Models ────────────────────────────────────────────────────────────────
 
-    /** Model whose field has @Tracked — used with a module that supports String. */
+    /**
+     * Model whose field has @Tracked — used with a module that supports String.
+     */
     @FixedObject
     @Data
     @NoArgsConstructor

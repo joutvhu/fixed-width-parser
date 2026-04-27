@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Model lồng nhau: dùng để test frame stack depth và parent/child context.
+ * Nested model: used to test frame stack depth and parent/child context.
  */
 @FixedObject
 @Data

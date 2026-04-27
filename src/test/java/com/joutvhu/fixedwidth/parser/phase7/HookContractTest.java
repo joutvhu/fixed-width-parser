@@ -10,7 +10,10 @@ import org.junit.jupiter.api.Test;
 import java.util.EnumSet;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Task 1.1 — Unit tests for Hook interface contract.
@@ -21,13 +24,15 @@ class HookContractTest {
     // Minimal Hook implementation for testing defaults
     static class NoOpHook implements Hook {
         @Override
-        public void handle(FixedTypeInfo info, ParseContext ctx) {}
+        public void handle(FixedTypeInfo info, ParseContext ctx) {
+        }
     }
 
     // Hook that overrides getSupportedPhases
     static class ReadOnlyHook implements Hook {
         @Override
-        public void handle(FixedTypeInfo info, ParseContext ctx) {}
+        public void handle(FixedTypeInfo info, ParseContext ctx) {
+        }
 
         @Override
         public Set<Phase> getSupportedPhases() {
@@ -38,10 +43,13 @@ class HookContractTest {
     // Minimal ModuleHook implementation
     static class NoOpModuleHook implements ModuleHook {
         @Override
-        public boolean supports(FixedTypeInfo info) { return true; }
+        public boolean supports(FixedTypeInfo info) {
+            return true;
+        }
 
         @Override
-        public void handle(FixedTypeInfo info, ParseContext ctx) {}
+        public void handle(FixedTypeInfo info, ParseContext ctx) {
+        }
     }
 
     @Test

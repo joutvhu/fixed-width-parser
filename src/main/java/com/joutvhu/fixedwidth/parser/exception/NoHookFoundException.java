@@ -20,7 +20,7 @@ public class NoHookFoundException extends FixedException {
     private static String buildMessage(FixedTypeInfo info) {
         return String.format(
             "No ModuleHook found for type '%s' at field '%s' (position %d, length %d). " +
-            "Register a ModuleHook that supports this type in your FixedModule.",
+                "Register a ModuleHook that supports this type in your FixedModule.",
             info.getType() != null ? info.getType().getName() : "unknown",
             info.getName() != null ? info.getName() : "unknown",
             info.getPosition() != null ? info.getPosition() : -1,

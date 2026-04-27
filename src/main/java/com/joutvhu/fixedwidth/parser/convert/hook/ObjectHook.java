@@ -42,7 +42,9 @@ import java.util.Set;
  */
 public class ObjectHook implements ModuleHook {
 
-    /** Context key used to pass the assembler to ObjectHook for read operations. */
+    /**
+     * Context key used to pass the assembler to ObjectHook for read operations.
+     */
     public static final String ASSEMBLER_KEY = "__assembler__";
 
     @Override

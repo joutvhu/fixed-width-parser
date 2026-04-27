@@ -26,8 +26,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * Phase 2 — Built-in handlers
  * <p>
- * Kiểm tra các built-in handler (migrate từ validator cũ) hoạt động đúng.
- * Tất cả test này sẽ FAIL cho đến khi Phase 2 được implement.
+ * Tests that built-in handlers (migrated from old validators) work correctly.
+ * All these tests will FAIL until Phase 2 is implemented.
  */
 class BuiltinHandlerTest {
 

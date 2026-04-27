@@ -22,7 +22,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tasks 5.1–5.4 — Property tests and unit tests for invokeHooks() dispatch.
@@ -33,24 +36,51 @@ class InvokeHooksDispatchTest {
     static final List<String> callLog = new ArrayList<>();
 
     static class SupportingHookA implements ModuleHook {
-        @Override public boolean supports(FixedTypeInfo info) { return true; }
-        @Override public void handle(FixedTypeInfo info, ParseContext ctx) { callLog.add("A"); }
+        @Override
+        public boolean supports(FixedTypeInfo info) {
+            return true;
+        }
+
+        @Override
+        public void handle(FixedTypeInfo info, ParseContext ctx) {
+            callLog.add("A");
+        }
     }
 
     static class SupportingHookB implements ModuleHook {
-        @Override public boolean supports(FixedTypeInfo info) { return true; }
-        @Override public void handle(FixedTypeInfo info, ParseContext ctx) { callLog.add("B"); }
+        @Override
+        public boolean supports(FixedTypeInfo info) {
+            return true;
+        }
+
+        @Override
+        public void handle(FixedTypeInfo info, ParseContext ctx) {
+            callLog.add("B");
+        }
     }
 
     static class NotSupportingHook implements ModuleHook {
         static int handleCallCount = 0;
-        @Override public boolean supports(FixedTypeInfo info) { return false; }
-        @Override public void handle(FixedTypeInfo info, ParseContext ctx) { handleCallCount++; }
+
+        @Override
+        public boolean supports(FixedTypeInfo info) {
+            return false;
+        }
+
+        @Override
+        public void handle(FixedTypeInfo info, ParseContext ctx) {
+            handleCallCount++;
+        }
     }
 
     static class TestModule extends FixedModule {
-        TestModule() { super(); }
-        TestModule(Class<?>... classes) { super(classes); }
+        TestModule() {
+            super();
+        }
+
+        TestModule(Class<?>... classes) {
+            super(classes);
+        }
     }
 
     @FixedObject

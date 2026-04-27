@@ -16,9 +16,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * Phase 4 — Field dependency resolution
  * <p>
- * Kiểm tra field phụ thuộc nhau được parse đúng thứ tự,
- * circular dependency được phát hiện, và @FixedConditional hoạt động.
- * Tất cả test này sẽ FAIL cho đến khi Phase 4 được implement.
+ * Tests that dependent fields are parsed in the correct order,
+ * circular dependency is detected, and @FixedConditional works.
+ * All these tests will FAIL until Phase 4 is implemented.
  */
 class FieldDependencyTest {
 
@@ -27,23 +27,23 @@ class FieldDependencyTest {
     // -------------------------------------------------------------------------
 
     /**
-     * B phụ thuộc A — B phải parse sau A dù B đứng trước trong class
+     * B depends on A — B must be parsed after A even if B comes before it in the class
      */
     @FixedObject
     @Data
     @NoArgsConstructor
     public static class DependencyModel {
-        // B khai báo trước A trong class, nhưng phụ thuộc vào A
+        // B is declared before A in the class, but depends on A
         @FixedConditional(dependsOnField = "typeCode", whenValue = "X")
         @FixedField(start = 1, length = 4)
-        private String dataX; // chỉ có khi typeCode = "X"
+        private String dataX; // only present when typeCode = "X"
 
         @FixedField(start = 0, length = 1)
-        private String typeCode; // A — không có dependency
+        private String typeCode; // A — no dependency
     }
 
     /**
-     * Circular dependency — phải throw tại build time
+     * Circular dependency — must throw at build time
      */
     @FixedObject
     @Data
@@ -51,15 +51,15 @@ class FieldDependencyTest {
     public static class CircularModel {
         @FixedConditional(dependsOnField = "fieldB", whenValue = "1")
         @FixedField(length = 1)
-        private String fieldA; // A phụ thuộc B
+        private String fieldA; // A depends on B
 
         @FixedConditional(dependsOnField = "fieldA", whenValue = "1")
         @FixedField(start = 1, length = 1)
-        private String fieldB; // B phụ thuộc A → circular!
+        private String fieldB; // B depends on A → circular!
     }
 
     /**
-     * Conditional field — bị skip khi điều kiện không thỏa
+     * Conditional field — skipped when condition is not met
      */
     @FixedObject
     @Data
@@ -70,15 +70,15 @@ class FieldDependencyTest {
 
         @FixedConditional(dependsOnField = "type", whenValue = "A")
         @FixedField(start = 1, length = 5)
-        private String dataA; // chỉ parse khi type = "A"
+        private String dataA; // only parsed when type = "A"
 
         @FixedConditional(dependsOnField = "type", whenValue = "B")
         @FixedField(start = 1, length = 5)
-        private String dataB; // chỉ parse khi type = "B"
+        private String dataB; // only parsed when type = "B"
     }
 
     /**
-     * Nhiều tầng dependency: C → B → A
+     * Multiple levels of dependency: C → B → A
      */
     @FixedObject
     @Data
@@ -97,12 +97,12 @@ class FieldDependencyTest {
     }
 
     // -------------------------------------------------------------------------
-    // Field phụ thuộc nhau — parse đúng thứ tự
+    // Dependent fields — parsed in the correct order
     // -------------------------------------------------------------------------
 
     @Test
     void dependentField_parsedAfterDependency() {
-        // typeCode = "X" → dataX được parse
+        // typeCode = "X" → dataX is parsed
         DependencyModel model = FixedParser.parser()
             .parse(DependencyModel.class, "Xhello");
 
@@ -112,7 +112,7 @@ class FieldDependencyTest {
 
     @Test
     void dependentField_skippedWhenConditionNotMet() {
-        // typeCode = "Y" → dataX bị skip (null)
+        // typeCode = "Y" → dataX is skipped (null)
         DependencyModel model = FixedParser.parser()
             .parse(DependencyModel.class, "Yhello");
 
@@ -121,7 +121,7 @@ class FieldDependencyTest {
     }
 
     // -------------------------------------------------------------------------
-    // @FixedConditional — field bị skip khi điều kiện không thỏa
+    // @FixedConditional — field is skipped when condition is not met
     // -------------------------------------------------------------------------
 
     @Test
@@ -131,7 +131,7 @@ class FieldDependencyTest {
 
         assertEquals("A", model.getType());
         assertEquals("hello", model.getDataA());
-        assertNull(model.getDataB()); // dataB bị skip
+        assertNull(model.getDataB()); // dataB is skipped
     }
 
     @Test
@@ -140,7 +140,7 @@ class FieldDependencyTest {
             .parse(ConditionalModel.class, "Bworld");
 
         assertEquals("B", model.getType());
-        assertNull(model.getDataA()); // dataA bị skip
+        assertNull(model.getDataA()); // dataA is skipped
         assertEquals("world", model.getDataB());
     }
 
@@ -174,8 +174,8 @@ class FieldDependencyTest {
             .parse(ChainDependencyModel.class, "NOGO  ");
 
         assertEquals("NO", model.getFieldA());
-        assertNull(model.getFieldB()); // B skip vì A != "OK"
-        assertNull(model.getFieldC()); // C skip vì B null
+        assertNull(model.getFieldB()); // B skipped because A != "OK"
+        assertNull(model.getFieldC()); // C skipped because B is null
     }
 
     // -------------------------------------------------------------------------
@@ -184,14 +184,14 @@ class FieldDependencyTest {
 
     @Test
     void circularDependency_throwsAtBuildTime() {
-        // CircularDependencyException phải throw khi build FixedTypeInfo
-        // (tại lần đầu tiên parse, không phải lúc runtime)
+        // CircularDependencyException must be thrown when building FixedTypeInfo
+        // (at the first parse, not at runtime)
         assertThrows(CircularDependencyException.class,
             () -> FixedParser.parser().parse(CircularModel.class, "AB"));
     }
 
     // -------------------------------------------------------------------------
-    // Export với conditional field
+    // Export with conditional field
     // -------------------------------------------------------------------------
 
     @Test
@@ -199,7 +199,7 @@ class FieldDependencyTest {
         ConditionalModel model = new ConditionalModel();
         model.setType("A");
         model.setDataA("hello");
-        model.setDataB(null); // không có dataB
+        model.setDataB(null); // no dataB
 
         String exported = FixedParser.parser().export(model);
         assertEquals("A", exported.substring(0, 1));

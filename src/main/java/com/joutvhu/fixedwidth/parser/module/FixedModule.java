@@ -36,13 +36,18 @@ public abstract class FixedModule {
 
     private static final Logger log = Logger.getLogger(FixedModule.class.getName());
 
-    /** Ordered set of registered module-hook classes (registration order = priority). */
+    /**
+     * Ordered set of registered module-hook classes (registration order = priority).
+     */
     private Set<Class<? extends ModuleHook>> hooks = new LinkedHashSet<>();
 
-    /** Singleton instances, keyed by hook class. */
+    /**
+     * Singleton instances, keyed by hook class.
+     */
     private Map<Class<? extends ModuleHook>, ModuleHook> hookInstances = new LinkedHashMap<>();
 
-    protected FixedModule() {}
+    protected FixedModule() {
+    }
 
     @SuppressWarnings("unchecked")
     public FixedModule(Class<?>... classes) {
@@ -93,7 +98,7 @@ public abstract class FixedModule {
 
         // Merge singleton instances — don't recreate existing ones
         for (Map.Entry<Class<? extends ModuleHook>, ModuleHook> entry
-                : module.hookInstances.entrySet()) {
+            : module.hookInstances.entrySet()) {
             this.hookInstances.putIfAbsent(entry.getKey(), entry.getValue());
         }
         return this;
@@ -207,12 +212,16 @@ public abstract class FixedModule {
 
     // ── Accessors for testing ─────────────────────────────────────────────────
 
-    /** Returns an unmodifiable view of the registered hook classes (in priority order). */
+    /**
+     * Returns an unmodifiable view of the registered hook classes (in priority order).
+     */
     public Set<Class<? extends ModuleHook>> getHooks() {
         return java.util.Collections.unmodifiableSet(hooks);
     }
 
-    /** Returns the singleton instance for the given hook class, or null if not registered. */
+    /**
+     * Returns the singleton instance for the given hook class, or null if not registered.
+     */
     public ModuleHook getHookInstance(Class<? extends ModuleHook> hookClass) {
         return hookInstances.get(hookClass);
     }

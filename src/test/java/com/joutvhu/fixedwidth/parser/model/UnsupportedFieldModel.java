@@ -17,7 +17,9 @@ public class UnsupportedFieldModel {
     @FixedField(length = 5)
     UnsupportedFieldType unsupported;
 
-    /** Custom class with no @FixedObject and no registered hook. */
+    /**
+     * Custom class with no @FixedObject and no registered hook.
+     */
     public static class UnsupportedFieldType {
     }
 }

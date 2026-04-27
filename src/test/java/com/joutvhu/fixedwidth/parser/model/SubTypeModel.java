@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Model đa hình: dùng để test subtype detection.
- * TypeA khi kind="A", TypeB khi kind="B", TypeC là default.
+ * Polymorphic model: used to test subtype detection.
+ * TypeA when kind="A", TypeB when kind="B", TypeC is default.
  */
 @FixedObject(
     subTypes = {

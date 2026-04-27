@@ -29,7 +29,9 @@ import java.util.Set;
  */
 public class OptionalHook implements ModuleHook {
 
-    /** Context key used to store the FixedParseStrategy reference. */
+    /**
+     * Context key used to store the FixedParseStrategy reference.
+     */
     public static final String STRATEGY_KEY = "__strategy__";
 
     @Override

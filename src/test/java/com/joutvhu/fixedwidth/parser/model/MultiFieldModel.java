@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 /**
- * Model nhiều field với các type khác nhau.
- * Dùng để test parse/export đầy đủ và frame stack.
+ * Model with multiple fields of different types.
+ * Used to test full parse/export and frame stack.
  */
 @FixedObject
 @Data

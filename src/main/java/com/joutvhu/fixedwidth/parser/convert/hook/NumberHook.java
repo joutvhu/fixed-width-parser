@@ -10,7 +10,6 @@ import com.joutvhu.fixedwidth.parser.support.ParseContext;
 import com.joutvhu.fixedwidth.parser.support.Phase;
 import com.joutvhu.fixedwidth.parser.util.CommonUtil;
 import com.joutvhu.fixedwidth.parser.util.ObjectUtil;
-import com.joutvhu.fixedwidth.parser.util.TypeConstants;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Model collection: dùng để test List và Map field.
+ * Collection model: used to test List and Map fields.
  */
 @FixedObject
 @Data
