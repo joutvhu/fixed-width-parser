@@ -209,29 +209,32 @@ FinalTypeFinder  (interface — subtype detection logic)
 ### READ pipeline (per field)
 
 ```
-ObjectReader iterates fields in dependency order
+ObjectHook iterates fields in dependency order
 │
-├─ READ_PRE_CUT      ← handlers may call ctx.skipCurrentField()
-│   invokeAnnotationHandlers()
+├─ READ_PRE_CUT      ← hooks may call ctx.skipCurrentField()
+│   invokeHooks()
 │
 ├─ [skip? → write blank, continue]
 │
 ├─ child assembler = assembler.child(start, length)
 │
 ├─ READ_AFTER_CUT    ← raw string available in ctx.getRawString()
-│   invokeAnnotationHandlers()   ← e.g. EncodingHandler re-decodes bytes
+│   invokeHooks()   ← e.g. EncodingHook re-decodes bytes
 │
 ├─ [blank check → null or throw if required]
 │
 ├─ trim/pad according to FixedTypeInfo defaults
 │
 ├─ READ_AFTER_TRANSFORM  ← processed string in ctx.getProcessedString()
-│   invokeAnnotationHandlers()   ← e.g. RegexHandler, OptionHandler validate here
+│   invokeHooks()   ← e.g. RegexHook, OptionHook validate here
 │
-├─ reader.read(assembler)        ← StringReader / NumberReader / DateReader / …
+├─ module-hook.handle()  ← StringHook / NumberHook / DateHook / … perform parsing here
 │
 ├─ READ_AFTER_CONVERT  ← Java value in ctx.getCurrentValue()
-│   invokeAnnotationHandlers()
+│   invokeHooks()
+│
+├─ READ_AFTER_SET
+│   invokeHooks()
 │
 └─ set value on parent object via reflection
 ```
@@ -239,27 +242,30 @@ ObjectReader iterates fields in dependency order
 ### WRITE pipeline (per field)
 
 ```
-ObjectWriter iterates fields in dependency order
+ObjectHook iterates fields in dependency order
 │
-├─ WRITE_PRE_GET     ← handlers may call ctx.skipCurrentField()
-│   invokeAnnotationHandlers()   ← e.g. ConditionalHandler skips field here
+├─ WRITE_PRE_GET     ← hooks may call ctx.skipCurrentField()
+│   invokeHooks()   ← e.g. ConditionalHook skips field here
 │
 ├─ [skip? → write blank, continue]
 │
 ├─ read field value from object via reflection
 │
 ├─ WRITE_AFTER_GET   ← value in ctx.getCurrentValue()
-│   invokeAnnotationHandlers()   ← handlers may transform value (e.g. encrypt)
+│   invokeHooks()   ← hooks may transform value (e.g. encrypt)
 │
-├─ writer.write(value)           ← StringWriter / NumberWriter / DateWriter / …
+├─ module-hook.handle()  ← StringHook / NumberHook / DateHook / … perform serialization here
 │
 ├─ WRITE_AFTER_CONVERT  ← string result in ctx.getCurrentValue()
-│   invokeAnnotationHandlers()   ← e.g. EncodingHandler re-encodes bytes
+│   invokeHooks()   ← e.g. EncodingHook re-encodes bytes
 │
 ├─ pad(assembler, info)          ← apply alignment and padding
 │
 ├─ WRITE_AFTER_TRANSFORM  ← final padded string in ctx.getCurrentValue()
-│   invokeAnnotationHandlers()   ← e.g. RegexHandler, OptionHandler validate here
+│   invokeHooks()   ← e.g. RegexHook, OptionHook validate here
+│
+├─ WRITE_AFTER_PUT
+│   invokeHooks()
 │
 ├─ builder.addPart(fieldName, info, paddedString)
 │
@@ -282,75 +288,62 @@ WRITE_PRE_GET → WRITE_AFTER_GET → WRITE_AFTER_CONVERT
 
 ## 6. Module system — FixedModule
 
-`FixedModule` holds two `LinkedHashSet`s — one for reader classes, one for writer classes. **Order matters**: the first class whose constructor succeeds is used.
+`FixedModule` holds two collections: `hooks` (a `LinkedHashSet` of module-hook classes) and `hookInstances` (a cache of singletons). **Order matters**: the first hook that returns `true` for `supports()` is used.
 
-### Reader/writer selection
+### Hook selection
 
 ```java
-for (Class<? extends FixedWidthReader> readerClass : readers) {
-    try {
-        // Try constructor(FixedTypeInfo, ReadStrategy)
-        reader = readerClass.getConstructor(FixedTypeInfo.class, ReadStrategy.class)
-                            .newInstance(info, strategy);
-        return reader;  // first success wins
-    } catch (Exception ignored) {
-        // constructor called this.reject() → FixedException → skip
+for (Class<? extends ModuleHook> hookClass : hooks) {
+    ModuleHook candidate = hookInstances.get(hookClass);
+    if (candidate != null && candidate.supports(info)) {
+        return candidate;  // first match wins
     }
 }
+throw new NoHookFoundException(info);
 ```
 
-`ParsingApprover.reject()` throws `FixedException`, which `IgnoreError.execute()` catches and converts to `null`. This means a reader/writer signals "I can't handle this type" simply by calling `reject()` in its constructor.
+A hook signals "I can't handle this type" by returning `false` from `supports(info)`.
 
 ### DefaultModule registration order
 
 ```
-Readers:  String → Boolean → Number → Date → Collection → Map → Object
-Writers:  String → Boolean → Number → Date → Collection → Map → Object
+Hooks: StringHook → BooleanHook → NumberHook → DateHook → EnumHook → UUIDHook → OptionalHook → CollectionHook → MapHook → ObjectHook
 ```
 
-`ObjectReader`/`ObjectWriter` must be last because they accept any class annotated with `@FixedObject`.
+`ObjectHook` must be last because it accepts any class annotated with `@FixedObject`.
 
 ### Module composition
 
 ```java
-// Add custom readers/writers with higher priority
+// Add custom hooks with higher priority
 FixedParser.parser().with(new MyModule());
 
 // Replace everything
 FixedParser.parser().use(new MyFullModule());
 ```
 
-`with()` calls `newModule.merge(existingModule)`, which appends the existing readers/writers after the new ones — so new entries have priority.
+`with()` calls `newModule.merge(existingModule)`, which appends the existing hooks after the new ones — so new entries have priority.
 
 ---
 
-## 7. Readers and writers
+## 7. Hooks
 
-### Built-in readers (`convert/reader/`)
+### Built-in module-hooks (`convert/hook/`)
 
 | Class | Handles | Notes |
 |-------|---------|-------|
-| `StringReader` | `String`, `char` | Trims padding; char requires `length=1` |
-| `NumberReader` | `Byte`, `Short`, `Integer`, `Long`, `Float`, `Double`, `BigInteger`, `BigDecimal`, atomic types | Supports `DecimalFormat` via `@FixedFormat` |
-| `DateReader` | `LocalDate`, `LocalTime`, `LocalDateTime`, `ZonedDateTime`, `Instant`, `Date`, `sql.Date/Time/Timestamp` | Format from `@FixedFormat` |
-| `BooleanReader` | `Boolean`, `boolean` | Tokens: `Y/N`, `T/F`, `YES/NO`, `TRUE/FALSE`, `ON/OFF`, `1/0`; custom via `@FixedFormat` |
-| `CollectionReader` | `Collection` and subtypes | Supports `@FixedCount`, `@FixedDelimiter`, `@FixedTerminator` |
-| `MapReader` | `Map` and subtypes | Key+value pairs via `@FixedParam` |
-| `ObjectReader` | Any `@FixedObject` class | Recursive; pushes OBJECT frame; sorts fields by dependency |
+| `StringHook` | `String`, `char` | Trims padding; char requires `length=1` |
+| `NumberHook` | `Byte`, `Short`, `Integer`, `Long`, `Float`, `Double`, `BigInteger`, `BigDecimal`, atomic types | Supports `DecimalFormat` via `@FixedFormat` |
+| `DateHook` | `LocalDate`, `LocalTime`, `LocalDateTime`, `ZonedDateTime`, `Instant`, `Date`, `sql.Date/Time/Timestamp` | Format from `@FixedFormat` |
+| `BooleanHook` | `Boolean`, `boolean` | Tokens: `Y/N`, `T/F`, `YES/NO`, `TRUE/FALSE`, `ON/OFF`, `1/0`; custom via `@FixedFormat` |
+| `CollectionHook` | `Collection` and subtypes | Supports `@FixedCount`, `@FixedDelimiter`, `@FixedTerminator` |
+| `MapHook` | `Map` and subtypes | Key+value pairs via `@FixedParam` |
+| `ObjectHook` | Any `@FixedObject` class | Recursive; pushes OBJECT frame; sorts fields by dependency |
+| `EnumHook` | `Enum` types | Parses/exports Enums |
+| `UUIDHook` | `UUID` | Parses/exports UUIDs |
+| `OptionalHook` | `Optional` | Wraps other types |
 
-### Built-in writers (`convert/writer/`)
-
-| Class | Notes |
-|-------|-------|
-| `StringWriter` | Returns string directly |
-| `NumberWriter` | `DecimalFormat` if `@FixedFormat` present |
-| `DateWriter` | `DateTimeFormatter` from `@FixedFormat` |
-| `BooleanWriter` | Token chosen by field length or `@FixedFormat` |
-| `CollectionWriter` | Iterates elements; uses local `start` variable (not instance field) |
-| `MapWriter` | Iterates key+value pairs; uses local `start` variable |
-| `ObjectWriter` | Recursive; pushes OBJECT frame with `FixedStringBuilder`; sorts fields by dependency |
-
-After a writer returns a string, `FixedParseStrategy` calls `pad(info)` to apply alignment and padding to the correct `length`.
+After a hook writes a string, `FixedParseStrategy` calls `pad(info)` to apply alignment and padding to the correct `length`.
 
 ---
 
@@ -360,47 +353,46 @@ The handler system is the primary extension mechanism. It decouples annotation s
 
 ### How it works
 
-1. Any annotation can be linked to a handler by annotating it with `@FixedHandler(MyHandler.class)`.
-2. At each pipeline phase, `FixedModule.invokeAnnotationHandlers()` scans all annotations on the current field/class.
-3. For each annotation that carries `@FixedHandler`, the declared handler is instantiated (no-arg constructor) and invoked if the current phase is in `handler.getPhases()`.
+1. Any annotation can be linked to a hook by annotating it with `@FixedHandler(MyHook.class)`.
+2. At each pipeline phase, `FixedModule.invokeHooks()` scans all annotations on the current field/class.
+3. For each annotation that carries `@FixedHandler`, the declared hook is instantiated (no-arg constructor) and invoked if the current phase is in `hook.getSupportedPhases()`.
 4. Composed annotations (meta-annotations) are unwrapped up to depth 3, so `@StandardDate` → `@FixedFormat` works automatically.
 
 ```
 field annotations
   └─ for each annotation A:
        └─ A.annotationType().getAnnotation(FixedHandler.class)?
-            └─ yes → instantiate handler → handler.getPhases() contains currentPhase?
-                 └─ yes → handler.handle(A, info, ctx)
+            └─ yes → instantiate hook → hook.getSupportedPhases() contains currentPhase?
+                 └─ yes → hook.handle(info, ctx)
 ```
 
-### AnnotationHandler interface
+### Hook interface
 
 ```java
-public interface AnnotationHandler<A extends Annotation> {
-
-    // Which phases to be called at (default: READ_AFTER_TRANSFORM)
-    default Set<Phase> getPhases(A annotation) { ... }
+public interface Hook {
+    // Which phases to be called at (default: all phases)
+    default Set<Phase> getSupportedPhases() { ... }
 
     // Field names that must be parsed before this field
-    default Set<String> getDependencies(A annotation, FixedTypeInfo info) { ... }
+    default Set<String> getDependencies(FixedTypeInfo info) { ... }
 
     // The actual logic
-    void handle(A annotation, FixedTypeInfo info, ParseContext ctx);
+    void handle(FixedTypeInfo info, ParseContext ctx);
 }
 ```
 
-### Built-in handlers (`convert/handler/`)
+### Built-in annotation hooks (`convert/hook/`)
 
-| Handler | Annotation | Phases |
+| Hook | Annotation | Phases |
 |---------|-----------|--------|
-| `RegexHandler` | `@FixedRegex` | `READ_AFTER_TRANSFORM`, `WRITE_AFTER_TRANSFORM` |
-| `OptionHandler` | `@FixedOption` | `READ_AFTER_TRANSFORM`, `WRITE_AFTER_TRANSFORM` |
-| `FormatDispatchHandler` | `@FixedFormat` | `READ_AFTER_TRANSFORM` — dispatches to Date/Boolean/Number handler |
-| `DateHandler` | (via FormatDispatch) | date format validation |
-| `BooleanHandler` | (via FormatDispatch) | boolean token validation |
-| `NumberHandler` | (via FormatDispatch) | number format validation |
-| `ConditionalHandler` | `@FixedConditional` | `READ_PRE_CUT`, `WRITE_PRE_GET` — calls `ctx.skipCurrentField()` |
-| `EncodingHandler` | `@FixedEncoding` | `READ_AFTER_CUT`, `WRITE_AFTER_CONVERT` — re-encodes bytes |
+| `RegexHook` | `@FixedRegex` | `READ_AFTER_TRANSFORM`, `WRITE_AFTER_TRANSFORM` |
+| `OptionHook` | `@FixedOption` | `READ_AFTER_TRANSFORM`, `WRITE_AFTER_TRANSFORM` |
+| `FormatDispatchHook` | `@FixedFormat` | `READ_AFTER_TRANSFORM` — dispatches to Date/Boolean/Number hook |
+| `DateHook` | (via FormatDispatch) | date format validation |
+| `BooleanHook` | (via FormatDispatch) | boolean token validation |
+| `NumberHook` | (via FormatDispatch) | number format validation |
+| `ConditionalHook` | `@FixedConditional` | `READ_PRE_CUT`, `WRITE_PRE_GET` — calls `ctx.skipCurrentField()` |
+| `EncodingHook` | `@FixedEncoding` | `READ_AFTER_CUT`, `WRITE_AFTER_CONVERT` — re-encodes bytes |
 
 ---
 
@@ -493,13 +485,13 @@ Fields with no dependency declarations keep their original relative order.
 
 ## 11. Write builder — FixedStringBuilder
 
-During export, `ObjectWriter` creates a `DefaultFixedStringBuilder` and attaches it to the OBJECT frame. After each field is written, the padded string is added to the builder:
+During export, `ObjectHook` creates a `DefaultFixedStringBuilder` and attaches it to the OBJECT frame. After each field is written, the padded string is added to the builder:
 
 ```java
 builder.addPart("price", priceInfo, "00042");
 ```
 
-Handlers running at `WRITE_PRE_GET` can inspect already-written fields:
+Hooks running at `WRITE_PRE_GET` can inspect already-written fields:
 
 ```java
 String alreadyWritten = ctx.parentFrame().getBuilder().getPart("price");
@@ -541,7 +533,7 @@ String alreadyWritten = ctx.parentFrame().getBuilder().getPart("price");
 
 ### Fail-fast mode (default)
 
-The first exception thrown by a reader or handler propagates immediately.
+The first exception thrown by a hook propagates immediately.
 
 ### Collect-all mode
 
@@ -551,7 +543,7 @@ ParseResult<Product> result = FixedParser.parser()
     .parseResult(Product.class, line);
 ```
 
-When `ctx.isCollectErrors()` is true, `FixedParseStrategy` wraps reader and handler calls in try/catch. Errors are recorded as `DefaultParseError` objects and stored in `ctx.collectedErrors`. The parse continues with the next field.
+When `ctx.isCollectErrors()` is true, `FixedParseStrategy` wraps hook calls in try/catch. Errors are recorded as `DefaultParseError` objects and stored in `ctx.collectedErrors`. The parse continues with the next field.
 
 ### ParseError fields
 
@@ -567,39 +559,25 @@ When `ctx.isCollectErrors()` is true, `FixedParseStrategy` wraps reader and hand
 
 ## 14. Extension points
 
-### Custom reader
+### Custom module hook
 
 ```java
-public class MyTypeReader extends FixedWidthReader<MyType> {
+public class MyTypeHook implements ModuleHook {
 
-    public MyTypeReader(FixedTypeInfo info, ReadStrategy strategy) {
-        super(info, strategy);
-        if (!MyType.class.equals(info.getType()))
-            this.reject();  // signals "not my type" — module skips this reader
+    @Override
+    public boolean supports(FixedTypeInfo info) {
+        return MyType.class.equals(info.getType());
     }
 
     @Override
-    public MyType read(StringAssembler assembler) {
-        String raw = assembler.trim(info).getValue();
-        return MyType.parse(raw);
-    }
-}
-```
-
-### Custom writer
-
-```java
-public class MyTypeWriter extends FixedWidthWriter<MyType> {
-
-    public MyTypeWriter(FixedTypeInfo info, WriteStrategy strategy) {
-        super(info, strategy);
-        if (!MyType.class.equals(info.getType()))
-            this.reject();
-    }
-
-    @Override
-    public String write(MyType value) {
-        return value.serialize();
+    public void handle(FixedTypeInfo info, ParseContext ctx) {
+        if (ctx.getPhase().isRead()) {
+            String raw = ctx.getProcessedString();
+            ctx.setCurrentValue(MyType.parse(raw));
+        } else if (ctx.getPhase().isWrite()) {
+            MyType value = (MyType) ctx.getCurrentValue();
+            ctx.setCurrentValue(value.serialize());
+        }
     }
 }
 ```
@@ -609,34 +587,34 @@ public class MyTypeWriter extends FixedWidthWriter<MyType> {
 ```java
 public class MyModule extends FixedModule {
     public MyModule() {
-        super(MyTypeReader.class, MyTypeWriter.class);
+        super(MyTypeHook.class);
     }
 }
 
 FixedParser parser = FixedParser.parser().with(new MyModule());
 ```
 
-### Custom annotation handler
+### Custom annotation hook
 
 No module registration needed — just annotate your annotation with `@FixedHandler`.
 
 ```java
 // 1. Define the annotation
-@FixedHandler(UpperCaseHandler.class)
+@FixedHandler(UpperCaseHook.class)
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface UpperCase {}
 
-// 2. Implement the handler
-public class UpperCaseHandler implements AnnotationHandler<UpperCase> {
+// 2. Implement the hook
+public class UpperCaseHook implements Hook {
 
     @Override
-    public Set<Phase> getPhases(UpperCase annotation) {
-        return Set.of(Phase.READ_AFTER_TRANSFORM);
+    public Set<Phase> getSupportedPhases() {
+        return EnumSet.of(Phase.READ_AFTER_TRANSFORM);
     }
 
     @Override
-    public void handle(UpperCase annotation, FixedTypeInfo info, ParseContext ctx) {
+    public void handle(FixedTypeInfo info, ParseContext ctx) {
         String value = ctx.getProcessedString();
         if (value != null)
             ctx.setProcessedString(value.toUpperCase());
@@ -654,7 +632,7 @@ private String code;
 An annotation can itself be annotated with `@FixedFormat` or any other `@FixedHandler` annotation. The engine unwraps up to 3 levels of meta-annotations automatically:
 
 ```java
-@FixedFormat(format = "yyyy-MM-dd")   // ← carries @FixedHandler(FormatDispatchHandler.class)
+@FixedFormat(format = "yyyy-MM-dd")   // ← carries @FixedHandler(FormatDispatchHook.class)
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface IsoDate {}
@@ -681,13 +659,13 @@ FixedParser.parser().validate(Product.class).throwIfInvalid();
 
 `FixedTypeInfo` is immutable after construction. This allows safe concurrent access from multiple threads without synchronization on reads. The cache in `FixedMetadataRegistry` uses `ConcurrentHashMap`.
 
-### Handler selection by exception
+### Hook selection by supports()
 
-Readers and writers signal "I can't handle this type" by calling `this.reject()` in their constructor, which throws `FixedException`. `IgnoreError.execute()` catches it and returns `null`, causing the module to try the next candidate. This keeps the selection logic in the module generic and allows adding new readers/writers without modifying the module.
+A hook signals "I can't handle this type" by returning `false` from `supports(info)`. This keeps the selection logic in the module generic and allows adding new hooks without modifying the module. `NoHookFoundException` is thrown when no hook can handle the field.
 
-### Annotation-driven handlers vs. module-registered validators
+### Annotation-driven hooks vs. module-registered validators
 
-The old validator system required registering classes in a module. The new `@FixedHandler` system is self-contained: the annotation carries a reference to its handler, so user-defined annotations work without any module changes. This is the preferred extension point for new validation or transformation logic.
+The old validator system required registering classes in a module. The new `@FixedHandler` system is self-contained: the annotation carries a reference to its hook, so user-defined annotations work without any module changes. This is the preferred extension point for new validation or transformation logic.
 
 ### Frame stack for nested objects
 

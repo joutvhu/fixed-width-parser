@@ -368,12 +368,12 @@ Product partial = result.getValue(); // may be partially populated
 
 ### Custom module
 
-Add custom readers or writers that take priority over the built-in ones.
+Add custom module-hooks that take priority over the built-in ones.
 
 ```java
 public class MyModule extends FixedModule {
     public MyModule() {
-        super(MyCustomReader.class, MyCustomWriter.class);
+        super(MyCustomHook.class);
     }
 }
 
@@ -382,26 +382,26 @@ FixedParser parser = FixedParser.parser().with(new MyModule());
 
 ---
 
-## Custom annotation handlers
+## Custom annotation hooks
 
-The `@FixedHandler` meta-annotation links any annotation to a handler class. The handler is invoked automatically at the declared pipeline phases — no module registration needed.
+The `@FixedHandler` meta-annotation links any annotation to a hook class. The hook is invoked automatically at the declared pipeline phases — no module registration needed.
 
 ```java
 // 1. Define the annotation
-@FixedHandler(UpperCaseHandler.class)
+@FixedHandler(UpperCaseHook.class)
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface UpperCase {}
 
-// 2. Implement the handler
-public class UpperCaseHandler implements AnnotationHandler<UpperCase> {
+// 2. Implement the hook
+public class UpperCaseHook implements Hook {
     @Override
-    public Set<Phase> getPhases(UpperCase annotation) {
-        return Set.of(Phase.READ_AFTER_TRANSFORM);
+    public Set<Phase> getSupportedPhases() {
+        return EnumSet.of(Phase.READ_AFTER_TRANSFORM);
     }
 
     @Override
-    public void handle(UpperCase annotation, FixedTypeInfo info, ParseContext ctx) {
+    public void handle(FixedTypeInfo info, ParseContext ctx) {
         String value = ctx.getProcessedString();
         if (value != null) ctx.setProcessedString(value.toUpperCase());
     }
@@ -413,15 +413,15 @@ public class UpperCaseHandler implements AnnotationHandler<UpperCase> {
 private String code;
 ```
 
-### Built-in handlers
+### Built-in hooks
 
-| Annotation | Handler | Phases |
+| Annotation | Hook | Phases |
 |-----------|---------|--------|
-| `@FixedRegex` | `RegexHandler` | `READ_AFTER_TRANSFORM`, `WRITE_AFTER_TRANSFORM` |
-| `@FixedOption` | `OptionHandler` | `READ_AFTER_TRANSFORM`, `WRITE_AFTER_TRANSFORM` |
-| `@FixedFormat` (date/bool/number) | `FormatDispatchHandler` | `READ_AFTER_TRANSFORM` |
-| `@FixedConditional` | `ConditionalHandler` | `READ_PRE_CUT` |
-| `@FixedEncoding` | `EncodingHandler` | `READ_AFTER_CUT`, `WRITE_AFTER_CONVERT` |
+| `@FixedRegex` | `RegexHook` | `READ_AFTER_TRANSFORM`, `WRITE_AFTER_TRANSFORM` |
+| `@FixedOption` | `OptionHook` | `READ_AFTER_TRANSFORM`, `WRITE_AFTER_TRANSFORM` |
+| `@FixedFormat` (date/bool/number) | `FormatDispatchHook` | `READ_AFTER_TRANSFORM` |
+| `@FixedConditional` | `ConditionalHook` | `READ_PRE_CUT` |
+| `@FixedEncoding` | `EncodingHook` | `READ_AFTER_CUT`, `WRITE_AFTER_CONVERT` |
 
 ---
 
