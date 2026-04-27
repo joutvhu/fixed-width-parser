@@ -18,7 +18,7 @@ import java.util.List;
  * }</pre>
  *
  * @author Giao Ho
- * @since 1.7.0
+ * @since 2.0.0
  */
 public class SchemaDocument {
 

@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
  * }</pre>
  *
  * @author Giao Ho
- * @since 1.7.0
+ * @since 2.0.0
  */
 @FixedHandler(EncodingHandler.class)
 @Retention(RetentionPolicy.RUNTIME)

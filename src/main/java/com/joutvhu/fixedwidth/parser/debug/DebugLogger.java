@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  * }</pre>
  *
  * @author Giao Ho
- * @since 1.7.0
+ * @since 2.0.0
  */
 public class DebugLogger {
 

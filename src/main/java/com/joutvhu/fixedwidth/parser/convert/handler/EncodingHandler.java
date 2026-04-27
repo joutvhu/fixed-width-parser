@@ -26,7 +26,7 @@ import java.util.Set;
  * is a no-op.
  *
  * @author Giao Ho
- * @since 1.7.0
+ * @since 2.0.0
  */
 public class EncodingHandler implements AnnotationHandler<FixedEncoding> {
 
